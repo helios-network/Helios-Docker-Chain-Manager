@@ -15,7 +15,7 @@ const decrypt2 = async (json, password) => {
 
 const install = async (keyStoreNode, passwordCrypted) => {
     // yes yes is for overloading if already exists
-    const result = await execWrapper(`yes yes | heliades keys add node --from-private-key="${await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)))}"`);
+    const result = await execWrapper(`yes yes | heliades keys add node --from-private-key="${await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)))}" --keyring-backend="local"`);
 
     if (result.includes("name: node")) {
         console.log(result);
