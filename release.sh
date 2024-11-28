@@ -1,1 +1,1 @@
-docker build -t docker-helios-nodemanager:v0.0.10 .
+docker build -t docker-helios-nodemanager:v0.0.11 .

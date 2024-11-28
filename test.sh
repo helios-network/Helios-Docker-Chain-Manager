@@ -1,1 +1,1 @@
-docker run -p 8080:8080 docker-helios-nodemanager:v0.0.10
+docker run -p 8080:8080 docker-helios-nodemanager:v0.0.11
