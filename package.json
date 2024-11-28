@@ -1,0 +1,45 @@
+{
+  "name": "helios-docker-chain-manager",
+  "version": "0.0.1",
+  "description": "Docker for running Helios Node easiest",
+  "main": "server.js",
+  "scripts": {
+    "test": "test",
+    "start": "node server.js -c testnet",
+    "prod": "node server.js -c mainnet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Helios-Chain-Labs/Helios-Docker-Chain-Manager.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Helios-Chain-Labs/Helios-Docker-Chain-Manager/issues"
+  },
+  "homepage": "https://github.com/Helios-Chain-Labs/Helios-Docker-Chain-Manager#readme",
+  "dependencies": {
+    "async": "^3.2.4",
+    "atob": "^2.1.2",
+    "boxen": "^7.0.2",
+    "chalk": "^2.4.2",
+    "configstore": "^6.0.0",
+    "cors": "^2.8.5",
+    "ethers": "^5.1.4",
+    "express": "^4.18.2",
+    "external-ip": "^2.3.1",
+    "find-process": "^1.4.7",
+    "inquirer": "^9.2.1",
+    "keythereum": "^2.0.0",
+    "lodash": "^4.17.21",
+    "meow": "^9.0.0",
+    "minimist": "^1.2.8",
+    "node-cleanup": "^2.1.2",
+    "primus": "^8.0.7",
+    "primus-responder": "^1.0.4",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "systeminformation": "^5.17.12",
+    "web3-0.x-wrapper": "^1.0.0"
+  }
+}
