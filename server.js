@@ -4,6 +4,7 @@ const environementLoader = require('./environements/environement.js');
 const fs = require('fs');
 const { parsePairNodes } = require('./utils/pairnodes.js');
 const middlewares = require('./utils/middlewares.js');
+const { runAutomation } = require('./automation/automation.js');
 
 const environement = environementLoader.load();
 
@@ -14,7 +15,7 @@ const environement = environementLoader.load();
 const app = express();
 app.use(express.json()) //Notice express.json middleware
 corsUtils.setCors(app, ['*']);
-middlewares.asFile(app, ['favicon.png', 'logo.png']);
+middlewares.asFile(app, ['favicon.png', 'favicon.ico', 'logo.png']);
 middlewares.auth(app, environement, './html/pages/login.html', 'access-code', []);
 middlewares.setHeaders(app, [
   ['Access-Control-Allow-Origin', '*'],
@@ -30,13 +31,21 @@ const main = async () => {
 
   // app.pairNodes = await parsePairNodes();
 
+  app.node = {
+      status: '0',
+      mining: '0',
+      logs: [],
+      checkIsAlive: async () => {},
+      stop: async () => {}
+  };
+
   ////////////////////////////////////////////
   // ROUTES
   ////////////////////////////////////////////
 
-  let routes = [... fs.readdirSync('./routes')]
+  let routes = [... fs.readdirSync('./exposition')]
     .filter(x => !['example.js'].includes(x)  && x.endsWith('.js'))
-    .map(x => [x, require(`./routes/${x}`)])
+    .map(x => [x, require(`./exposition/${x}`)])
     .map(x => ({ name: x[0].replace('.js', ''), use: Object.values(x[1])[0], type: 'normal' }));
 
   [... routes].forEach(routeUseFunction => {
@@ -46,6 +55,11 @@ const main = async () => {
     let path = routeUseFunction.name.replace(`${method}-`, '');
     console.log(`[Helios Node - API] - ${method} - ${path}`);
   });
+
+  ////////////////////////////////////////////
+  // AUTOMATIONS
+  ////////////////////////////////////////////
+  await runAutomation(app, environement);
 };
 
 ////////////////////////////////////////////
