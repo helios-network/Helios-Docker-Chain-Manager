@@ -1,0 +1,328 @@
+<html>
+    <head>
+        <title>Helios Node</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    </head>
+    <body>
+        <style>
+            body {
+                margin: 0px;
+            }
+            table {
+                /* border-spacing: 0px; */
+            }
+            .mdc-button {
+                width: 100%;
+            }
+            body {
+                background-color: #10101a;
+                color: #ffffff;
+                font-family: helveticaneue,Helvetica,Arial,sans-serif;
+            }
+            input {
+                background-color: #10101a;
+                color: #252525;
+                border: 1px solid #404040;
+                padding: 5px;
+                /* width: 100%; */
+            }
+            textarea {
+                background-color: #10101a;
+                color: #ffffff;
+                border: 1px solid #404040;
+                padding: 5px;
+                /* width: 100%; */
+                /* height: 100%; */
+                resize: none;
+            }
+            .customColor {
+                color: #28cc79!important;
+                user-select: all;
+                cursor: text;
+                text-align: center;
+            }
+            button:enabled {
+                background-color: #f2f524!important;
+                color: black!important;
+            }
+
+            button:disabled {
+                background-color: #747474!important;
+                color: rgb(255, 255, 255)!important;
+            }
+
+            .mdc-button-red {
+                background-color: #551c1c!important;
+            }
+
+            .tr-network {
+                background-color: #161822;
+            }
+            .tr-network:first-of-type, .tr-network:last-of-type {
+                border-radius: 12px 0 0 12px;
+            }
+            .td-network {
+                font-family: lft-etica-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+                font-weight: 400;
+                font-size: 0.875rem;
+                line-height: 1.43;
+                display: table-cell;
+                vertical-align: inherit;
+                border-bottom: 1px solid rgba(81, 81, 81, 1);
+                text-align: left;
+                padding: 16px;
+                color: #fff;
+                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+                white-space: nowrap;
+                border-style: solid;
+                border-width: 0 0 0 0;
+                border-color: #272b2a;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                padding-left: 12px;
+                padding-right: 12px;
+                text-align: left;
+            }
+            .a-td-network {
+                background-color: rgba(14, 233, 143, 0.1);
+                color: #38EAA1;
+                padding: 0.15rem 0.5rem 0.15rem 0.5rem;
+                font-weight: 400;
+                border-radius: 5px;
+            }
+        </style>
+
+        <div id="PageSetup" style="display: block;">
+            <table style="width:100%;border-spacing: 0px;">
+                <!-- header -->
+                <tr style="background-color: #18171c;">
+                    <td colspan="3" style="color:white;font-size: x-small;padding: 10px;"><img height="50px" src="./logo.png"/></td>
+                    <td colspan="2" style="width: 100%;text-align: right;" ></td>
+                    <!-- <td colspan="1"><button id="connect-wallet" class="mdc-button mdc-button--raised" onclick="connectMetamask()"><span class="mdc-button__label">Connect Wallet</span></button></td> -->
+                    <!-- <td colspan="1"><button id="disconnect-wallet" class="mdc-button mdc-button--raised" onclick="disconnect()" style="display: none;"><span class="mdc-button__label">Disconnect Wallet</span></button></td> -->
+                </tr>
+            </table>
+            <table style="width:100%;">
+                <tr>
+                    <td style="text-align:center;"><h1>Setup Node</h1></td>
+                </tr>
+                <tr style="width:100%; height: 100px;">
+                    <td style="width:100%; height: 100px;">
+                        <h3>Define you Node Wallet: </h3>
+                        <table style="width:100%;">
+                            <tr style="width:100%;">
+                                <td>
+                                    <input id="nodePrivateKeyInput" type="text" placeholder="privateKey" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
+                                </td>
+                                <td>
+                                    <input id="nodePasswordInput" type="text" placeholder="new password" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
+                                </td>
+                            </tr>
+                            <tr style="width:100%;">
+                                <td style="text-align: center;padding-top:10px;" colspan="2">
+                                    <button onclick="generateKeyStore(1)" style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">Generate KeyStore</button>
+                                </td>
+                            </tr>
+                            <tr style="width:100%;">
+                                <td style="text-align: center;padding-top:10px;" colspan="2"><h3>OR</h3></td>
+                            </tr>
+                            <tr style="width:100%;">
+                                <td colspan="2">
+                                    <input id="nodeKeyStoreInput" type="text" placeholder="keystore for Miner" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
+                                </td>
+                            </tr>
+                        </table>
+                        <h4>Please save your password on another device for more security. You will be asked for it every time you start a node.</h4>
+                    </td>
+                </tr>
+
+                <tr style="width:100%; height: 2px;background-color: black;">
+                    <td><div></div></td>
+                </tr>
+
+                <tr style="width:100%; height: 100px;">
+                    <td style="width:100%; height: 100px;">
+                        <h3>Select Start With: </h3>
+                        <table style="width:100%;">
+                            <tr style="width:100%;display: flex;gap: 5px;">
+                                <td style="width: 100%;">
+                                    <button id="existingGenesisBtn" onclick="startWith('existingGenesis')" disabled style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">From Existing Genesis</button>
+                                </td>
+                                <td style="width: 100%;">
+                                    <button id="newGenesisBtn" onclick="startWith('newGenesis')" style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">New Genesis</button>
+                                </td>
+                            </tr>
+                            <tr id="fromExistingGenesisTr" style="width:100%;">
+                                <td style="text-align: center;padding-top:10px;" colspan="2">
+                                    <input id="genesisURL" onchange="updateGenesisURL()" type="text" placeholder="http://localhost:26657/genesis-raw" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
+                                </td>
+                            </tr>
+                            <tr style="width:100%;">
+                                <td style="text-align: center;padding-top:10px;" colspan="2">
+                                    <input id="moniker" onchange="updateNodeMoniker()" type="text" placeholder="name-of-your-node (moniker)" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
+                                </td>
+                            </tr>
+                            <tr style="width:100%;">
+                                <td style="text-align: center;padding-top:10px;" colspan="2">
+                                    <input id="chainId" type="text" placeholder="4242 (chainId)" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
+                                </td>
+                            </tr>
+                        </table>
+                        <h4>Select an official node for the existing genesis option.</h4>
+                    </td>
+                </tr>
+
+                <tr style="width:100%; height: 2px;background-color: black;">
+                    <td><div></div></td>
+                </tr>
+
+                <tr style="width:100%; height: 100px;">
+                    <td style="width:100%; height: 100px;">
+                        <button onclick="fire()" style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;" >Fire!</button>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <script>
+            let password = "$password";
+            let fromGenesisType = 'existingGenesis';
+
+            // lib
+            const rot13 = str => str.split('')
+                    .map(char => String.fromCharCode(char.charCodeAt(0) + 13))
+                    .join('');
+
+            async function updateGenesisURL() {
+                const genesisURL = document.getElementById('genesisURL').value;
+
+                if (genesisURL === '') {
+                    return ;
+                }
+                try {
+                    new URL(genesisURL); // Vérifie si l'URL est valide
+                    // L'URL est valide, vous pouvez continuer avec votre logique
+                } catch (e) {
+                    alert('Please enter a valid URL.');
+                    return; // Arrêtez l'exécution si l'URL n'est pas valide
+                }
+
+                const result = await fetch(genesisURL, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                const jsonResult = await result.json();
+                const genesis = JSON.stringify(jsonResult);
+
+                if (genesis.chainId !== undefined) {
+                    document.getElementById('chainId').value = genesis.chainId;
+                }
+            }
+
+            function updateNodeMoniker() {
+                const monikerName = document.getElementById('moniker').value;
+
+                if (monikerName === '') {
+                    return ;
+                }
+
+                // Vérifie si le nom est en minuscules, sans espaces, et n'utilise que des tirets
+                const isValidMoniker = /^[a-z0-9-]+$/.test(monikerName);
+
+                if (!isValidMoniker) {
+                    alert('The name must be in lowercase, without spaces, and can only contain letters, numbers, and hyphens.');
+                    return; // Arrêtez l'exécution si le nom n'est pas valide
+                }
+            }
+
+            function startWith(value) {
+                if (value === 'existingGenesis') {
+                    document.getElementById('existingGenesisBtn').disabled = true;
+                    document.getElementById('newGenesisBtn').disabled = false;
+                    document.getElementById('fromExistingGenesisTr').style.display = '';
+                    fromGenesisType = value;
+                } else {
+                    document.getElementById('existingGenesisBtn').disabled = false;
+                    document.getElementById('newGenesisBtn').disabled = true;
+                    document.getElementById('fromExistingGenesisTr').style.display = 'none';
+                    fromGenesisType = value;
+                }
+            }
+
+            async function generateKeyStore() {
+                const privateKeyElement = document.getElementById(`nodePrivateKeyInput`);
+                const privatePasswordElement = document.getElementById(`nodePasswordInput`);
+                const privateKeyStoreElement = document.getElementById(`nodeKeyStoreInput`);
+
+                const cryptedPrivateKey = btoa(rot13(privateKeyElement.value));
+                const cryptedPassword = btoa(rot13(privatePasswordElement.value));
+
+                const result = await fetch('/generate-json-keystore', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            privateKey: cryptedPrivateKey,
+                            password: cryptedPassword
+                        })
+                    });
+                const jsonResult = await result.json();
+                privateKeyStoreElement.value = JSON.stringify(jsonResult);
+            }
+
+            async function fire() {
+                const privateKeyStoreNodeElement = document.getElementById(`nodeKeyStoreInput`);
+                if (privateKeyStoreNodeElement.value == '') {
+                    return ;
+                }
+                const privatePasswordElement = document.getElementById(`nodePasswordInput`);
+                if (privatePasswordElement.value == '') {
+                    return ;
+                }
+
+                const genesisURLElement = document.getElementById(`genesisURL`);
+
+                const monikerElement = document.getElementById('moniker');
+                const chainIdElement = document.getElementById('chainId');
+
+                const cryptedPassword = btoa(rot13(privatePasswordElement.value));
+                const result = await fetch('/setup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            keyStoreNode: privateKeyStoreNodeElement.value,
+                            password: cryptedPassword,
+                            fromGenesisType: fromGenesisType,
+                            genesisURL: genesisURLElement.value,
+                            moniker: monikerElement.value,
+                            chainId: chainIdElement.value
+                        })
+                    });
+                const jsonResult = await result.json();
+
+                if (jsonResult.status == 'ready') {
+                    window.location.href = `/html-page-status?access-code=${encodeURIComponent(password)}`;
+                } else {
+                    console.log('SETUP ERROR');
+                }
+            }
+
+            const main = () => {
+                
+            }
+
+            window.addEventListener('DOMContentLoaded', (event) => {
+                main();
+            });
+        </script>
+    </body>
+</html>

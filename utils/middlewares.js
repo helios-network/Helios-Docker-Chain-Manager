@@ -20,17 +20,24 @@ module.exports = {
             const isExcludedRoute = excludedRoutes.find(x =>  `${x}` === req.path);
 
             if (!isExcludedRoute) { // route who needed permissions
-                if (req.query[accessCodeKey] == undefined && environement.password == undefined
-                && req.headers[accessCodeKey] == undefined && environement.password == undefined) {
-                    const loginHtmlFile = (fs.readFileSync(loginHtmlFilePath)).toString();
+                if (req.query[accessCodeKey] == undefined && req.headers[accessCodeKey] == undefined) {
+                    let loginHtmlFile = (fs.readFileSync(loginHtmlFilePath)).toString();
+
+                    loginHtmlFile = loginHtmlFile.replace(/\$firstTime/, environement.password == undefined ? 'true' : 'false');
                     res.send(loginHtmlFile);
                     return ;
                 }
+                if (environement.password == undefined && fs.existsSync('./.password')) {
+                    const pass = fs.readFileSync('./.password').toString();
+                    environement.password = pass;
+                }
                 if (req.headers[accessCodeKey] != undefined && environement.password == undefined) {
                     environement.password = req.headers[accessCodeKey];
+                    fs.writeFileSync('./.password', environement.password);
                 }
                 if (req.query[accessCodeKey] != undefined && environement.password == undefined) {
                     environement.password = req.query[accessCodeKey];
+                    fs.writeFileSync('./.password', environement.password);
                 }
                 if (req.headers[accessCodeKey] != environement.password
                 && req.query[accessCodeKey] != environement.password) {

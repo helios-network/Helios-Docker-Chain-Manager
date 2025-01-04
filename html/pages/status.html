@@ -8,219 +8,154 @@
     </head>
     <body>
         <style>
+            body {
+                margin: 0px;
+            }
+            table {
+                /* border-spacing: 0px; */
+            }
             .mdc-button {
                 width: 100%;
             }
             body {
-                background-color: #182231;
+                background-color: #10101a;
                 color: #ffffff;
                 font-family: helveticaneue,Helvetica,Arial,sans-serif;
             }
             input {
-                background-color: #182231;
-                color: #ffffff;
-                border: 1px solid #000000;
+                background-color: #10101a;
+                color: #252525;
+                border: 1px solid #404040;
                 padding: 5px;
                 /* width: 100%; */
+                height: 36px;
             }
             textarea {
-                background-color: #182231;
+                background-color: #10101a;
                 color: #ffffff;
-                border: 1px solid #000000;
+                border: 1px solid #404040;
                 padding: 5px;
                 /* width: 100%; */
                 /* height: 100%; */
                 resize: none;
             }
             .customColor {
-                color: #2774ff!important;
+                color: #28cc79!important;
                 user-select: all;
                 cursor: text;
                 text-align: center;
             }
+            button:enabled {
+                background-color: #f2f524!important;
+                color: black!important;
+            }
+            button:disabled {
+                background-color: #2c2c2cc1!important;
+                color: rgb(255, 255, 255)!important;
+            }
+
+            .mdc-button-red {
+                background-color: #551c1c!important;
+            }
+
+            .tr-network {
+                background-color: #161822;
+            }
+            .tr-network:first-of-type, .tr-network:last-of-type {
+                border-radius: 12px 0 0 12px;
+            }
+            .td-network {
+                font-family: lft-etica-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+                font-weight: 400;
+                font-size: 0.875rem;
+                line-height: 1.43;
+                display: table-cell;
+                vertical-align: inherit;
+                border-bottom: 1px solid rgba(81, 81, 81, 1);
+                text-align: left;
+                padding: 16px;
+                color: #fff;
+                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
+                white-space: nowrap;
+                border-style: solid;
+                border-width: 0 0 0 0;
+                border-color: #272b2a;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                padding-left: 12px;
+                padding-right: 12px;
+                text-align: left;
+            }
+            .a-td-network {
+                background-color: rgba(14, 233, 143, 0.1);
+                color: #38EAA1;
+                padding: 0.15rem 0.5rem 0.15rem 0.5rem;
+                font-weight: 400;
+                border-radius: 5px;
+            }
         </style>
-        <div id="PageStatus" style="display: none;">
+        <div id="PageStatus">
+            <table style="width:100%;border-spacing: 0px;">
+                <!-- header -->
+                <tr style="background-color: #18171c;">
+                    <td colspan="3" style="color:white;font-size: x-small;padding: 10px;"><img height="50px" src="./logo.png"/></td>
+                    <td colspan="2" style="width: 100%;text-align: right;" ></td>
+                    <!-- <td colspan="1"><button id="connect-wallet" class="mdc-button mdc-button--raised" onclick="connectMetamask()"><span class="mdc-button__label">Connect Wallet</span></button></td> -->
+                    <!-- <td colspan="1"><button id="disconnect-wallet" class="mdc-button mdc-button--raised" onclick="disconnect()" style="display: none;"><span class="mdc-button__label">Disconnect Wallet</span></button></td> -->
+                </tr>
+            </table>
             <table style="width:100%;">
                 <!-- Internal Node -->
 
                 <tr>
-                    <td colspan="6" style="color:white;text-align: center;font-size: x-small;"><img height="50px" src="logo.png"/> <span>v0.0.9</span></td>
-                </tr>
-
-                <tr>
-                    <td>INTERNAL NODE STATUS</td>
+                    <td>NODE STATUS</td>
                     <td id="node1-status" class="mdc-button mdc-button--outlined customColor"></td>
                     <td colspan="4"></td>
                 </tr>
                 <tr>
+                    <td>Wallet Password</td>
+                    <td colspan="2"><input id="node1-keystore-password" type="password" style="width:100%"></td>
+                </tr>
+                <tr>
+                    <td>EthStats Server Url</td>
+                    <td colspan="2">
+                        <input id="ethStats-server-url" type="text" style="width:100%">
+                    </td>
+                </tr>
+                <tr></tr>
+                    <td>EthStats Node Name</td>
+                    <td colspan="2">
+                        <input id="ethStats-node-name" type="text" style="width:100%">
+                    </td>
+                </tr>
+                <tr style="height: 38px;">
+                    <td>Address</td>
+                    <td class="customColor" style="text-align: left;">$node1Address</td>
+                </tr>
+                <tr style="height: 38px;">
+                    <td>RPC port</td>
+                    <td class="customColor" style="text-align: left;">8545</td>
+                </tr>
+                <tr>
                     <td>Node</td>
-                    <td><button id="node1-button-start" class="mdc-button mdc-button--raised" onclick="startNode1(this)"><span class="mdc-button__label">Start</span></button></td>
-                    <td><button id="node1-button-stop" class="mdc-button mdc-button--raised" onclick="stopNode1(this)"><span class="mdc-button__label">Stop</span></button></td>
-                    <td style="text-align: right;margin-right:10px;">Node Wallet Password:</td>
-                    <td><input id="node1-keystore-password" type="password" style="width:100%"></td>
+                    <td colspan="2" style="display: flex; gap: 5px;">
+                        <button id="node1-button-start" class="mdc-button mdc-button--raised" onclick="startNode1(this)"><span class="mdc-button__label">Start</span></button>
+                        <button id="node1-button-stop" class="mdc-button mdc-button--raised" onclick="stopNode1(this)"><span class="mdc-button__label">Stop</span></button>
+                    </td>
                 </tr>
                 <tr>
                     <td>EthStats</td>
-                    <td><button id="ethStats-button-start" class="mdc-button mdc-button--raised" onclick="startEthStats(this)"><span class="mdc-button__label">Start</span></button></td>
-                    <td><button id="ethStats-button-stop" class="mdc-button mdc-button--raised" onclick="stopEthStats(this)"><span class="mdc-button__label">Stop</span></button></td>
-                    <td style="text-align: right;margin-right:10px;">EthStats Server Url:</td>
-                    <td>
-                        <input id="ethStats-server-url" type="text" style="width:100%"></td>
-                    <td>
-                        <div style="display: grid; grid-template-columns: 30% 70%;">
-                            <div style="text-align: right;margin-right:5px;">Node Name:</div>
-                            <input id="ethStats-node-name" type="text" style="width:100%">
-                        </div>
+                    <td colspan="2" style="display: flex; gap: 5px;">
+                        <button id="ethStats-button-start" class="mdc-button mdc-button--raised" onclick="startEthStats(this)"><span class="mdc-button__label">Start</span></button>
+                        <button id="ethStats-button-stop" class="mdc-button mdc-button--raised" onclick="stopEthStats(this)"><span class="mdc-button__label">Stop</span></button>
                     </td>
                 </tr>
-                <tr>
-                    <td>Mining</td>
-                    <td><button id="node1-button-miner-start" class="mdc-button mdc-button--raised" onclick="startMinerNode1(this)"><span class="mdc-button__label">Start Miner</span></button></td>
-                    <td><button id="node1-button-miner-stop" class="mdc-button mdc-button--raised" onclick="stopMinerNode1(this)"><span class="mdc-button__label">Stop Miner</span></button></td>
-                    <td colspan="3"></td>
-                </tr>
-                <tr>
-                    <td>Address</td>
-                    <td class="customColor">$node1Address</td>
-                </tr>
-                <tr>
-                    <td colspan="3">Node Logs</td>
-                    <td colspan="3">IPC Console</td>
-                </tr>
-                <tr style="width:100%; height: 200px;">
-                    <td colspan="3" style="width:50%; height: 200px;position: relative;">
-                        <textarea id="node1-logs" style="width:100%; height: 200px;" readonly></textarea>
-                    </td>
-                    <td colspan="3" style="width:50%; height: 200px;">
-                        <textarea id="node1-ipc-logs" style="width:100%; height: 160px;" readonly></textarea>
-                        <input id="node1-ipc-input" type="text" placeholder="admin" style="width:100%; height: 25px;margin-top: 15px;" />
-                    </td>
-                </tr>
-
-                <!-- External Node -->
-
-                <tr>
-                    <td>EXTERNAL NODE STATUS</td>
-                    <td id="node2-status" class="mdc-button mdc-button--outlined customColor"></td>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td colspan="1">Node</td>
-                    <td colspan="1"><button id="node2-button-start" class="mdc-button mdc-button--raised" onclick="startNode2(this)">Start</button></td>
-                    <td colspan="1"><button id="node2-button-stop" class="mdc-button mdc-button--raised" onclick="stopNode2(this)">Stop</button></td>
-                    <td colspan="3"></td>
-                </tr>
-                <tr>
-                    <td>RPC EXPOSED PORT</td>
-                    <td class="mdc-button mdc-button--outlined customColor">8551</td>
-                </tr>
-                <tr>
-                    <td>HTTP EXPOSED PORT</td>
-                    <td class="mdc-button mdc-button--outlined customColor">8545</td>
-                </tr>
-                <tr>
-                    <td>Address</td>
-                    <td class="customColor">$node2Address</td>
-                </tr>
-                <tr>
-                    <td colspan="3">External Node Logs</td>
-                    <td colspan="3">IPC Console</td>
-                </tr>
-                <tr style="width:100%; height: 200px;">
-                    <td colspan="3" style="width:50%; height: 200px;position: relative;">
-                        <textarea id="node2-logs" style="width:100%; height: 200px;" readonly></textarea>
-                    </td>
-                    <td colspan="3" style="width:50%; height: 200px;">
-                        <textarea id="node2-ipc-logs" style="width:100%; height: 160px;" readonly></textarea>
-                        <input id="node2-ipc-input" type="text" placeholder="admin" style="width:100%; height: 25px;margin-top: 15px;" />
-                    </td>
-                </tr>
-
-                <!-- Pair Ids -->
-                <tr>
-                    <td>Main nodes</td>
+                <tr style="height: 38px;">
+                    <td colspan="6">Node Logs</td>
                 </tr>
                 <tr style="width:100%; height: 200px;">
                     <td colspan="6" style="width:100%; height: 200px;position: relative;">
-                        <textarea id="textarea-pair-nodes-ids" style="width:100%; height: 200px;"></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td><button class="mdc-button mdc-button--raised" onclick="savePairNodes(document.getElementById('textarea-pair-nodes-ids').value, this)">Save</button></td>
-                    <!-- <td><button onclick="applyPairNodes(document.getElementById('textarea-pair-nodes-ids').value)">Apply on Nodes</button></td> -->
-                </tr>
-            </table>
-        </div>
-
-        <div id="PageSetup" style="display: none;">
-            <table style="width:100%;">
-                <tr>
-                    <td style="text-align:center;"><h1>Setup Nodes</h1></td>
-                </tr>
-                <tr style="width:100%; height: 100px;">
-                    <td style="width:100%; height: 100px;">
-                        <h3>NODE 1 (Internal Node Miner): </h3>
-                        <table style="width:100%;">
-                            <tr style="width:100%;">
-                                <td>
-                                    <input id="node1PrivateKey" type="text" placeholder="privateKey" style="width:100%; height: 25px;margin-top: 2px;" />
-                                </td>
-                                <td>
-                                    <input id="node1Password" type="text" placeholder="new password" style="width:100%; height: 25px;margin-top: 2px;" />
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;" colspan="2">
-                                    <button onclick="generateKeyStore(1)">Generate KeyStore</button>
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;" colspan="2">OR</td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td colspan="2">
-                                    <input id="node1KeyStore" type="text" placeholder="keystore for Miner" style="width:100%; height: 25px;margin-top: 2px;" />
-                                </td>
-                            </tr>
-                        </table>
-                        Please save your password on another device for more security. You will be asked for it every time you start a node.
-                    </td>
-                </tr>
-                <tr style="width:100%; height: 2px;background-color: black;">
-                    <td><div></div></td>
-                </tr>
-                <!-- <tr style="width:100%; height: 100px;">
-                    <td style="width:100%; height: 100px;">
-                        <h3>NODE 2 (Exposed Node):</h3>
-                        <table style="width:100%;">
-                            <tr style="width:100%;">
-                                <td>
-                                    <input id="node2PrivateKey" type="text" placeholder="privateKey" style="width:100%; height: 25px;margin-top: 2px;" />
-                                </td>
-                                <td>
-                                    <input id="node2Password" type="text" placeholder="new password" style="width:100%; height: 25px;margin-top: 2px;" />
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;" colspan="2">
-                                    <button onclick="generateKeyStore(2)">Generate KeyStore</button>
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;" colspan="2">OR</td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td colspan="2">
-                                    <input id="node2KeyStore" type="text" placeholder="keystore for Miner" style="width:100%; height: 25px;margin-top: 2px;" />
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr> -->
-
-                <tr style="width:100%; height: 100px;">
-                    <td style="width:100%; height: 100px;">
-                        <button onclick="fire()" style="width: 100%;" >Fire!</button>
+                        <textarea id="node1-logs" style="width:100%; height: 200px;" readonly></textarea>
                     </td>
                 </tr>
             </table>
@@ -255,21 +190,6 @@
                 return cmp;
             }
 
-            //manager
-            document.getElementById('node1-ipc-input')
-            .addEventListener('keyup', function onEvent(e) {
-                if (e.keyCode === 13) {
-                    execNode1IpcCommand();
-                }
-            });
-
-            document.getElementById('node2-ipc-input')
-            .addEventListener('keyup', function onEvent(e) {
-                if (e.keyCode === 13) {
-                    execNode2IpcCommand();
-                }
-            });
-
             function scrollLogToBottom(element) {
                 element.scrollTop = element.scrollHeight;
             }
@@ -278,53 +198,21 @@
 
                 let node1Status = document.getElementById('node1-status');
                 let node1Logs = document.getElementById('node1-logs');
-                let node1ipcLogs = document.getElementById('node1-ipc-logs');
                 let node1ButtonStart = document.getElementById('node1-button-start');
                 let node1ButtonStop = document.getElementById('node1-button-stop');
-                let node1ButtonMinerStart = document.getElementById('node1-button-miner-start');
-                let node1ButtonMinerStop = document.getElementById('node1-button-miner-stop');
 
-                let node2Status = document.getElementById('node2-status');
-                let node2Logs = document.getElementById('node2-logs');
-                let node2ipcLogs = document.getElementById('node2-ipc-logs');
-                let node2ButtonStart = document.getElementById('node2-button-start');
-                let node2ButtonStop = document.getElementById('node2-button-stop');
-
-                node1Status.innerText = jsonData.node1.status;
-                if (compareIt(node1Logs.innerHTML, jsonData.node1.logs.join('\n'))) {
-                    node1Logs.innerHTML = jsonData.node1.logs.join('\n');
+                node1Status.innerText = jsonData.node.status == '1' ? 'Active' : 'Inactive';
+                if (compareIt(node1Logs.innerHTML, jsonData.node.logs.join('\n'))) {
+                    node1Logs.innerHTML = jsonData.node.logs.join('\n');
                     scrollLogToBottom(node1Logs);
                 }
-                if (compareIt(node1ipcLogs.innerHTML, jsonData.node1.ipcLogs.join('\n'))) {
-                    node1ipcLogs.innerHTML = jsonData.node1.ipcLogs.join('\n');
-                    scrollLogToBottom(node1ipcLogs);
-                }
-                node1ButtonStart.disabled = jsonData.node1.status == '1';
-                node1ButtonStop.disabled = jsonData.node1.status == '0';
-                node1ButtonMinerStart.disabled = jsonData.node1.mining == '1';
-                node1ButtonMinerStop.disabled = jsonData.node1.mining == '0';
-
-                node2Status.innerText = jsonData.node2.status;
-                if (compareIt(node2Logs.innerHTML, jsonData.node2.logs.join('\n'))) {
-                    node2Logs.innerHTML = jsonData.node2.logs.join('\n');
-                    scrollLogToBottom(node2Logs);
-                }
-                if (compareIt(node2ipcLogs.innerHTML, jsonData.node2.ipcLogs.join('\n'))) {
-                    node2ipcLogs.innerHTML = jsonData.node2.ipcLogs.join('\n');
-                    scrollLogToBottom(node2ipcLogs);
-                }
-                node2ButtonStart.disabled = jsonData.node2.status == '1';
-                node2ButtonStop.disabled = jsonData.node2.status == '0';
-
-                let pairNodesIds = document.getElementById('textarea-pair-nodes-ids');
-                if (compareIt(pairNodesIds.innerHTML, jsonData.pairNodes.join('\n'))) {
-                    pairNodesIds.innerHTML = jsonData.pairNodes.join('\n');
-                }
+                node1ButtonStart.disabled = jsonData.node.status == '1';
+                node1ButtonStop.disabled = jsonData.node.status == '0';
 
                 let ethStatsButtonStart = document.getElementById('ethStats-button-start');
                 let ethStatsButtonStop = document.getElementById('ethStats-button-stop');
 
-                if (jsonData.ethStats.status == '1') {
+                if (jsonData.ethStats?.status == '1') {
                     ethStatsButtonStart.disabled = true;
                     ethStatsButtonStop.disabled = false;
                 } else {
@@ -342,7 +230,7 @@
                     window.localStorage.setItem('ethstats-node-name', inputEthStatsNodeName.value);
                 }
 
-                if (document.activeElement !== inputEthStatsNodeName && jsonData.ethStats.nodeName != undefined && inputEthStatsNodeName.value == jsonData.ethStats.nodeName) {
+                if (document.activeElement !== inputEthStatsNodeName && jsonData.ethStats?.nodeName != undefined && inputEthStatsNodeName.value == jsonData.ethStats?.nodeName) {
                     inputEthStatsNodeName.value = jsonData.ethStats.nodeName;
                 }
 
@@ -363,20 +251,6 @@
                         body: JSON.stringify({
                             password: cryptedPassword
                         })
-                    });
-                let jsonResult = await result.json();
-            }
-
-            async function startNode2(btn) {
-                btn.disabled = true;
-
-                let result = await fetch('/run-external-node', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
                     });
                 let jsonResult = await result.json();
             }
@@ -403,19 +277,7 @@
 
             async function stopNode1(btn) {
                 btn.disabled = true;
-                let result = await fetch('/node1-kill', {
-                    method: 'POST',
-                    headers: {
-                        'Access-Code': password,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                });
-            }
-
-            async function stopNode2(btn) {
-                btn.disabled = true;
-                let result = await fetch('/node2-kill', {
+                let result = await fetch('/stop-node', {
                     method: 'POST',
                     headers: {
                         'Access-Code': password,
@@ -434,36 +296,6 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({})
-                });
-            }
-
-            async function startMinerNode1(btn) {
-                btn.disabled = true;
-                let result = await fetch('/node1-ipc-command', {
-                    method: 'POST',
-                    headers: {
-                        'Access-Code': password,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        command: 'miner.start()',
-                        ignore: true
-                    })
-                });
-            }
-
-            async function stopMinerNode1(btn) {
-                btn.disabled = true;
-                let result = await fetch('/node1-ipc-command', {
-                    method: 'POST',
-                    headers: {
-                        'Access-Code': password,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        command: 'miner.stop()',
-                        ignore: true
-                    })
                 });
             }
 
@@ -492,102 +324,6 @@
                 if (compareIt(node1ipcLogs.innerHTML, jsonData.join('\n'))) {
                     node1ipcLogs.innerHTML = jsonData.join('\n');
                     scrollLogToBottom(node1ipcLogs);
-                }
-            }
-
-            async function execNode2IpcCommand() {
-                const node2IpcInput = document.getElementById('node2-ipc-input');
-                const node2ipcLogs = document.getElementById('node2-ipc-logs');
-                const value = node2IpcInput.value;
-
-                node2IpcInput.disabled = true;
-
-                let result = await fetch('/node2-ipc-command', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            command: value
-                        })
-                    });
-                let jsonData = await result.json();
-
-                node2IpcInput.value = '';
-                node2IpcInput.disabled = false;
-                node2IpcInput.focus();
-                if (compareIt(node2ipcLogs.innerHTML, jsonData.join('\n'))) {
-                    node2ipcLogs.innerHTML = jsonData.join('\n');
-                    scrollLogToBottom(node2ipcLogs);
-                }
-            }
-
-            async function savePairNodes(value, btn) {
-                console.log(value);
-                btn.disabled = true;
-                let result = await fetch('/update-pair-nodes', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            nodes: value.split('\n')
-                        })
-                    });
-                let jsonResult = await result.json();
-
-                let pairNodesIds = document.getElementById('textarea-pair-nodes-ids');
-                pairNodesIds.value = jsonResult.join('\n');
-
-                btn.disabled = false;
-            }
-
-            async function generateKeyStore(nodeId) {
-                let privateKeyElement = document.getElementById(`node${nodeId}PrivateKey`);
-                let privatePasswordElement = document.getElementById(`node${nodeId}Password`);
-                let privateKeyStoreElement = document.getElementById(`node${nodeId}KeyStore`);
-
-                let cryptedPrivateKey = btoa(rot13(privateKeyElement.value));
-                let cryptedPassword = btoa(rot13(privatePasswordElement.value));
-
-                let result = await fetch('/generate-json-keystore', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            privateKey: cryptedPrivateKey,
-                            password: cryptedPassword
-                        })
-                    });
-                let jsonResult = await result.json();
-                privateKeyStoreElement.value = JSON.stringify(jsonResult);
-            }
-
-            async function fire() {
-                let privateKeyStoreNode1Element = document.getElementById(`node1KeyStore`);
-                if (privateKeyStoreNode1Element.value == '') {
-                    return ;
-                }
-                let result = await fetch('/setup', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            keyStoreNode1: privateKeyStoreNode1Element.value
-                        })
-                    });
-                let jsonResult = await result.json();
-
-                if (jsonResult.status == 'ready') {
-                    location.reload();
-                } else {
-                    console.log('SETUP ERROR');
                 }
             }
 

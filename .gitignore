@@ -4,3 +4,7 @@ node2/
 nodes/
 .DS_Store
 bin/
+.password
+wasm/
+node/
+data/
