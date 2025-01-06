@@ -123,6 +123,7 @@
                 color: #6C757D;
                 font-weight: 300;
                 letter-spacing: 0.2px;
+                opacity: 0.6;
             }
 
             .form-control:focus {
@@ -133,7 +134,7 @@
             }
 
             .form-control.is-valid {
-                border-color: #FCA13E;
+                border-color: #2ECC71;
                 background-color: #141E27;
                 background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%232ECC71' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
                 background-repeat: no-repeat;
@@ -181,9 +182,13 @@
             }
 
             button:disabled {
-                background: linear-gradient(135deg, #2c3e50, #2c3e50);
+                background: linear-gradient(135deg, #8B5827, #704820);
                 opacity: 0.7;
                 cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+                border: none;
+                outline: none;
             }
 
             .invalid-feedback {
@@ -265,6 +270,7 @@
             let firstTime = "$firstTime";
 
             window.addEventListener('DOMContentLoaded', (event) => {
+                document.getElementById('login-btn').disabled = true;
                 if (firstTime === "false") {
                     document.getElementById('login-title').innerHTML = 'Welcome Back';
                     document.getElementById('login-btn').innerHTML = 'Login';
@@ -330,18 +336,22 @@
             document.getElementById('access-password').addEventListener('input', function(e) {
                 const password = e.target.value;
                 const feedbackElement = document.getElementById('password-feedback');
+                const submitButton = document.getElementById('login-btn');
                 
                 e.target.classList.remove('is-invalid', 'is-valid');
                 
                 if (password.length === 0) {
+                    submitButton.disabled = true;
                     return;
                 }
                 
                 if (password.length < 4) {
                     e.target.classList.add('is-invalid');
                     feedbackElement.textContent = 'Le mot de passe doit contenir au moins 4 caractères';
+                    submitButton.disabled = true;
                 } else {
                     e.target.classList.add('is-valid');
+                    submitButton.disabled = false;
                 }
             });
         </script>
