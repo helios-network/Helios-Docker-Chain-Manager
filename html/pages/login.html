@@ -283,7 +283,6 @@
                 const passwordInput = document.getElementById('access-password');
                 const feedbackElement = document.getElementById('password-feedback');
                 
-                // Réinitialiser les classes
                 passwordInput.classList.remove('is-invalid', 'is-valid');
                 
                 if (password.length < 4) {
@@ -292,7 +291,6 @@
                     return;
                 }
 
-                // Afficher l'indicateur de chargement
                 const button = document.getElementById('login-btn');
                 const originalText = button.innerHTML;
                 button.innerHTML = `
@@ -301,35 +299,7 @@
                 `;
                 button.disabled = true;
 
-                fetch('/setup-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ password: password })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        passwordInput.classList.add('is-valid');
-                        button.classList.add('btn-success');
-                        button.innerHTML = `
-                            <i class="fas fa-check"></i>
-                            Configuration réussie
-                        `;
-                        setTimeout(() => {
-                            window.location.href = '/';
-                        }, 1000);
-                    } else {
-                        throw new Error('Échec de la configuration');
-                    }
-                })
-                .catch(error => {
-                    passwordInput.classList.add('is-invalid');
-                    feedbackElement.textContent = 'Une erreur est survenue. Veuillez réessayer.';
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                });
+                window.location.href = `/html-page-setup?access-code=${encodeURIComponent(password)}`;
             }
 
             // Validation en temps réel
