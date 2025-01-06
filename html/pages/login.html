@@ -5,120 +5,169 @@
         <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
         <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     </head>
     <body>
         <style>
             body {
-                margin: 0px;
-            }
-            table {
-                /* border-spacing: 0px; */
-            }
-            .mdc-button {
-                width: 100%;
-            }
-            body {
-                background-color: #10101a;
+                margin: 0;
+                min-height: 100vh;
+                background-color: #0a0a0f;
                 color: #ffffff;
-                font-family: helveticaneue,Helvetica,Arial,sans-serif;
+                font-family: 'Poppins', sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
-            input {
-                background-color: #10101a;
-                color: #252525;
-                border: 1px solid #404040;
-                padding: 5px;
-                /* width: 100%; */
+
+            .login-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 2rem;
+                max-width: 400px;
+                margin: 0 auto;
             }
-            textarea {
-                background-color: #10101a;
-                color: #ffffff;
-                border: 1px solid #404040;
-                padding: 5px;
-                /* width: 100%; */
-                /* height: 100%; */
-                resize: none;
-            }
-            .customColor {
-                color: #28cc79!important;
-                user-select: all;
-                cursor: text;
+
+            .logo-container {
+                margin-bottom: 2rem;
                 text-align: center;
             }
+
+            .logo-container img {
+                height: 60px;
+                margin-bottom: 1rem;
+                animation: fadeInDown 0.8s ease-out;
+            }
+
+            @keyframes fadeInDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .login-box {
+                background-color: #16161f;
+                padding: 3rem;
+                border-radius: 15px;
+                width: 100%;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                animation: fadeIn 0.8s ease-out;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .login-title {
+                color: #ffffff;
+                font-size: 1.5rem;
+                margin-bottom: 0.5rem;
+                text-align: center;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+            }
+
+            .login-subtitle {
+                color: #8a8a9d;
+                font-size: 0.9rem;
+                text-align: center;
+                margin-bottom: 2rem;
+                font-weight: 300;
+            }
+
+            .form-group {
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                display: block;
+                color: #b4b4c7;
+                font-size: 0.9rem;
+                margin-bottom: 0.5rem;
+                font-weight: 500;
+            }
+
+            input {
+                width: 100%;
+                padding: 14px;
+                margin-bottom: 0.5rem;
+                border: 1px solid #2a2a35;
+                border-radius: 10px;
+                background-color: #1c1c26;
+                color: #ffffff;
+                font-size: 0.95rem;
+                transition: all 0.3s ease;
+            }
+
+            input::placeholder {
+                color: #4a4a5a;
+            }
+
+            .password-requirements {
+                color: #6b6b7c;
+                font-size: 0.8rem;
+                margin-top: 0.5rem;
+            }
+
             button {
-                background-color: #f2f524!important;
-                color: black!important;
+                width: 100%;
+                padding: 14px;
+                border: none;
+                border-radius: 10px;
+                background: linear-gradient(135deg, #28cc79 0%, #24b86d 100%);
+                color: white;
+                font-size: 0.95rem;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-top: 1rem;
             }
 
-            .mdc-button-red {
-                background-color: #551c1c!important;
-            }
-
-            .tr-network {
-                background-color: #161822;
-            }
-            .tr-network:first-of-type, .tr-network:last-of-type {
-                border-radius: 12px 0 0 12px;
-            }
-            .td-network {
-                font-family: lft-etica-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-                font-weight: 400;
-                font-size: 0.875rem;
-                line-height: 1.43;
-                display: table-cell;
-                vertical-align: inherit;
-                border-bottom: 1px solid rgba(81, 81, 81, 1);
-                text-align: left;
-                padding: 16px;
-                color: #fff;
-                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
-                white-space: nowrap;
-                border-style: solid;
-                border-width: 0 0 0 0;
-                border-color: #272b2a;
-                padding-top: 12px;
-                padding-bottom: 12px;
-                padding-left: 12px;
-                padding-right: 12px;
-                text-align: left;
-            }
-            .a-td-network {
-                background-color: rgba(14, 233, 143, 0.1);
-                color: #38EAA1;
-                padding: 0.15rem 0.5rem 0.15rem 0.5rem;
-                font-weight: 400;
-                border-radius: 5px;
+            button:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 4px 12px rgba(40,204,121,0.2);
             }
         </style>
-        <div id="PageSetup" style="display: block;">
-            <table style="width:100%;border-spacing: 0px;">
-                <!-- header -->
-                <tr style="background-color: #18171c;">
-                    <td colspan="3" style="color:white;font-size: x-small;padding: 10px;"><img height="50px" src="./logo.png"/></td>
-                    <td colspan="2" style="width: 100%;text-align: right;" ></td>
-                    <!-- <td colspan="1"><button id="connect-wallet" class="mdc-button mdc-button--raised" onclick="connectMetamask()"><span class="mdc-button__label">Connect Wallet</span></button></td> -->
-                    <!-- <td colspan="1"><button id="disconnect-wallet" class="mdc-button mdc-button--raised" onclick="disconnect()" style="display: none;"><span class="mdc-button__label">Disconnect Wallet</span></button></td> -->
-                </tr>
-            </table>
-            <table style="width:100%; margin-top: 50px;">
-                <tr>
-                    <td style="text-align:center;">
-                        <h1 id="login-title">Set Node Access Password</h1>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:center;">
-                        <input id="access-password" type="password" placeholder="Password (min 4 characters)" style="width:80%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                    </td>
-                </tr>
-                <tr>
-                    <td style="text-align:center;">
-                        <button id="login-btn" onclick="setupPassword()" style="width: 80%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">
-                            Set Password
-                        </button>
-                    </td>
-                </tr>
-            </table>
+
+        <div class="login-container">
+            <div class="logo-container">
+                <img src="./logo.png" alt="Helios Node Logo"/>
+            </div>
+            <div class="login-box">
+                <h1 class="login-title">Welcome to Helios Node</h1>
+                <p class="login-subtitle">Please set up your access password to continue</p>
+                
+                <div class="form-group">
+                    <label class="form-label">Access Password</label>
+                    <input 
+                        id="access-password" 
+                        type="password" 
+                        placeholder="Enter your password" 
+                    />
+                    <p class="password-requirements">Minimum 4 characters required</p>
+                </div>
+
+                <button id="login-btn" onclick="setupPassword()">
+                    Create Secure Access
+                </button>
+            </div>
         </div>
+
         <script>
             let firstTime = "$firstTime";
 
