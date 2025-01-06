@@ -9,182 +9,483 @@
     <body>
         <style>
             body {
-                margin: 0px;
+                margin: 0;
+                min-height: 100vh;
+                background: radial-gradient(circle at center, #111F2C, #0D131A);
+                color: #E8E9EA;
+                font-family: 'Poppins', sans-serif;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
-            table {
-                /* border-spacing: 0px; */
+
+            .setup-container {
+                max-width: 800px;
+                margin: 2rem auto;
+                padding: 0 2rem;
             }
-            .mdc-button {
-                width: 100%;
-            }
-            body {
-                background-color: #10101a;
-                color: #ffffff;
-                font-family: helveticaneue,Helvetica,Arial,sans-serif;
-            }
-            input {
-                background-color: #10101a;
-                color: #252525;
-                border: 1px solid #404040;
-                padding: 5px;
-                /* width: 100%; */
-            }
-            textarea {
-                background-color: #10101a;
-                color: #ffffff;
-                border: 1px solid #404040;
-                padding: 5px;
-                /* width: 100%; */
-                /* height: 100%; */
-                resize: none;
-            }
-            .customColor {
-                color: #28cc79!important;
-                user-select: all;
-                cursor: text;
+
+            .logo-container {
                 text-align: center;
+                margin-bottom: 2rem;
             }
-            button:enabled {
-                background-color: #f2f524!important;
-                color: black!important;
+
+            .logo-container img {
+                height: 70px;
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+            }
+
+            .setup-box {
+                background: #1C2833;
+                padding: 3rem;
+                border-radius: 16px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .setup-title {
+                font-size: 1.8rem;
+                font-weight: 600;
+                text-align: center;
+                margin-bottom: 3rem;
+                color: #E8E9EA;
+                letter-spacing: -0.5px;
+            }
+
+            .setup-section {
+                margin-bottom: 2.5rem;
+            }
+
+            .section-title {
+                font-size: 1.1rem;
+                color: #CED4DA;
+                margin-bottom: 1.5rem;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+            }
+
+            .form-control {
+                background-color: #141E27;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #FFFFFF !important;
+                padding: 0.8rem 1rem;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                width: 100%;
+                transition: all 0.3s ease;
+                -webkit-text-fill-color: #FFFFFF;
+                letter-spacing: 0.3px;
+                font-weight: 400;
+                margin-bottom: 1rem;
+            }
+
+            .form-control::placeholder {
+                color: #6C757D;
+                opacity: 0.6;
+                font-weight: 300;
+                letter-spacing: 0.2px;
+            }
+
+            .form-control:focus {
+                background-color: #1A272F;
+                border-color: #FCA13E;
+                box-shadow: 0 0 0 3px rgba(252, 161, 62, 0.15);
+                outline: none;
+            }
+
+            button {
+                background: linear-gradient(135deg, #FCA13E, #F48023);
+                border: none;
+                color: #FFFFFF !important;
+                padding: 1rem;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-radius: 8px;
+                width: 100%;
+                height: 48px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+            }
+
+            button:hover {
+                background: linear-gradient(135deg, #FCA13E, #E67016);
+                opacity: 0.95;
             }
 
             button:disabled {
-                background-color: #747474!important;
-                color: rgb(255, 255, 255)!important;
+                background: linear-gradient(135deg, #8B5827, #704820);
+                opacity: 0.7;
+                cursor: not-allowed;
+                border: none;
+                outline: none;
             }
 
-            .mdc-button-red {
-                background-color: #551c1c!important;
+            .input-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 1rem;
             }
 
-            .tr-network {
-                background-color: #161822;
+            .section-divider {
+                position: relative;
+                text-align: center;
+                margin: 2rem 0;
             }
-            .tr-network:first-of-type, .tr-network:last-of-type {
-                border-radius: 12px 0 0 12px;
+
+            .section-divider.solid {
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+                margin: 2.5rem 0;
             }
-            .td-network {
-                font-family: lft-etica-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
-                font-weight: 400;
-                font-size: 0.875rem;
-                line-height: 1.43;
-                display: table-cell;
-                vertical-align: inherit;
-                border-bottom: 1px solid rgba(81, 81, 81, 1);
-                text-align: left;
-                padding: 16px;
-                color: #fff;
-                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
-                white-space: nowrap;
-                border-style: solid;
-                border-width: 0 0 0 0;
-                border-color: #272b2a;
-                padding-top: 12px;
-                padding-bottom: 12px;
-                padding-left: 12px;
-                padding-right: 12px;
-                text-align: left;
+
+            .section-divider span {
+                background: #1C2833;
+                padding: 0 1rem;
+                color: #6C757D;
+                position: relative;
+                z-index: 1;
+                font-size: 0.9rem;
+                letter-spacing: 0.5px;
             }
-            .a-td-network {
-                background-color: rgba(14, 233, 143, 0.1);
-                color: #38EAA1;
-                padding: 0.15rem 0.5rem 0.15rem 0.5rem;
-                font-weight: 400;
-                border-radius: 5px;
+
+            .section-divider:not(.solid)::before {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+                z-index: 0;
+            }
+
+            .info-text {
+                color: #A3A7AB;
+                font-size: 0.9rem;
+                margin-top: 1rem;
+                line-height: 1.5;
+                letter-spacing: 0.2px;
+            }
+
+            .button-group {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .button-group button {
+                height: 48px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+            }
+
+            .button-group .secondary-button {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #A3A7AB;
+            }
+
+            .button-group .secondary-button:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: #FFFFFF;
+            }
+
+            .button-group .primary-button {
+                background: linear-gradient(135deg, #FCA13E, #F48023);
+                border: none;
+                color: #FFFFFF;
+            }
+
+            .button-group .primary-button:hover {
+                opacity: 0.95;
+            }
+
+            @media (max-width: 768px) {
+                .button-group {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .form-control.textarea {
+                min-height: 120px;
+                font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                font-size: 0.85rem;
+                line-height: 1.5;
+                white-space: pre;
+                resize: vertical;
+                tab-size: 2;
+                padding: 1rem;
+                background-color: #141E27;
+            }
+
+            /* Stylisation de la barre de défilement */
+            .form-control.textarea::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .form-control.textarea::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 4px;
+            }
+
+            .form-control.textarea::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+                transition: background 0.3s ease;
+            }
+
+            .form-control.textarea::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.15);
+            }
+
+            /* Firefox */
+            .form-control.textarea {
+                scrollbar-width: thin;
+                scrollbar-color: rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.05);
+            }
+
+            .setup-step {
+                display: none;
+            }
+
+            .setup-step.active {
+                display: block;
+                animation: fadeIn 0.3s ease-in-out;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .step-indicator {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-bottom: 3rem;
+                position: relative;
+            }
+
+            .step-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: relative;
+                z-index: 1;
+                flex: 1;
+                max-width: 200px;
+            }
+
+            .step-dot {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                margin-bottom: 8px;
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+            }
+
+            .step-dot.active {
+                background: #FCA13E;
+                box-shadow: 0 0 0 4px rgba(252, 161, 62, 0.2);
+            }
+
+            .step-dot.completed {
+                background: #2ECC71;
+                box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.2);
+            }
+
+            .step-label {
+                font-size: 0.9rem;
+                color: #A3A7AB;
+                text-align: center;
+                transition: all 0.3s ease;
+            }
+
+            .step-label.active {
+                color: #FCA13E;
+                font-weight: 500;
+            }
+
+            .step-label.completed {
+                color: #2ECC71;
+                font-weight: 500;
+            }
+
+            .step-line {
+                position: absolute;
+                top: 6px;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: rgba(255, 255, 255, 0.1);
+                z-index: 0;
+            }
+
+            .step-line-progress {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                transition: all 0.3s ease;
+                width: 0%;
+            }
+
+            .step-line-progress.completed {
+                background: #2ECC71;
+            }
+
+            .step-line-progress.active {
+                background: #FCA13E;
+            }
+
+            .step-dot.next {
+                background: #FCA13E;
+                box-shadow: 0 0 0 4px rgba(252, 161, 62, 0.2);
+            }
+
+            .input-group-container {
+                margin-top: 2rem;
+            }
+
+            /* Pour les boutons de navigation en bas */
+            .navigation-buttons {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+
+            .navigation-buttons .secondary-button {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #A3A7AB !important;
+                height: 48px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+            }
+
+            .navigation-buttons .secondary-button:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: #FFFFFF !important;
+            }
+
+            .navigation-buttons .primary-button {
+                background: linear-gradient(135deg, #FCA13E, #F48023);
+                border: none;
+                color: #FFFFFF !important;
+                height: 48px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
+            }
+
+            .navigation-buttons .primary-button:hover {
+                opacity: 0.95;
+            }
+
+            @media (max-width: 768px) {
+                .navigation-buttons {
+                    grid-template-columns: 1fr;
+                }
             }
         </style>
 
-        <div id="PageSetup" style="display: block;">
-            <table style="width:100%;border-spacing: 0px;">
-                <!-- header -->
-                <tr style="background-color: #18171c;">
-                    <td colspan="3" style="color:white;font-size: x-small;padding: 10px;"><img height="50px" src="./logo.png"/></td>
-                    <td colspan="2" style="width: 100%;text-align: right;" ></td>
-                    <!-- <td colspan="1"><button id="connect-wallet" class="mdc-button mdc-button--raised" onclick="connectMetamask()"><span class="mdc-button__label">Connect Wallet</span></button></td> -->
-                    <!-- <td colspan="1"><button id="disconnect-wallet" class="mdc-button mdc-button--raised" onclick="disconnect()" style="display: none;"><span class="mdc-button__label">Disconnect Wallet</span></button></td> -->
-                </tr>
-            </table>
-            <table style="width:100%;">
-                <tr>
-                    <td style="text-align:center;"><h1>Setup Node</h1></td>
-                </tr>
-                <tr style="width:100%; height: 100px;">
-                    <td style="width:100%; height: 100px;">
-                        <h3>Define you Node Wallet: </h3>
-                        <table style="width:100%;">
-                            <tr style="width:100%;">
-                                <td>
-                                    <input id="nodePrivateKeyInput" type="text" placeholder="privateKey" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                                </td>
-                                <td>
-                                    <input id="nodePasswordInput" type="text" placeholder="new password" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;padding-top:10px;" colspan="2">
-                                    <button onclick="generateKeyStore(1)" style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">Generate KeyStore</button>
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;padding-top:10px;" colspan="2"><h3>OR</h3></td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td colspan="2">
-                                    <input id="nodeKeyStoreInput" type="text" placeholder="keystore for Miner" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                                </td>
-                            </tr>
-                        </table>
-                        <h4>Please save your password on another device for more security. You will be asked for it every time you start a node.</h4>
-                    </td>
-                </tr>
+        <div class="setup-container">
+            <div class="logo-container">
+                <img height="50px" src="./logo.png" alt="Logo"/>
+            </div>
 
-                <tr style="width:100%; height: 2px;background-color: black;">
-                    <td><div></div></td>
-                </tr>
+            <div class="setup-box">
+                <div class="step-indicator">
+                    <div class="step-line">
+                        <div class="step-line-progress" id="stepProgress"></div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-dot active"></div>
+                        <div class="step-label active">Node Wallet</div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-dot"></div>
+                        <div class="step-label">Genesis Config</div>
+                    </div>
+                </div>
 
-                <tr style="width:100%; height: 100px;">
-                    <td style="width:100%; height: 100px;">
-                        <h3>Select Start With: </h3>
-                        <table style="width:100%;">
-                            <tr style="width:100%;display: flex;gap: 5px;">
-                                <td style="width: 100%;">
-                                    <button id="existingGenesisBtn" onclick="startWith('existingGenesis')" disabled style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">From Existing Genesis</button>
-                                </td>
-                                <td style="width: 100%;">
-                                    <button id="newGenesisBtn" onclick="startWith('newGenesis')" style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;">New Genesis</button>
-                                </td>
-                            </tr>
-                            <tr id="fromExistingGenesisTr" style="width:100%;">
-                                <td style="text-align: center;padding-top:10px;" colspan="2">
-                                    <input id="genesisURL" onchange="updateGenesisURL()" type="text" placeholder="http://localhost:26657/genesis-raw" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;padding-top:10px;" colspan="2">
-                                    <input id="moniker" onchange="updateNodeMoniker()" type="text" placeholder="name-of-your-node (moniker)" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                                </td>
-                            </tr>
-                            <tr style="width:100%;">
-                                <td style="text-align: center;padding-top:10px;" colspan="2">
-                                    <input id="chainId" type="text" placeholder="4242 (chainId)" style="width:100%; height: 40px; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background-color: #2c3e50; color: #ffffff; font-size: 16px;" />
-                                </td>
-                            </tr>
-                        </table>
-                        <h4>Select an official node for the existing genesis option.</h4>
-                    </td>
-                </tr>
+                <div id="step1" class="setup-step active">
+                    <h1 class="setup-title">Node Wallet Configuration</h1>
+                    <div class="setup-section">
+                        <div class="input-group-container">
+                            <div class="input-row">
+                                <input id="nodePrivateKeyInput" type="text" class="form-control" placeholder="Private Key" />
+                                <input id="nodePasswordInput" type="text" class="form-control" placeholder="New Password" />
+                            </div>
+                            <button onclick="generateKeyStore(1)" class="action-button">Generate KeyStore</button>
+                        </div>
 
-                <tr style="width:100%; height: 2px;background-color: black;">
-                    <td><div></div></td>
-                </tr>
+                        <div class="section-divider">
+                            <span>OR</span>
+                        </div>
 
-                <tr style="width:100%; height: 100px;">
-                    <td style="width:100%; height: 100px;">
-                        <button onclick="fire()" style="width: 100%; height: 40px; background-color: #3498db; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; transition: background-color 0.3s;" >Fire!</button>
-                    </td>
-                </tr>
-            </table>
+                        <div class="input-group-container">
+                            <textarea 
+                                id="nodeKeyStoreInput" 
+                                class="form-control textarea" 
+                                placeholder="Keystore for Miner"
+                                spellcheck="false"
+                                onchange="formatJsonKeystore(this)"
+                            ></textarea>
+                        </div>
+                        <p class="info-text">Please save your password on another device for more security. You will be asked for it every time you start a node.</p>
+                    </div>
+
+                    <button onclick="nextStep()" class="primary-button">Next</button>
+                </div>
+
+                <div id="step2" class="setup-step">
+                    <h1 class="setup-title">Genesis Configuration</h1>
+                    <div class="setup-section">
+                        <div class="button-group">
+                            <button id="existingGenesisBtn" onclick="startWith('existingGenesis')" disabled>From Existing Genesis</button>
+                            <button id="newGenesisBtn" onclick="startWith('newGenesis')">New Genesis</button>
+                        </div>
+
+                        <div id="fromExistingGenesisTr" class="input-group-container">
+                            <input id="genesisURL" onchange="updateGenesisURL()" type="text" class="form-control" placeholder="http://localhost:26657/genesis-raw" />
+                            <input id="moniker" onchange="updateNodeMoniker()" type="text" class="form-control" placeholder="name-of-your-node (moniker)" />
+                            <input id="chainId" type="text" class="form-control" placeholder="4242 (chainId)" />
+                        </div>
+                        <p class="info-text">Select an official node for the existing genesis option.</p>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button onclick="previousStep()" class="secondary-button">Previous</button>
+                        <button onclick="fire()" class="primary-button">Fire!</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <script>
             let password = "$password";
@@ -240,40 +541,104 @@
             }
 
             function startWith(value) {
+                const fromExistingGenesisTr = document.getElementById('fromExistingGenesisTr');
+                const genesisURL = document.getElementById('genesisURL');
+                
                 if (value === 'existingGenesis') {
+                    document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
+                    document.getElementById('existingGenesisBtn').style.border = 'none';
+                    document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
+                    document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
+                    document.getElementById('newGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
+                    document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
                     document.getElementById('existingGenesisBtn').disabled = true;
                     document.getElementById('newGenesisBtn').disabled = false;
-                    document.getElementById('fromExistingGenesisTr').style.display = '';
+                    fromExistingGenesisTr.style.display = '';
+                    genesisURL.style.display = '';
                     fromGenesisType = value;
                 } else {
+                    document.getElementById('newGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
+                    document.getElementById('newGenesisBtn').style.border = 'none';
+                    document.getElementById('newGenesisBtn').style.color = '#FFFFFF';
+                    document.getElementById('existingGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
+                    document.getElementById('existingGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
+                    document.getElementById('existingGenesisBtn').style.color = '#A3A7AB';
                     document.getElementById('existingGenesisBtn').disabled = false;
                     document.getElementById('newGenesisBtn').disabled = true;
-                    document.getElementById('fromExistingGenesisTr').style.display = 'none';
+                    fromExistingGenesisTr.style.display = '';
+                    genesisURL.style.display = 'none';
                     fromGenesisType = value;
                 }
             }
 
+            function validateKeystore() {
+                const keystoreValue = document.getElementById('nodeKeyStoreInput').value.trim();
+                const nextButton = document.querySelector('button[onclick="nextStep()"]');
+                
+                if (!keystoreValue) {
+                    nextButton.disabled = true;
+                    return false;
+                }
+
+                try {
+                    JSON.parse(keystoreValue);
+                    nextButton.disabled = false;
+                    return true;
+                } catch (e) {
+                    nextButton.disabled = true;
+                    return false;
+                }
+            }
+
+            function formatJsonKeystore(textarea) {
+                try {
+                    const value = textarea.value;
+                    if (value) {
+                        const jsonObj = JSON.parse(value);
+                        textarea.value = JSON.stringify(jsonObj, null, 2);
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON');
+                }
+                validateKeystore();
+            }
+
             async function generateKeyStore() {
-                const privateKeyElement = document.getElementById(`nodePrivateKeyInput`);
-                const privatePasswordElement = document.getElementById(`nodePasswordInput`);
-                const privateKeyStoreElement = document.getElementById(`nodeKeyStoreInput`);
+                const privateKeyElement = document.getElementById('nodePrivateKeyInput');
+                const privatePasswordElement = document.getElementById('nodePasswordInput');
+                const privateKeyStoreElement = document.getElementById('nodeKeyStoreInput');
+                const generateButton = document.getElementById('generateKeystoreBtn');
+
+                if (!privateKeyElement.value || !privatePasswordElement.value) {
+                    if (generateButton) {
+                        generateButton.disabled = true;
+                    }
+                    return;
+                }
+
+                if (generateButton) {
+                    generateButton.disabled = false;
+                }
 
                 const cryptedPrivateKey = btoa(rot13(privateKeyElement.value));
                 const cryptedPassword = btoa(rot13(privatePasswordElement.value));
 
                 const result = await fetch('/generate-json-keystore', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            privateKey: cryptedPrivateKey,
-                            password: cryptedPassword
-                        })
-                    });
+                    method: 'POST',
+                    headers: {
+                        'Access-Code': password,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        privateKey: cryptedPrivateKey,
+                        password: cryptedPassword
+                    })
+                });
                 const jsonResult = await result.json();
-                privateKeyStoreElement.value = JSON.stringify(jsonResult);
+                privateKeyStoreElement.value = JSON.stringify(jsonResult, null, 2);
+                
+                // Déclencher manuellement la validation après avoir mis à jour la valeur
+                validateKeystore();
             }
 
             async function fire() {
@@ -316,12 +681,80 @@
                 }
             }
 
+            function updateStepProgress(step) {
+                const progress = document.getElementById('stepProgress');
+                if (step === 1) {
+                    progress.style.width = '0%';
+                    progress.classList.remove('completed', 'active');
+                } else if (step === 2) {
+                    progress.style.width = '50%';
+                    progress.classList.add('completed');
+                    progress.classList.remove('active');
+                    
+                    // Update dots and labels
+                    document.querySelectorAll('.step-dot')[0].classList.add('completed');
+                    document.querySelectorAll('.step-dot')[0].classList.remove('active');
+                    document.querySelectorAll('.step-dot')[1].classList.add('next');
+                    
+                    document.querySelectorAll('.step-label')[0].classList.add('completed');
+                    document.querySelectorAll('.step-label')[0].classList.remove('active');
+                    document.querySelectorAll('.step-label')[1].classList.add('active');
+                }
+            }
+
+            function nextStep() {
+                document.getElementById('step1').classList.remove('active');
+                document.getElementById('step2').classList.add('active');
+                updateStepProgress(2);
+            }
+
+            function previousStep() {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step1').classList.add('active');
+                
+                // Reset all states
+                document.querySelectorAll('.step-dot').forEach(dot => {
+                    dot.classList.remove('completed', 'active', 'next');
+                });
+                document.querySelectorAll('.step-label').forEach(label => {
+                    label.classList.remove('completed', 'active');
+                });
+                
+                // Set initial state
+                document.querySelectorAll('.step-dot')[0].classList.add('active');
+                document.querySelectorAll('.step-label')[0].classList.add('active');
+                
+                updateStepProgress(1);
+            }
+
             const main = () => {
                 
             }
 
             window.addEventListener('DOMContentLoaded', (event) => {
                 main();
+                // Initialisation des couleurs des boutons
+                document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
+                document.getElementById('existingGenesisBtn').style.border = 'none';
+                document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
+                document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
+                document.getElementById('newGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
+                document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
+                document.getElementById('existingGenesisBtn').disabled = true;
+                document.getElementById('newGenesisBtn').disabled = false;
+                
+                document.querySelectorAll('.step-dot')[0].classList.add('active');
+                document.querySelectorAll('.step-label')[0].classList.add('active');
+
+                const privateKeyInput = document.getElementById('nodePrivateKeyInput');
+                const privatePasswordInput = document.getElementById('nodePasswordInput');
+                const keystoreInput = document.getElementById('nodeKeyStoreInput');
+                const generateButton = document.querySelector('button[onclick="generateKeyStore()"]');
+                const nextButton = document.querySelector('button[onclick="nextStep()"]');
+
+                nextButton.disabled = true;
+
+                keystoreInput.addEventListener('input', validateKeystore);
             });
         </script>
     </body>
