@@ -1,4 +1,4 @@
-<html></html>
+<html>
     <head>
         <title>Helios Node</title>
         <link rel="icon" type="image/png" href="favicon.png">
@@ -6,14 +6,15 @@
         <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <body>
         <style>
             body {
                 margin: 0;
                 min-height: 100vh;
-                background-color: #0a0a0f;
-                color: #ffffff;
+                background: #0D131A;
+                color: #E8E9EA;
                 font-family: 'Poppins', sans-serif;
                 display: flex;
                 align-items: center;
@@ -21,72 +22,59 @@
             }
 
             .login-container {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
+                width: 100%;
+                max-width: 550px;
                 padding: 2rem;
-                max-width: 400px;
-                margin: 0 auto;
             }
 
             .logo-container {
-                margin-bottom: 2rem;
                 text-align: center;
+                margin-bottom: 2.5rem;
             }
 
             .logo-container img {
-                height: 60px;
-                margin-bottom: 1rem;
-                animation: fadeInDown 0.8s ease-out;
-            }
-
-            @keyframes fadeInDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+                height: 70px;
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
             }
 
             .login-box {
-                background-color: #16161f;
-                padding: 3rem;
-                border-radius: 15px;
+                background: #1C2833;
+                padding: 3.5rem;
+                border-radius: 16px;
                 width: 100%;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                animation: fadeIn 0.8s ease-out;
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                position: relative;
+                overflow: hidden;
             }
 
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            .login-box::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, 
+                    transparent, 
+                    rgba(255, 255, 255, 0.1), 
+                    transparent);
             }
 
             .login-title {
-                color: #ffffff;
-                font-size: 1.5rem;
+                color: #E8E9EA;
+                font-weight: 600;
+                font-size: 1.8rem;
                 margin-bottom: 0.5rem;
                 text-align: center;
-                font-weight: 500;
-                letter-spacing: 0.5px;
             }
 
             .login-subtitle {
-                color: #8a8a9d;
-                font-size: 0.9rem;
-                text-align: center;
-                margin-bottom: 2rem;
+                color: #A3A7AB;
                 font-weight: 300;
+                font-size: 1rem;
+                text-align: center;
+                margin-bottom: 2.5rem;
             }
 
             .form-group {
@@ -94,53 +82,115 @@
             }
 
             .form-label {
-                display: block;
-                color: #b4b4c7;
-                font-size: 0.9rem;
-                margin-bottom: 0.5rem;
+                color: #CED4DA;
                 font-weight: 500;
+                font-size: 0.9rem;
+                margin-bottom: 0.75rem;
+                display: block;
             }
 
-            input {
-                width: 100%;
-                padding: 14px;
-                margin-bottom: 0.5rem;
-                border: 1px solid #2a2a35;
-                border-radius: 10px;
-                background-color: #1c1c26;
-                color: #ffffff;
-                font-size: 0.95rem;
+            .form-control {
+                background-color: #141E27;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #FFFFFF !important;
+                padding: 0.8rem 1rem;
+                border-radius: 8px;
+                font-size: 1rem;
                 transition: all 0.3s ease;
+                -webkit-text-fill-color: #FFFFFF;
             }
 
-            input::placeholder {
-                color: #4a4a5a;
+            .form-control:focus {
+                background-color: #1A272F;
+                border-color: rgba(255, 255, 255, 0.15);
+                box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+                color: #FFFFFF !important;
+                -webkit-text-fill-color: #FFFFFF;
             }
 
-            .password-requirements {
-                color: #6b6b7c;
-                font-size: 0.8rem;
-                margin-top: 0.5rem;
+            /* S'assurer que l'autofill ne change pas la couleur */
+            .form-control:-webkit-autofill,
+            .form-control:-webkit-autofill:hover,
+            .form-control:-webkit-autofill:focus,
+            .form-control:-webkit-autofill:active {
+                -webkit-box-shadow: 0 0 0 30px #141E27 inset !important;
+                -webkit-text-fill-color: #FFFFFF !important;
+                caret-color: #FFFFFF;
+            }
+
+            .form-control::placeholder {
+                color: #6C757D;
             }
 
             button {
-                width: 100%;
-                padding: 14px;
+                background: linear-gradient(135deg, #3498DB, #2980B9);
                 border: none;
-                border-radius: 10px;
-                background: linear-gradient(135deg, #28cc79 0%, #24b86d 100%);
-                color: white;
-                font-size: 0.95rem;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                cursor: pointer;
-                transition: all 0.3s ease;
+                color: #FFFFFF;
+                padding: 1rem;
+                font-size: 1rem;
+                font-weight: 500;
+                border-radius: 8px;
+                width: 100%;
                 margin-top: 1rem;
+                transition: all 0.3s ease;
+                letter-spacing: 0.5px;
             }
 
             button:hover {
+                background: linear-gradient(135deg, #3498DB, #2475A8);
                 transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(40,204,121,0.2);
+                box-shadow: 0 4px 20px rgba(52, 152, 219, 0.3);
+            }
+
+            button:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 10px rgba(52, 152, 219, 0.2);
+            }
+
+            .password-requirements {
+                color: #A3A7AB;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+            }
+
+            /* États de validation */
+            .form-control.is-valid {
+                border-color: #2ECC71;
+                background-color: #141E27;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%232ECC71' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 12px center;
+                background-size: 16px;
+                padding-right: 40px;
+                transition: none;
+            }
+
+            .form-control.is-invalid {
+                border-color: #E74C3C;
+                background-color: #141E27;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23E74C3C'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23E74C3C' stroke='none'/%3e%3c/svg%3e");
+                background-repeat: no-repeat;
+                background-position: right 12px center;
+                background-size: 16px;
+                padding-right: 40px;
+                transition: none;
+            }
+
+            .valid-feedback {
+                display: none;
+            }
+
+            .invalid-feedback {
+                color: #E74C3C;
+                font-size: 0.85rem;
+                margin-top: 0.5rem;
+            }
+
+            /* Animation de chargement du bouton */
+            button .spinner-border {
+                width: 1.2rem;
+                height: 1.2rem;
+                margin-right: 0.5rem;
             }
         </style>
 
@@ -152,19 +202,29 @@
                 <h1 class="login-title">Welcome to Helios Node</h1>
                 <p class="login-subtitle">Please set up your access password to continue</p>
                 
-                <div class="form-group">
-                    <label class="form-label">Access Password</label>
-                    <input 
-                        id="access-password" 
-                        type="password" 
-                        placeholder="Enter your password" 
-                    />
-                    <p class="password-requirements">Minimum 4 characters required</p>
-                </div>
+                <form id="login-form" novalidate>
+                    <div class="form-group">
+                        <label class="form-label">Access Password</label>
+                        <input 
+                            id="access-password" 
+                            type="password" 
+                            class="form-control"
+                            placeholder="Enter your password" 
+                            required
+                            minlength="4"
+                        />
+                        <div id="password-feedback" class="invalid-feedback"></div>
+                    </div>
 
-                <button id="login-btn" onclick="setupPassword()">
-                    Create Secure Access
-                </button>
+                    <button 
+                        id="login-btn" 
+                        type="button"
+                        class="btn w-100" 
+                        onclick="setupPassword()"
+                    >
+                        Create Secure Access
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -178,15 +238,79 @@
                 }
             });
 
-            async function setupPassword() {
+            function setupPassword() {
                 const password = document.getElementById('access-password').value;
+                const form = document.getElementById('login-form');
+                const passwordInput = document.getElementById('access-password');
+                const feedbackElement = document.getElementById('password-feedback');
+                
+                // Réinitialiser les classes
+                passwordInput.classList.remove('is-invalid', 'is-valid');
+                
                 if (password.length < 4) {
-                    alert('The password must contain at least 4 characters.');
+                    passwordInput.classList.add('is-invalid');
+                    feedbackElement.textContent = 'Le mot de passe doit contenir au moins 4 caractères';
                     return;
                 }
-                // Redirection vers l'URL avec le code d'accès
-                window.location.href = `/html-page-setup?access-code=${encodeURIComponent(password)}`;
+
+                // Afficher l'indicateur de chargement
+                const button = document.getElementById('login-btn');
+                const originalText = button.innerHTML;
+                button.innerHTML = `
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Configuration en cours...
+                `;
+                button.disabled = true;
+
+                fetch('/setup-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password: password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        passwordInput.classList.add('is-valid');
+                        button.classList.add('btn-success');
+                        button.innerHTML = `
+                            <i class="fas fa-check"></i>
+                            Configuration réussie
+                        `;
+                        setTimeout(() => {
+                            window.location.href = '/';
+                        }, 1000);
+                    } else {
+                        throw new Error('Échec de la configuration');
+                    }
+                })
+                .catch(error => {
+                    passwordInput.classList.add('is-invalid');
+                    feedbackElement.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                });
             }
+
+            // Validation en temps réel
+            document.getElementById('access-password').addEventListener('input', function(e) {
+                const password = e.target.value;
+                const feedbackElement = document.getElementById('password-feedback');
+                
+                e.target.classList.remove('is-invalid', 'is-valid');
+                
+                if (password.length === 0) {
+                    return;
+                }
+                
+                if (password.length < 4) {
+                    e.target.classList.add('is-invalid');
+                    feedbackElement.textContent = 'Le mot de passe doit contenir au moins 4 caractères';
+                } else {
+                    e.target.classList.add('is-valid');
+                }
+            });
         </script>
     </body>
 </html>
