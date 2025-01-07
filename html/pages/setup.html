@@ -561,7 +561,6 @@
             function showError(inputElement, message) {
                 inputElement.classList.add('error');
                 
-                // Trouver ou créer le message d'erreur
                 let errorMessage = inputElement.nextElementSibling;
                 if (!errorMessage || !errorMessage.classList.contains('error-message')) {
                     errorMessage = document.createElement('div');
@@ -572,7 +571,6 @@
                 errorMessage.textContent = message;
                 errorMessage.classList.add('visible');
 
-                // Retirer l'erreur après un délai
                 setTimeout(() => {
                     inputElement.classList.remove('error');
                 }, 500);
@@ -593,7 +591,6 @@
 
                 let isValid = true;
 
-                // Validation du moniker
                 if (moniker.value) {
                     if (!/^[a-z0-9-]+$/.test(moniker.value)) {
                         showError(moniker, 'Moniker must contain only lowercase letters, numbers, and hyphens');
@@ -605,7 +602,6 @@
                     hideError(moniker);
                 }
 
-                // Validation du chainId
                 if (chainId.value) {
                     if (isNaN(chainId.value)) {
                         showError(chainId, 'Chain ID must be a number');
@@ -617,7 +613,6 @@
                     hideError(chainId);
                 }
 
-                // Validation de l'URL
                 if (fromGenesisType === 'existingGenesis' && genesisURL.value) {
                     try {
                         new URL(genesisURL.value);
@@ -630,7 +625,6 @@
                     hideError(genesisURL);
                 }
 
-                // Activation/désactivation du bouton Fire!
                 if (fromGenesisType === 'existingGenesis') {
                     fireButton.disabled = !isValid || !moniker.value || !chainId.value || !genesisURL.value;
                 } else {
@@ -767,7 +761,6 @@
                 const jsonResult = await result.json();
                 privateKeyStoreElement.value = JSON.stringify(jsonResult, null, 2);
                 
-                // Déclencher manuellement la validation après avoir mis à jour la valeur
                 validateKeystore();
             }
 
@@ -779,10 +772,8 @@
                 const chainIdElement = document.getElementById('chainId');
                 const fireButton = document.querySelector('.navigation-buttons .primary-button');
 
-                // Désactiver le bouton pendant la validation
                 fireButton.disabled = true;
 
-                // Réinitialiser les états d'erreur
                 hideError(monikerElement);
                 hideError(chainIdElement);
                 if (fromGenesisType === 'existingGenesis') {
@@ -791,7 +782,6 @@
 
                 let hasError = false;
 
-                // Validation du moniker
                 if (!monikerElement.value.trim()) {
                     showError(monikerElement, 'Moniker is required');
                     monikerElement.classList.add('error');
@@ -802,7 +792,6 @@
                     hasError = true;
                 }
 
-                // Validation du chainId
                 if (!chainIdElement.value.trim()) {
                     showError(chainIdElement, 'Chain ID is required');
                     chainIdElement.classList.add('error');
@@ -813,7 +802,6 @@
                     hasError = true;
                 }
 
-                // Validation de l'URL pour existing genesis
                 if (fromGenesisType === 'existingGenesis') {
                     if (!genesisURLElement.value.trim()) {
                         showError(genesisURLElement, 'Genesis URL is required');
@@ -831,7 +819,6 @@
                 }
 
                 if (hasError) {
-                    // Réactiver le bouton si il y a des erreurs
                     setTimeout(() => {
                         fireButton.disabled = false;
                     }, 500);
@@ -850,7 +837,7 @@
                             keyStoreNode: privateKeyStoreNodeElement.value,
                             password: cryptedPassword,
                             fromGenesisType: fromGenesisType,
-                            genesisURL: genesisURLElement.value,
+                            genesisURL: fromGenesisType === 'existingGenesis' ? genesisURLElement.value : '',
                             moniker: monikerElement.value,
                             chainId: chainIdElement.value
                         })
@@ -859,8 +846,7 @@
 
                     if (jsonResult.status === 'ready') {
                         window.location.href = `/html-page-status?access-code=${encodeURIComponent(password)}`;
-                    } else if (jsonResult.status === 'ko') {
-                        // Afficher l'erreur pour l'URL invalide
+                    } else if (jsonResult.status === 'ko' && fromGenesisType === 'existingGenesis') {
                         showError(genesisURLElement, 'Unable to fetch genesis from this URL');
                         genesisURLElement.classList.add('error');
                     } else {
@@ -873,7 +859,6 @@
                         genesisURLElement.classList.add('error');
                     }
                 } finally {
-                    // Réactiver le bouton dans tous les cas
                     fireButton.disabled = false;
                 }
             }
@@ -887,8 +872,7 @@
                     progress.style.width = '50%';
                     progress.classList.add('completed');
                     progress.classList.remove('active');
-                    
-                    // Update dots and labels
+                
                     document.querySelectorAll('.step-dot')[0].classList.add('completed');
                     document.querySelectorAll('.step-dot')[0].classList.remove('active');
                     document.querySelectorAll('.step-dot')[1].classList.add('active');
@@ -909,7 +893,6 @@
                 document.getElementById('step2').classList.remove('active');
                 document.getElementById('step1').classList.add('active');
                 
-                // Reset all states
                 document.querySelectorAll('.step-dot').forEach(dot => {
                     dot.classList.remove('completed', 'active', 'next');
                 });
@@ -930,7 +913,6 @@
 
             window.addEventListener('DOMContentLoaded', (event) => {
                 main();
-                // Initialisation des couleurs des boutons
                 document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
                 document.getElementById('existingGenesisBtn').style.border = 'none';
                 document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
@@ -953,7 +935,6 @@
 
                 keystoreInput.addEventListener('input', validateKeystore);
 
-                // Ajout des écouteurs pour la validation Genesis
                 const genesisURL = document.getElementById('genesisURL');
                 const moniker = document.getElementById('moniker');
                 const chainId = document.getElementById('chainId');
