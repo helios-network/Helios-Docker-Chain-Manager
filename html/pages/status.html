@@ -9,156 +9,613 @@
     <body>
         <style>
             body {
-                margin: 0px;
+                margin: 0;
+                min-height: 100vh;
+                background: radial-gradient(circle at center, #111F2C, #0D131A);
+                color: #E8E9EA;
+                font-family: 'Poppins', sans-serif;
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
             }
-            table {
-                /* border-spacing: 0px; */
+
+            .container {
+                max-width: 1200px;
+                margin: 2rem auto;
+                padding: 0 2rem;
             }
-            .mdc-button {
-                width: 100%;
+
+            .header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 3rem;
+                padding: 1rem 0;
             }
-            body {
-                background-color: #10101a;
-                color: #ffffff;
-                font-family: helveticaneue,Helvetica,Arial,sans-serif;
-            }
-            input {
-                background-color: #10101a;
-                color: #252525;
-                border: 1px solid #404040;
-                padding: 5px;
-                /* width: 100%; */
-                height: 36px;
-            }
-            textarea {
-                background-color: #10101a;
-                color: #ffffff;
-                border: 1px solid #404040;
-                padding: 5px;
-                /* width: 100%; */
-                /* height: 100%; */
-                resize: none;
-            }
-            .customColor {
-                color: #28cc79!important;
-                user-select: all;
-                cursor: text;
+
+            .logo {
                 text-align: center;
             }
-            button:enabled {
-                background-color: #f2f524!important;
-                color: black!important;
-            }
-            button:disabled {
-                background-color: #2c2c2cc1!important;
-                color: rgb(255, 255, 255)!important;
+
+            .logo img {
+                height: 70px;
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+                transition: transform 0.3s ease;
             }
 
-            .mdc-button-red {
-                background-color: #551c1c!important;
+            .logo img:hover {
+                transform: translateY(-2px);
             }
 
-            .tr-network {
-                background-color: #161822;
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: auto auto;
+                gap: 2rem;
             }
-            .tr-network:first-of-type, .tr-network:last-of-type {
-                border-radius: 12px 0 0 12px;
+
+            .section {
+                background: #1C2833;
+                padding: 2rem;
+                border-radius: 16px;
+                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                border: 1px solid rgba(255, 255, 255, 0.05);
+                margin-bottom: 0;
+                display: flex;
+                flex-direction: column;
+                min-height: 280px;
             }
-            .td-network {
-                font-family: lft-etica-mono, ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace;
+
+            .section-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .section.full-width {
+                grid-column: 1 / -1;
+            }
+
+            .logs-section {
+                grid-column: 1 / -1;
+                grid-row: 2;
+                margin-top: 0;
+                position: relative;
+                z-index: 1;
+            }
+
+            .logs-container {
+                background-color: #141E27;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+                padding: 1.5rem;
+                margin-top: 1rem;
+                height: 300px;
+                overflow-y: auto;
+                position: relative;
+                font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
+            }
+
+            .logs-container pre {
+                margin: 0;
+                font-size: 0.9rem;
+                line-height: 1.5;
+                color: #A3A7AB;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+            /* Stylisation de la barre de défilement */
+            .logs-container::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+
+            .logs-container::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 4px;
+            }
+
+            .logs-container::-webkit-scrollbar-thumb {
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 4px;
+            }
+
+            .logs-container::-webkit-scrollbar-thumb:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+
+            /* Style pour les différents types de logs */
+            .logs-container pre .log-info {
+                color: #3B82F6;
+            }
+
+            .logs-container pre .log-success {
+                color: #10B981;
+            }
+
+            .logs-container pre .log-warning {
+                color: #FCA13E;
+            }
+
+            .logs-container pre .log-error {
+                color: #EF4444;
+            }
+
+            .logs-container pre .log-timestamp {
+                color: #6B7280;
+                margin-right: 8px;
+            }
+
+            .logs-container pre .log-address {
+                color: #8B5CF6;
+            }
+
+            .logs-container pre .log-hash {
+                color: #EC4899;
+            }
+
+            /* Effet de terminal */
+            .logs-container::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 1px;
+                background: linear-gradient(90deg, 
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            }
+
+            .section:not(.logs-section) {
+                position: relative;
+                z-index: 2;
+            }
+
+            .section-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 1.25rem;
+            }
+
+            .section-title {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+
+            .section-title i {
+                color: #FCA13E;
+                font-size: 1.5rem;
+            }
+
+            .form-control {
+                background-color: #141E27;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                color: #FFFFFF !important;
+                padding: 0.8rem 1rem;
+                border-radius: 8px;
+                font-size: 0.95rem;
+                width: 100%;
+                transition: all 0.3s ease;
+                -webkit-text-fill-color: #FFFFFF;
+                letter-spacing: 0.3px;
                 font-weight: 400;
-                font-size: 0.875rem;
-                line-height: 1.43;
-                display: table-cell;
-                vertical-align: inherit;
-                border-bottom: 1px solid rgba(81, 81, 81, 1);
-                text-align: left;
-                padding: 16px;
-                color: #fff;
-                padding: 0.75rem 1.5rem 0.75rem 1.5rem;
-                white-space: nowrap;
-                border-style: solid;
-                border-width: 0 0 0 0;
-                border-color: #272b2a;
-                padding-top: 12px;
-                padding-bottom: 12px;
-                padding-left: 12px;
-                padding-right: 12px;
-                text-align: left;
+                margin-bottom: 1rem;
             }
-            .a-td-network {
-                background-color: rgba(14, 233, 143, 0.1);
-                color: #38EAA1;
-                padding: 0.15rem 0.5rem 0.15rem 0.5rem;
-                font-weight: 400;
-                border-radius: 5px;
+
+            .form-control:focus {
+                outline: none;
+                border-color: #FCA13E;
+                box-shadow: 0 0 0 2px rgba(252, 161, 62, 0.1);
+            }
+
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+            }
+
+            .status-badge i {
+                font-size: 0.75rem;
+            }
+
+            .status-badge.active {
+                background: rgba(46, 204, 113, 0.15);
+                color: #2ECC71;
+                border: 1px solid rgba(46, 204, 113, 0.2);
+            }
+
+            .status-badge.inactive {
+                background: rgba(255, 255, 255, 0.05);
+                color: #94A3B8;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .button-group {
+                margin-top: auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                padding-top: 1rem;
+            }
+
+            .button {
+                height: 48px;
+                font-size: 0.95rem;
+                font-weight: 500;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                border: none;
+                letter-spacing: 0.5px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 0 1.5rem;
+            }
+
+            .button i {
+                font-size: 1.2rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .button.primary {
+                background: linear-gradient(135deg, #FCA13E, #F48023);
+                color: #FFFFFF;
+            }
+
+            .button.secondary {
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #94A3B8;
+            }
+
+            .button:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+            .button:disabled:hover {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+            .button.primary:hover:not(:disabled) {
+                opacity: 0.95;
+                transform: translateY(-1px);
+            }
+
+            .button.secondary:hover:not(:disabled) {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.15);
+                color: #FFFFFF;
+            }
+
+            @media (max-width: 1024px) {
+                .grid-container {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto auto auto;
+                }
+
+                .logs-section {
+                    grid-row: 3;
+                }
+            }
+
+            .status-section {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin-bottom: 2rem;
+                padding: 1rem;
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 12px;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+
+            .status-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                border-radius: 20px;
+                font-size: 0.9rem;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+            }
+
+            .status-badge i {
+                font-size: 1rem;
+            }
+
+            .status-badge.active {
+                background: rgba(46, 204, 113, 0.15);
+                color: #2ECC71;
+                border: 1px solid rgba(46, 204, 113, 0.2);
+            }
+
+            .status-badge.inactive {
+                background: rgba(255, 255, 255, 0.05);
+                color: #94A3B8;
+                border: 1px solid rgba(255, 255, 255, 0.08);
+            }
+
+            .form-group {
+                margin-bottom: 0.75rem;
+            }
+
+            .form-group:last-of-type {
+                margin-bottom: 0;
+            }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.25rem;
+                color: #94A3B8;
+                font-size: 0.85rem;
+                font-weight: 500;
+            }
+
+            .form-control {
+                background: rgba(0, 0, 0, 0.2);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+                width: 100%;
+                border-radius: 8px;
+                color: #FFFFFF;
+                transition: all 0.3s ease;
+            }
+
+            .form-control:focus {
+                border-color: #FCA13E;
+                box-shadow: 0 0 0 2px rgba(252, 161, 62, 0.1);
+                outline: none;
+            }
+
+            .button-group {
+                margin-top: auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                padding-top: 1.5rem;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 200px;
+                background: #1C2833;
+                border-right: 1px solid rgba(255, 255, 255, 0.05);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 2rem;
+                z-index: 100;
+            }
+
+            .sidebar-logo {
+                width: 100%;
+                margin-bottom: 2rem;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: relative;
+                padding-bottom: 2rem;
+            }
+
+            .sidebar-logo:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: -2rem;
+                right: -2rem;
+                height: 1px;
+                background: linear-gradient(
+                    90deg,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    rgba(255, 255, 255, 0) 100%
+                );
+            }
+
+            .sidebar-logo img {
+                height: 70px;
+                filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar-logo img:hover {
+                transform: translateY(-2px);
+            }
+
+            .sidebar-button {
+                width: 100%;
+                height: 48px;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #94A3B8;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 0 16px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+
+            .sidebar-button:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: #FFFFFF;
+                transform: translateY(-2px);
+            }
+
+            .sidebar-button i {
+                font-size: 1.25rem;
+            }
+
+            .sidebar-button span {
+                font-size: 0.95rem;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                min-height: 100vh;
+            }
+
+            @media (max-width: 768px) {
+                .sidebar {
+                    width: 80px;
+                    padding: 2rem 1rem;
+                }
+
+                .sidebar-logo img {
+                    height: 50px;
+                }
+
+                .sidebar-button {
+                    padding: 0;
+                    justify-content: center;
+                }
+
+                .sidebar-button span {
+                    display: none;
+                }
+
+                .main-content {
+                    margin-left: 80px;
+                    width: calc(100% - 80px);
+                }
+
+                .sidebar-logo {
+                    padding-bottom: 1.5rem;
+                    margin-bottom: 1.5rem;
+                }
+
+                .sidebar-logo:after {
+                    left: -1rem;
+                    right: -1rem;
+                }
             }
         </style>
-        <div id="PageStatus">
-            <table style="width:100%;border-spacing: 0px;">
-                <!-- header -->
-                <tr style="background-color: #18171c;">
-                    <td colspan="3" style="color:white;font-size: x-small;padding: 10px;"><img height="50px" src="./logo.png"/></td>
-                    <td colspan="2" style="width: 100%;text-align: right;" ></td>
-                    <!-- <td colspan="1"><button id="connect-wallet" class="mdc-button mdc-button--raised" onclick="connectMetamask()"><span class="mdc-button__label">Connect Wallet</span></button></td> -->
-                    <!-- <td colspan="1"><button id="disconnect-wallet" class="mdc-button mdc-button--raised" onclick="disconnect()" style="display: none;"><span class="mdc-button__label">Disconnect Wallet</span></button></td> -->
-                </tr>
-            </table>
-            <table style="width:100%;">
-                <!-- Internal Node -->
 
-                <tr>
-                    <td>NODE STATUS</td>
-                    <td id="node1-status" class="mdc-button mdc-button--outlined customColor"></td>
-                    <td colspan="4"></td>
-                </tr>
-                <tr>
-                    <td>Wallet Password</td>
-                    <td colspan="2"><input id="node1-keystore-password" type="password" style="width:100%"></td>
-                </tr>
-                <tr>
-                    <td>EthStats Server Url</td>
-                    <td colspan="2">
-                        <input id="ethStats-server-url" type="text" style="width:100%">
-                    </td>
-                </tr>
-                <tr></tr>
-                    <td>EthStats Node Name</td>
-                    <td colspan="2">
-                        <input id="ethStats-node-name" type="text" style="width:100%">
-                    </td>
-                </tr>
-                <tr style="height: 38px;">
-                    <td>Address</td>
-                    <td class="customColor" style="text-align: left;">$node1Address</td>
-                </tr>
-                <tr style="height: 38px;">
-                    <td>RPC port</td>
-                    <td class="customColor" style="text-align: left;">8545</td>
-                </tr>
-                <tr>
-                    <td>Node</td>
-                    <td colspan="2" style="display: flex; gap: 5px;">
-                        <button id="node1-button-start" class="mdc-button mdc-button--raised" onclick="startNode1(this)"><span class="mdc-button__label">Start</span></button>
-                        <button id="node1-button-stop" class="mdc-button mdc-button--raised" onclick="stopNode1(this)"><span class="mdc-button__label">Stop</span></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>EthStats</td>
-                    <td colspan="2" style="display: flex; gap: 5px;">
-                        <button id="ethStats-button-start" class="mdc-button mdc-button--raised" onclick="startEthStats(this)"><span class="mdc-button__label">Start</span></button>
-                        <button id="ethStats-button-stop" class="mdc-button mdc-button--raised" onclick="stopEthStats(this)"><span class="mdc-button__label">Stop</span></button>
-                    </td>
-                </tr>
-                <tr style="height: 38px;">
-                    <td colspan="6">Node Logs</td>
-                </tr>
-                <tr style="width:100%; height: 200px;">
-                    <td colspan="6" style="width:100%; height: 200px;position: relative;">
-                        <textarea id="node1-logs" style="width:100%; height: 200px;" readonly></textarea>
-                    </td>
-                </tr>
-            </table>
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <img src="./logo.png" alt="Logo">
+            </div>
+            <a href="setup" class="sidebar-button" title="Back to Setup">
+                <i class="material-icons">settings</i>
+                <span>Settings</span>
+            </a>
+        </div>
+
+        <div class="main-content">
+            <div class="container">
+                <div class="grid-container">
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">account_tree</i>
+                                <span>Node Status</span>
+                            </div>
+                            <div id="node1-status" class="status-badge inactive">
+                                <i class="material-icons">fiber_manual_record</i>
+                                <span>Inactive</span>
+                            </div>
+                        </div>
+                        
+                        <div class="section-content">
+                            <div class="form-group">
+                                <label for="node1-keystore-password">Wallet Password</label>
+                                <input id="node1-keystore-password" 
+                                       type="password" 
+                                       class="form-control" 
+                                       placeholder="Enter your wallet password">
+                            </div>
+
+                            <div class="button-group">
+                                <button id="node1-button-start" class="button primary" onclick="startNode1(this)">
+                                    <i class="material-icons">play_arrow</i>
+                                    <span>Start</span>
+                                </button>
+                                <button id="node1-button-stop" class="button secondary" onclick="stopNode1(this)">
+                                    <i class="material-icons">stop</i>
+                                    <span>Stop</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">analytics</i>
+                                <span>EthStats Configuration</span>
+                            </div>
+                            <div id="ethStats-status" class="status-badge inactive">
+                                <i class="material-icons">fiber_manual_record</i>
+                                <span>Inactive</span>
+                            </div>
+                        </div>
+                        
+                        <div class="section-content">
+                            <div class="form-group">
+                                <label for="ethStats-server-url">Server URL</label>
+                                <input id="ethStats-server-url" 
+                                       type="text" 
+                                       class="form-control" 
+                                       placeholder="Enter EthStats server URL">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ethStats-node-name">Node Name</label>
+                                <input id="ethStats-node-name" 
+                                       type="text" 
+                                       class="form-control" 
+                                       placeholder="Enter node name">
+                            </div>
+
+                            <div class="button-group">
+                                <button id="ethStats-button-start" class="button primary" onclick="startEthStats(this)">
+                                    <i class="material-icons">play_arrow</i>
+                                    <span>Start</span>
+                                </button>
+                                <button id="ethStats-button-stop" class="button secondary" onclick="stopEthStats(this)">
+                                    <i class="material-icons">stop</i>
+                                    <span>Stop</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section logs-section">
+                        <div class="section-title">
+                            <i class="material-icons">terminal</i>
+                            <span>Node Logs</span>
+                        </div>
+                        <div class="logs-container">
+                            <pre id="node1-logs"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <script>
             let setup = $setup;
