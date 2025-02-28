@@ -42,7 +42,7 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
         fs.writeFileSync(destGenesisPath, genesisContent);
     } else {
         // todo execute script of generation
-        let address = await execWrapper(`heliades keys show node -a`)
+        let address = await execWrapper(`heliades keys show node -a --keyring-backend="local"`)
         await execWrapper(`heliades add-genesis-account --chain-id ${chainId} ${address} 1000000000000000000000000ahelios --keyring-backend="local"`);
         await execWrapper(`heliades gentx node 1000000000000000000000ahelios --chain-id ${chainId} --keyring-backend="local"`);
         await execWrapper(`heliades collect-gentxs`);
