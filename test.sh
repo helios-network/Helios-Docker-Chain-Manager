@@ -1,1 +1,1 @@
-docker run -p 8080:8080 docker-helios-nodemanager:v0.0.11
+docker run -p 8080:8080 -p 8545:8545 -p 1317:1317 -p 26657:26657 -p 26656:26656 -p 10337:10337 -p 9900:9900 -p 9091:9091 -p 9999:9999 docker-helios-nodemanager:v0.0.13

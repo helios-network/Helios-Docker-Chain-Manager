@@ -16,4 +16,6 @@ COPY --from=clone /clone/Helios-Docker-Chain-Manager/ .
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.2/libwasmvm.x86_64.so /lib/libwasmvm.x86_64.so
 ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.2/libwasmvm.aarch64.so /lib/libwasmvm.aarch64.so
 RUN npm install
+RUN apt-get update
+RUN apt-get install jq --yes
 ENTRYPOINT ["npm", "run", "prod"]
