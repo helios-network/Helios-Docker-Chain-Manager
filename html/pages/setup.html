@@ -87,13 +87,13 @@
 
             .form-control:focus {
                 background-color: #1A272F;
-                border-color: #FCA13E;
-                box-shadow: 0 0 0 3px rgba(252, 161, 62, 0.15);
+                border-color: #012dcb;
+                box-shadow: 0 0 0 3px rgba(68, 62, 252, 0.15);
                 outline: none;
             }
 
             button {
-                background: linear-gradient(135deg, #FCA13E, #F48023);
+                background: linear-gradient(135deg, #2042be, #012dcb);
                 border: none;
                 color: #FFFFFF !important;
                 padding: 1rem;
@@ -108,12 +108,12 @@
             }
 
             button:hover {
-                background: linear-gradient(135deg, #FCA13E, #E67016);
+                background: linear-gradient(135deg, #2344bd, #012dcb);
                 opacity: 0.95;
             }
 
             button:disabled {
-                background: linear-gradient(135deg, #8B5827, #704820);
+                background: linear-gradient(135deg, #19275b, #051c6e);
                 opacity: 0.7;
                 cursor: not-allowed;
                 border: none;
@@ -198,7 +198,7 @@
             }
 
             .button-group .primary-button {
-                background: linear-gradient(135deg, #FCA13E, #F48023);
+                background: linear-gradient(135deg, #2042be, #012dcb);
                 border: none;
                 color: #FFFFFF;
             }
@@ -304,8 +304,8 @@
             }
 
             .step-dot.active {
-                background: #FCA13E;
-                box-shadow: 0 0 0 6px rgba(252, 161, 62, 0.2);
+                background: #1b40c5;
+                box-shadow: 0 0 0 6px rgba(78, 62, 252, 0.2);
             }
 
             .step-dot.completed {
@@ -322,7 +322,7 @@
             }
 
             .step-label.active {
-                color: #FCA13E;
+                color: #012dcb;
                 font-weight: 600;
             }
 
@@ -356,13 +356,13 @@
             }
 
             .step-line-progress.active {
-                background: #FCA13E;
+                background: #012dcb;
                 width: 50%;
             }
 
             .step-dot.next {
-                background: #FCA13E;
-                box-shadow: 0 0 0 6px rgba(252, 161, 62, 0.1);
+                background: #012dcb;
+                box-shadow: 0 0 0 6px rgba(62, 97, 252, 0.1);
             }
 
             @media (max-width: 768px) {
@@ -407,7 +407,7 @@
             }
 
             .navigation-buttons .primary-button {
-                background: linear-gradient(135deg, #FCA13E, #F48023);
+                background: linear-gradient(135deg, #2042be, #012dcb);
                 border: none;
                 color: #FFFFFF !important;
                 height: 48px;
@@ -668,7 +668,7 @@
                 const genesisURL = document.getElementById('genesisURL');
                 
                 if (value === 'existingGenesis') {
-                    document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
+                    document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
                     document.getElementById('existingGenesisBtn').style.border = 'none';
                     document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
                     document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
@@ -680,7 +680,7 @@
                     genesisURL.style.display = '';
                     fromGenesisType = value;
                 } else {
-                    document.getElementById('newGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
+                    document.getElementById('newGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
                     document.getElementById('newGenesisBtn').style.border = 'none';
                     document.getElementById('newGenesisBtn').style.color = '#FFFFFF';
                     document.getElementById('existingGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
@@ -913,7 +913,7 @@
 
             window.addEventListener('DOMContentLoaded', (event) => {
                 main();
-                document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #FCA13E, #F48023)';
+                document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #012dcb, #012dcb)';
                 document.getElementById('existingGenesisBtn').style.border = 'none';
                 document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
                 document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
