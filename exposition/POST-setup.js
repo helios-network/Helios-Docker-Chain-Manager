@@ -29,7 +29,6 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
 
     const initResult = await execWrapper(`heliades init ${moniker} --chain-id ${chainId}`);
 
-    // yes yes is for overloading if already exists
     const resultKeyAdd = await execWrapper(`heliades keys add node --from-private-key="${await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)))}" --keyring-backend="local"`);
 
     if (!resultKeyAdd.includes("name: node")) {
@@ -41,16 +40,11 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
         const destGenesisPath = path.join(homedir, '.heliades/config/genesis.json');
         fs.writeFileSync(destGenesisPath, genesisContent);
     } else {
-        // todo execute script of generation
-        // heliades keys show node -a --keyring-backend="local"
-        // heliades add-genesis-account --chain-id 4242 helios1n0l87j4wwnhsz05zrmunczfv94pw43xaqzggvu 1000000000000000000000000ahelios --keyring-backend="local"
-        // heliades gentx node 1000000000000000000000ahelios --chain-id 4242 --keyring-backend="local"
         let address = await execWrapper(`heliades keys show node -a --keyring-backend="local"`)
         await execWrapper(`heliades add-genesis-account --chain-id ${chainId} ${address.trim()} 1000000000000000000000000ahelios --keyring-backend="local"`);
-        await execWrapper(`heliades gentx node 1000000000000000000000ahelios --chain-id ${chainId} --keyring-backend="local"`);
+        await execWrapper(`heliades gentx node 1000000000000000000000ahelios --chain-id ${chainId} --keyring-backend="local" --gas-prices "1000000000ahelios"`);
         await execWrapper(`heliades collect-gentxs`);
         await execWrapper(`heliades validate-genesis`);
-        await execWrapper(`sh setup.sh`);
     }
     return true;
 }
