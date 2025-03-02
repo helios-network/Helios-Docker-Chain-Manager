@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
+const { execWrapper } = require('../utils/exec-wrapper');
 
 const runMinerNode = async (app, environement) => {
     if (!fs.existsSync('./node')) {
@@ -66,6 +67,40 @@ const runMinerNode = async (app, environement) => {
         }
         app.node.mining = '0';
     };
+
+    app.node.getInfos = async () => {
+        try {
+            const response = await fetch('http://localhost:26657/status');
+            const status = await response.json();
+            return {
+                node_info: { ... status.result.node_info },
+                sync_info: {
+                    latest_block_height: status.result.sync_info.latest_block_height,
+                    latest_block_time: status.result.sync_info.latest_block_time,
+                },
+                heliosAddress: await app.node.getHeliosAddress(),
+                heliosValAddress: await app.node.getHeliosValAddress(),
+                address: await app.node.getAddress(),
+            };
+        } catch (e) {
+            return {};
+        }
+    }
+
+    app.node.getHeliosAddress = async () => {
+        const data = await execWrapper(`heliades keys show node -a --bech=acc --keyring-backend="local"`);
+        return data.trim();
+    }
+
+    app.node.getHeliosValAddress = async () => {
+        const data = await execWrapper(`heliades keys show node -a --bech=val --keyring-backend="local"`);
+        return data.trim();
+    }
+
+    app.node.getAddress = async () => {
+        const data = await execWrapper(`heliades keys show node -e --keyring-backend="local"`);
+        return data.trim();
+    }
 
     app.node.stop = async () => {
         childProcess.kill('SIGTERM');

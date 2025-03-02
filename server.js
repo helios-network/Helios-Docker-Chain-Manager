@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json()) //Notice express.json middleware
 corsUtils.setCors(app, ['*']);
 middlewares.asFile(app, ['favicon.png', 'favicon.ico', 'logo.png', 'icon.png', 'style.css']);
-middlewares.asPageFile(app, [{ file: 'login', path: '/' }, 'login', 'setup', 'status', 'settings', 'eth-stats', 'hyperions', 'ibc-relayers']);
+middlewares.asPageFile(app, [{ file: 'login', path: '/' }, 'login', 'setup', 'status', 'validator', 'settings', 'eth-stats', 'hyperions', 'ibc-relayers']);
 middlewares.auth(app, environement, './html/pages/404.html', 'access-code', []);
 middlewares.setHeaders(app, [
   ['Access-Control-Allow-Origin', '*'],
@@ -35,6 +35,7 @@ const main = async () => {
   app.node = {
       status: '0',
       mining: '0',
+      setup: false,
       logs: [],
       checkIsAlive: async () => {},
       stop: async () => {}

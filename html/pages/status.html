@@ -18,6 +18,10 @@
             </div>
             <a href="status" class="sidebar-button" title="Home">
                 <i class="material-icons">home</i>
+                <span>Node</span>
+            </a>
+            <a href="validator" class="sidebar-button mt-1" title="Validator">
+                <i class="material-icons">how_to_reg</i>
                 <span>Validator</span>
             </a>
             <a href="settings" class="sidebar-button mt-1" title="Settings">
@@ -88,6 +92,7 @@
                             <pre id="node1-logs"></pre>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -125,30 +130,30 @@
                 node1ButtonStart.disabled = jsonData.node.status == '1';
                 node1ButtonStop.disabled = jsonData.node.status == '0';
 
-                let ethStatsButtonStart = document.getElementById('ethStats-button-start');
-                let ethStatsButtonStop = document.getElementById('ethStats-button-stop');
+                // let ethStatsButtonStart = document.getElementById('ethStats-button-start');
+                // let ethStatsButtonStop = document.getElementById('ethStats-button-stop');
 
-                if (jsonData.ethStats?.status == '1') {
-                    ethStatsButtonStart.disabled = true;
-                    ethStatsButtonStop.disabled = false;
-                } else {
-                    ethStatsButtonStart.disabled = false;
-                    ethStatsButtonStop.disabled = true;
-                }
+                // if (jsonData.ethStats?.status == '1') {
+                //     ethStatsButtonStart.disabled = true;
+                //     ethStatsButtonStop.disabled = false;
+                // } else {
+                //     ethStatsButtonStart.disabled = false;
+                //     ethStatsButtonStop.disabled = true;
+                // }
 
-                let inputEthStatsServerUrl = document.getElementById('ethStats-server-url');
-                if (window.localStorage.getItem('ethstats-server-url') != inputEthStatsServerUrl.value) {
-                    window.localStorage.setItem('ethstats-server-url', inputEthStatsServerUrl.value);
-                }
+                // let inputEthStatsServerUrl = document.getElementById('ethStats-server-url');
+                // if (window.localStorage.getItem('ethstats-server-url') != inputEthStatsServerUrl.value) {
+                //     window.localStorage.setItem('ethstats-server-url', inputEthStatsServerUrl.value);
+                // }
 
-                let inputEthStatsNodeName = document.getElementById('ethStats-node-name');
-                if (window.localStorage.getItem('ethstats-node-name') != inputEthStatsNodeName.value) {
-                    window.localStorage.setItem('ethstats-node-name', inputEthStatsNodeName.value);
-                }
+                // let inputEthStatsNodeName = document.getElementById('ethStats-node-name');
+                // if (window.localStorage.getItem('ethstats-node-name') != inputEthStatsNodeName.value) {
+                //     window.localStorage.setItem('ethstats-node-name', inputEthStatsNodeName.value);
+                // }
 
-                if (document.activeElement !== inputEthStatsNodeName && jsonData.ethStats?.nodeName != undefined && inputEthStatsNodeName.value == jsonData.ethStats?.nodeName) {
-                    inputEthStatsNodeName.value = jsonData.ethStats.nodeName;
-                }
+                // if (document.activeElement !== inputEthStatsNodeName && jsonData.ethStats?.nodeName != undefined && inputEthStatsNodeName.value == jsonData.ethStats?.nodeName) {
+                //     inputEthStatsNodeName.value = jsonData.ethStats.nodeName;
+                // }
 
                 console.log(jsonData);
             }
@@ -156,7 +161,7 @@
             async function startNode1(btn) {
                 btn.disabled = true;
 
-                const cryptedPassword = btoa(rot13(document.getElementById('node1-keystore-password').value));
+                // const cryptedPassword = btoa(rot13(document.getElementById('node1-keystore-password').value));
 
                 let result = await fetch('/run-miner-node', {
                         method: 'POST',
@@ -164,9 +169,7 @@
                             'Access-Code': password,
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({
-                            password: cryptedPassword
-                        })
+                        body: JSON.stringify({})
                     });
                 let jsonResult = await result.json();
             }
@@ -301,14 +304,14 @@
                 const setup = await isSetup();
 
                 if (setup) {
-                    let inputEthStatsServerUrl = document.getElementById('ethStats-server-url');
-                    if (window.localStorage.getItem('ethstats-server-url') != undefined) {
-                        inputEthStatsServerUrl.value = window.localStorage.getItem('ethstats-server-url');
-                    }
-                    let inputEthStatsNodeName = document.getElementById('ethStats-node-name');
-                    if (window.localStorage.getItem('ethstats-node-name') != undefined) {
-                        inputEthStatsNodeName.value = window.localStorage.getItem('ethstats-node-name');
-                    }
+                    // let inputEthStatsServerUrl = document.getElementById('ethStats-server-url');
+                    // if (window.localStorage.getItem('ethstats-server-url') != undefined) {
+                    //     inputEthStatsServerUrl.value = window.localStorage.getItem('ethstats-server-url');
+                    // }
+                    // let inputEthStatsNodeName = document.getElementById('ethStats-node-name');
+                    // if (window.localStorage.getItem('ethstats-node-name') != undefined) {
+                    //     inputEthStatsNodeName.value = window.localStorage.getItem('ethstats-node-name');
+                    // }
                     
                     setInterval(async () => {
                         let result = await fetch('/test', {

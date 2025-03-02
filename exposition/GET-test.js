@@ -11,6 +11,12 @@ const test = (app, environement) => {
                 mining: app.node?.mining ? app.node?.mining : '0',
                 logs: app.node?.logs ? app.node?.logs : []
             };
+
+            if (app.node.status == '1') {
+                data.node.infos = {
+                    ... await app.node.getInfos()
+                };
+            }
         }
         
         res.send(data);

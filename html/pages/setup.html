@@ -360,7 +360,7 @@
 
                 try {
                     const cryptedPassword = btoa(rot13(privatePasswordElement.value));
-                    const result = await fetch('/setup', {
+                    const result = await fetch('/setup-node', {
                         method: 'POST',
                         headers: {
                             'Access-Code': password,

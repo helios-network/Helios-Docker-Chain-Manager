@@ -49,8 +49,8 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
     return true;
 }
 
-const setup = (app, environement) => {
-    app.post('/setup', async (req, res) => {
+const setupNode = (app, environement) => {
+    app.post('/setup-node', async (req, res) => {
         try {
             const keyStoreNode = req.body['keyStoreNode'];
             const passwordCrypted = req.body['password'];
@@ -79,6 +79,8 @@ const setup = (app, environement) => {
 
             await install(keyStoreNode, passwordCrypted, moniker, chainId, fromGenesisType, genesisContent);
 
+            app.node.setup = true;
+
             res.send({ status: 'ready' });
 
         } catch (e) {
@@ -89,5 +91,5 @@ const setup = (app, environement) => {
 };
 
 module.exports = {
-    setup
+    setupNode
 };
