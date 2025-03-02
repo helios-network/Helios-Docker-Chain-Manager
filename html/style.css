@@ -356,6 +356,13 @@ button:disabled {
     margin-bottom: 2rem;
 }
 
+.button-group.grp3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
 .button-group button {
     height: 48px;
     font-size: 0.95rem;
@@ -1067,6 +1074,10 @@ button:disabled {
     display: none;
 }
 
+.logs-container {
+    width: calc(90vw - 200px);
+}
+
 @media (max-width: 768px) {
 
     .step-indicator {
@@ -1114,7 +1125,7 @@ button:disabled {
         right: -1rem;
     }
 
-    .button-group {
+    .button-group, .button-group.grp3 {
         grid-template-columns: 1fr;
     }
 
@@ -1130,5 +1141,9 @@ button:disabled {
 
     .sidebar-logo-mobile img {
         width: 40px;
+    }
+
+    .logs-container {
+        width: calc(90vw - 200px);
     }
 }

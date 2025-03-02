@@ -16,7 +16,8 @@ const app = express();
 app.use(express.json()) //Notice express.json middleware
 corsUtils.setCors(app, ['*']);
 middlewares.asFile(app, ['favicon.png', 'favicon.ico', 'logo.png', 'icon.png', 'style.css']);
-middlewares.auth(app, environement, './html/pages/login.html', 'access-code', []);
+middlewares.asPageFile(app, [{ file: 'login', path: '/' }, 'login', 'setup', 'status']);
+middlewares.auth(app, environement, './html/pages/404.html', 'access-code', []);
 middlewares.setHeaders(app, [
   ['Access-Control-Allow-Origin', '*'],
   ['Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'],

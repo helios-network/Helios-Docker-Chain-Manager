@@ -67,8 +67,12 @@ const runMinerNode = async (app, environement) => {
         app.node.mining = '0';
     };
 
-    app.node.stop = () => {
+    app.node.stop = async () => {
         childProcess.kill('SIGTERM');
+    }
+
+    app.node.start = async () => {
+        await runMinerNode(app, environement);
     }
 };
 

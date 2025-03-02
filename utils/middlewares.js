@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const moment = require('moment');
 
 module.exports = {
     asFile: (app, files) => {
@@ -15,16 +16,59 @@ module.exports = {
             next();
         });
     },
-    auth: (app, environement, loginHtmlFilePath, accessCodeKey = 'access-code', excludedRoutes) => {
+    asPageFile: (app, files) => {
+        app.use(function (req, res, next) {
+
+            const fileOrFileAndPath = files.find(x => {
+                if (typeof x === 'object') {
+                    return x.path === req.path;
+                }
+                return `/${x}` === req.path;
+            });
+
+            if (fileOrFileAndPath) {
+                const file = typeof fileOrFileAndPath === 'object' ? fileOrFileAndPath.file : fileOrFileAndPath;
+                let templates = path.join(process.cwd(), 'html');
+                res.sendFile(`/pages/${file}.html`, {root: templates});
+                return ;
+            }
+            next();
+        });
+    },
+    auth: (app, environement, notFounHtmlFilePath, accessCodeKey = 'access-code', excludedRoutes) => {
         app.use((req, res, next) => {
+
+            if (req.path === '/auth') {
+                if (fs.existsSync('./.password')) {
+                    res.send(true);
+                    return ;
+                }
+                res.send(false);
+                return ;
+            }
+
+            if (req.path === '/auth-try') {
+                if (fs.existsSync('./.password') && req.body['password'] != undefined
+                    && (app.lastAuthFailedTime === undefined || moment(app.lastAuthFailedTime).add(10, 'seconds').isBefore(moment())) // anti brut force
+                    ) {
+                    const pass = fs.readFileSync('./.password').toString();
+                    const equals = req.body['password'] === pass;
+
+                    if (!equals) {
+                        app.lastAuthFailedTime = moment(app.lastAuthFailedTime).toDate().getTime();
+                    }
+                    res.send(equals);
+                    return ;
+                }
+                res.send(false);
+                return ;
+            }
+
             const isExcludedRoute = excludedRoutes.find(x =>  `${x}` === req.path);
 
             if (!isExcludedRoute) { // route who needed permissions
                 if (req.query[accessCodeKey] == undefined && req.headers[accessCodeKey] == undefined) {
-                    let loginHtmlFile = (fs.readFileSync(loginHtmlFilePath)).toString();
-
-                    loginHtmlFile = loginHtmlFile.replace(/\$firstTime/, environement.password == undefined ? 'true' : 'false');
-                    res.send(loginHtmlFile);
+                    res.send((fs.readFileSync(notFounHtmlFilePath)).toString());
                     return ;
                 }
                 if (environement.password == undefined && fs.existsSync('./.password')) {

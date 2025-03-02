@@ -35,7 +35,7 @@
 
                     <button 
                         id="login-btn" 
-                        type="button"
+                        type="submit"
                         class="btn w-100" 
                         onclick="setupPassword()"
                     >
@@ -46,17 +46,33 @@
         </div>
 
         <script>
-            let firstTime = "$firstTime";
+            let isWelcomeBack = false;
 
-            window.addEventListener('DOMContentLoaded', (event) => {
+            window.addEventListener('DOMContentLoaded', async (event) => {
                 document.getElementById('login-btn').disabled = true;
-                if (firstTime === "false") {
-                    document.getElementById('login-title').innerHTML = 'Welcome Back';
-                    document.getElementById('login-btn').innerHTML = 'Login';
+                if (window.localStorage.getItem("access-code") != undefined) {
+                    window.location = '/setup';
+                } else {
+                    const hasSetupAccount = async () => {
+                        const response = await fetch('/auth', {
+                                method: 'GET'
+                            });
+                        const is = await response.text();
+
+                        if (is === 'true') {
+                            return true;
+                        }
+                        return false;
+                    }
+                    if (await hasSetupAccount()) {
+                        document.querySelectorAll(".login-title")[0].innerHTML = 'Welcome Back';
+                        document.getElementById("login-btn").innerHTML = 'Login';
+                        isWelcomeBack = true;
+                    }
                 }
             });
 
-            function setupPassword() {
+            async function setupPassword() {
                 const password = document.getElementById('access-password').value;
                 const form = document.getElementById('login-form');
                 const passwordInput = document.getElementById('access-password');
@@ -66,7 +82,7 @@
                 
                 if (password.length < 4) {
                     passwordInput.classList.add('is-invalid');
-                    feedbackElement.textContent = 'Le mot de passe doit contenir au moins 4 caractères';
+                    feedbackElement.textContent = 'Password must contain at least 4 characters';
                     return;
                 }
 
@@ -74,15 +90,54 @@
                 const originalText = button.innerHTML;
                 button.innerHTML = `
                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Configuration en cours...
+                    Loading...
                 `;
                 button.disabled = true;
 
-                window.location.href = `/html-page-setup?access-code=${encodeURIComponent(password)}`;
+                if (isWelcomeBack) {
+                    const testPassword = async (password) => {
+                        const response = await fetch('/auth-try', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    password: password
+                                })
+                            });
+                        const is = await response.text();
+
+                        if (is === 'true') {
+                            return true;
+                        }
+                        return false;
+                    }
+                    if (await testPassword(password)) {
+                        window.localStorage.setItem("access-code", password);
+                        window.location.href = `/setup`;
+                    } else {
+                        document.getElementById('access-password').classList.add('is-invalid');
+                        document.getElementById('password-feedback').textContent = 'Invalid Password retry in 10 seconds.';
+                        document.getElementById('login-btn').disabled = true;
+                        document.getElementById('login-btn').innerHTML = 'Login'; 
+                        document.getElementById('access-password').value = '';
+                    }
+                    return ;
+                }
+
+                window.localStorage.setItem("access-code", password);
+                window.location.href = `/setup`;
             }
 
             // Validation en temps réel
             document.getElementById('access-password').addEventListener('input', function(e) {
+
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Empêche le comportement par défaut du formulaire
+                    setupPassword(); // Appelle la fonction setupPassword
+                    return ;
+                }
+
                 const password = e.target.value;
                 const feedbackElement = document.getElementById('password-feedback');
                 const submitButton = document.getElementById('login-btn');
@@ -96,7 +151,7 @@
                 
                 if (password.length < 4) {
                     e.target.classList.add('is-invalid');
-                    feedbackElement.textContent = 'Le mot de passe doit contenir au moins 4 caractères';
+                    feedbackElement.textContent = 'Password must contain at least 4 characters';
                     submitButton.disabled = true;
                 } else {
                     e.target.classList.add('is-valid');

@@ -22,7 +22,7 @@
             </a>
         </div>
 
-        <div class="main-content">
+        <div class="main-content" style="display: none">
             <div class="container">
                 <div class="grid-container">
                     <div class="section">
@@ -46,7 +46,7 @@
                                        placeholder="Enter your wallet password">
                             </div>
 
-                            <div class="button-group">
+                            <div class="button-group grp3">
                                 <button id="node1-button-start" class="button primary" onclick="startNode1(this)">
                                     <i class="material-icons">play_arrow</i>
                                     <span>Start</span>
@@ -55,6 +55,10 @@
                                     <i class="material-icons">stop</i>
                                     <span>Stop</span>
                                 </button>
+                                <button id="node1-button-restart" class="button warning" onclick="restartNode1(this)">
+                                    <i class="material-icons">autorenew</i>
+                                    <span>Restart</span>
+                                </button>                                
                             </div>
                         </div>
                     </div>
@@ -114,28 +118,13 @@
             </div>
         </div>
         <script>
-            let setup = $setup;
-            let password = "$password";
-
+            let password = window.localStorage.getItem("access-code");
 
             // lib
             const rot13 = str => str.split('')
                     .map(char => String.fromCharCode(char.charCodeAt(0) + 13))
                     .join('');
 
-            function toLower(a){
-                let c = "";
-                // let kk = [];
-                for(let i = 0;i<a.length;i++){
-                    let f = a.charCodeAt(i);
-                    if(f < 95 && f > 32){
-                        c += String.fromCharCode(f);
-                        // kk.push(f);
-                    }
-                }
-                // console.log(kk);
-                return c;
-            }
             function compareIt(a,b){
                 let ap = a.trim().replace(/\&lt/gm, '<').replace(/\&gt/gm, '<').replace(/[^a-z0-9]/gi, '');
                 let bp = b.trim().replace(/\&lt/gm, '<').replace(/\&gt/gm, '<').replace(/[^a-z0-9]/gi, '');
@@ -206,6 +195,36 @@
                         })
                     });
                 let jsonResult = await result.json();
+            }
+
+            async function restartNode1(button) {
+                button.disabled = true; // Désactive temporairement le bouton pour éviter les double-cliques
+                button.querySelector("span").innerText = "Restarting...";
+                
+                fetch("/restart-node", {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Erreur lors du redémarrage !");
+                        }
+                        return response.text();
+                    })
+                    .then(message => {
+                        button.querySelector("span").innerText = "Restart";
+                    })
+                    .catch(error => {
+                        console.error("Erreur :", error);
+                        button.querySelector("span").innerText = "Restart";
+                    })
+                    .finally(() => {
+                        button.disabled = false; // Réactive le bouton après l'action
+                    });
             }
 
             async function startEthStats(btn) {
@@ -280,7 +299,33 @@
                 }
             }
 
-            const main = () => {
+            const isSetup = async () => {
+                const response = await fetch('/is-setup', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                const isSetup = await response.text();
+
+                if (isSetup === 'true') {
+                    return true;
+                }
+                return false;
+            }
+
+            const main = async () => {
+
+                if (password == undefined) {
+                    window.location = '/';
+                    return ;
+                }
+
+                document.querySelectorAll('.main-content')[0].style.display = '';
+
+                const setup = await isSetup();
+
                 if (setup) {
                     let inputEthStatsServerUrl = document.getElementById('ethStats-server-url');
                     if (window.localStorage.getItem('ethstats-server-url') != undefined) {
@@ -307,8 +352,8 @@
                 }
             }
 
-            window.addEventListener('DOMContentLoaded', (event) => {
-                main();
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
             });
 
         </script>

@@ -14,7 +14,7 @@
                 <img height="50px" src="./logo.png" alt="Logo"/>
             </div>
 
-            <div class="setup-box">
+            <div class="setup-box" style="display: none">
                 <div class="step-indicator">
                     <div class="step-line">
                         <div class="step-line-progress" id="stepProgress"></div>
@@ -83,7 +83,7 @@
             </div>
         </div>
         <script>
-            let password = "$password";
+            let password = window.localStorage.getItem("access-code");
             let fromGenesisType = 'existingGenesis';
 
             // lib
@@ -440,12 +440,37 @@
                 updateStepProgress(1);
             }
 
-            const main = () => {
-                
+            const isSetup = async () => {
+                const response = await fetch('/is-setup', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                const isSetup = await response.text();
+
+                if (isSetup === 'true') {
+                    return true;
+                }
+                return false;
             }
 
-            window.addEventListener('DOMContentLoaded', (event) => {
-                main();
+            const main = async () => {
+                if (password == undefined) {
+                    window.location = '/';
+                    return ;
+                }
+
+                if (await isSetup() === true) {
+                    window.location = '/status';
+                    return ;
+                }
+                document.querySelectorAll('.setup-box')[0].style.display = '';
+            }
+
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
                 document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #012dcb, #012dcb)';
                 document.getElementById('existingGenesisBtn').style.border = 'none';
                 document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
