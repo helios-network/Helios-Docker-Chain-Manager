@@ -99,18 +99,6 @@
         <script>
             let password = window.localStorage.getItem("access-code");
 
-            // lib
-            const rot13 = str => str.split('')
-                    .map(char => String.fromCharCode(char.charCodeAt(0) + 13))
-                    .join('');
-
-            function compareIt(a,b){
-                let ap = a.trim().replace(/\&lt/gm, '<').replace(/\&gt/gm, '<').replace(/[^a-z0-9]/gi, '');
-                let bp = b.trim().replace(/\&lt/gm, '<').replace(/\&gt/gm, '<').replace(/[^a-z0-9]/gi, '');
-                let cmp = ap != bp;
-                return cmp;
-            }
-
             function scrollLogToBottom(element) {
                 element.scrollTop = element.scrollHeight;
             }
@@ -248,50 +236,6 @@
                 });
             }
 
-            async function execNode1IpcCommand() {
-                const node1IpcInput = document.getElementById('node1-ipc-input');
-                const node1ipcLogs = document.getElementById('node1-ipc-logs');
-                const value = node1IpcInput.value;
-
-                node1IpcInput.disabled = true;
-
-                let result = await fetch('/node1-ipc-command', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            command: value
-                        })
-                    });
-                let jsonData = await result.json();
-
-                node1IpcInput.value = '';
-                node1IpcInput.disabled = false;
-                node1IpcInput.focus();
-                if (compareIt(node1ipcLogs.innerHTML, jsonData.join('\n'))) {
-                    node1ipcLogs.innerHTML = jsonData.join('\n');
-                    scrollLogToBottom(node1ipcLogs);
-                }
-            }
-
-            const isSetup = async () => {
-                const response = await fetch('/is-setup', {
-                        method: 'GET',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                const isSetup = await response.text();
-
-                if (isSetup === 'true') {
-                    return true;
-                }
-                return false;
-            }
-
             const main = async () => {
 
                 if (password == undefined) {
@@ -334,6 +278,8 @@
             });
 
         </script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     </body>
 </html>

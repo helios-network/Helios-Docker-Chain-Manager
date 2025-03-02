@@ -86,11 +86,6 @@
             let password = window.localStorage.getItem("access-code");
             let fromGenesisType = 'existingGenesis';
 
-            // lib
-            const rot13 = str => str.split('')
-                    .map(char => String.fromCharCode(char.charCodeAt(0) + 13))
-                    .join('');
-
             function showError(inputElement, message) {
                 inputElement.classList.add('error');
                 
@@ -378,7 +373,7 @@
                     const jsonResult = await result.json();
 
                     if (jsonResult.status === 'ready') {
-                        window.location.href = `/html-page-status?access-code=${encodeURIComponent(password)}`;
+                        window.location.href = `/status`;
                     } else if (jsonResult.status === 'ko' && fromGenesisType === 'existingGenesis') {
                         showError(genesisURLElement, 'Unable to fetch genesis from this URL');
                         genesisURLElement.classList.add('error');
@@ -440,22 +435,6 @@
                 updateStepProgress(1);
             }
 
-            const isSetup = async () => {
-                const response = await fetch('/is-setup', {
-                        method: 'GET',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                const isSetup = await response.text();
-
-                if (isSetup === 'true') {
-                    return true;
-                }
-                return false;
-            }
-
             const main = async () => {
                 if (password == undefined) {
                     window.location = '/';
@@ -513,5 +492,8 @@
                 }
             });
         </script>
+
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
     </body>
 </html>

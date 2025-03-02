@@ -43,25 +43,45 @@
         </div>
 
         <div class="main-content" style="display: none">
-            
+            <div class="container">
+                <div class="grid-container-one">
+
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">settings</i>
+                                <span>Reinitialize the node</span>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="button-group-one">
+                                <button id="ethStats-button-stop" class="button danger" onclick="reinitialize(this)">
+                                    <i class="material-icons">restart_alt</i>
+                                    <span>Reset</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
 
-            const isSetup = async () => {
-                const response = await fetch('/is-setup', {
-                        method: 'GET',
+
+            const reinitialize = async () => {
+                const result = await fetch('/reinitialize-node', {
+                        method: 'POST',
                         headers: {
                             'Access-Code': password,
                             'Content-Type': 'application/json'
-                        }
+                        },
+                        body: JSON.stringify({})
                     });
-                const isSetup = await response.text();
-
-                if (isSetup === 'true') {
-                    return true;
-                }
-                return false;
+                
+                window.localStorage.removeItem("access-code");
+                window.location = '/';
             }
 
             const main = async () => {
@@ -82,6 +102,8 @@
             });
 
         </script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     </body>
 </html>

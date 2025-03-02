@@ -877,6 +877,11 @@ button:disabled {
     color: #94A3B8;
 }
 
+.button.danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b); /* Couleurs rouge pour le danger */
+    color: #FFFFFF;
+}
+
 .button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
