@@ -254,6 +254,13 @@ button:disabled {
     gap: 2rem;
 }
 
+.grid-container-one {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: auto auto;
+    gap: 2rem;
+}
+
 /* SETUP */
 
 .setup-container {
@@ -652,7 +659,6 @@ button:disabled {
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
-    min-height: 280px;
 }
 
 .section-content {
@@ -830,7 +836,7 @@ button:disabled {
 }
 
 .button-group {
-    margin-top: auto;
+    /* margin-top: auto; */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
@@ -974,14 +980,6 @@ button:disabled {
     outline: none;
 }
 
-.button-group {
-    margin-top: auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    padding-top: 1.5rem;
-}
-
 .sidebar {
     position: fixed;
     left: 0;
@@ -1076,6 +1074,10 @@ button:disabled {
 
 .logs-container {
     width: calc(90vw - 200px);
+}
+
+.mt-1 {
+    margin-top: 1rem;
 }
 
 @media (max-width: 768px) {

@@ -16,15 +16,31 @@
             <div class="sidebar-logo-mobile">
                 <img src="./icon.png" alt="Logo">
             </div>
-            <a href="setup" class="sidebar-button" title="Back to Setup">
+            <a href="status" class="sidebar-button" title="Home">
+                <i class="material-icons">home</i>
+                <span>Validator</span>
+            </a>
+            <a href="settings" class="sidebar-button mt-1" title="Settings">
                 <i class="material-icons">settings</i>
                 <span>Settings</span>
+            </a>
+            <a href="eth-stats" class="sidebar-button mt-1" title="EthStats">
+                <i class="material-icons">analytics</i>
+                <span>EthStats</span>
+            </a>
+            <a href="hyperions" class="sidebar-button mt-1" title="Hyperions">
+                <i class="material-icons">blur_on</i>
+                <span>Hyperions</span>
+            </a>
+            <a href="ibc-relayers" class="sidebar-button mt-1" title="IBC Relayers">
+                <i class="material-icons">multiple_stop</i>
+                <span>IBC Relayers</span>
             </a>
         </div>
 
         <div class="main-content" style="display: none">
             <div class="container">
-                <div class="grid-container">
+                <div class="grid-container-one">
                     <div class="section">
                         <div class="section-header">
                             <div class="section-title">
@@ -38,13 +54,13 @@
                         </div>
                         
                         <div class="section-content">
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="node1-keystore-password">Wallet Password</label>
                                 <input id="node1-keystore-password" 
                                        type="password" 
                                        class="form-control" 
                                        placeholder="Enter your wallet password">
-                            </div>
+                            </div> -->
 
                             <div class="button-group grp3">
                                 <button id="node1-button-start" class="button primary" onclick="startNode1(this)">
@@ -59,48 +75,6 @@
                                     <i class="material-icons">autorenew</i>
                                     <span>Restart</span>
                                 </button>                                
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">analytics</i>
-                                <span>EthStats Configuration</span>
-                            </div>
-                            <div id="ethStats-status" class="status-badge inactive">
-                                <i class="material-icons">fiber_manual_record</i>
-                                <span>Inactive</span>
-                            </div>
-                        </div>
-                        
-                        <div class="section-content">
-                            <div class="form-group">
-                                <label for="ethStats-server-url">Server URL</label>
-                                <input id="ethStats-server-url" 
-                                       type="text" 
-                                       class="form-control" 
-                                       placeholder="Enter EthStats server URL">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="ethStats-node-name">Node Name</label>
-                                <input id="ethStats-node-name" 
-                                       type="text" 
-                                       class="form-control" 
-                                       placeholder="Enter node name">
-                            </div>
-
-                            <div class="button-group">
-                                <button id="ethStats-button-start" class="button primary" onclick="startEthStats(this)">
-                                    <i class="material-icons">play_arrow</i>
-                                    <span>Start</span>
-                                </button>
-                                <button id="ethStats-button-stop" class="button secondary" onclick="stopEthStats(this)">
-                                    <i class="material-icons">stop</i>
-                                    <span>Stop</span>
-                                </button>
                             </div>
                         </div>
                     </div>
