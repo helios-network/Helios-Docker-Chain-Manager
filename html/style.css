@@ -985,6 +985,10 @@ button:disabled {
     outline: none;
 }
 
+.form-control:disabled {
+    filter: contrast(0.5);
+}
+
 .sidebar {
     position: fixed;
     left: 0;

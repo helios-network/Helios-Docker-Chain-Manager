@@ -68,8 +68,21 @@
                         </div>
 
                         <div id="fromExistingGenesisTr" class="input-group-container">
+                            <label for="nodeIP">Node IP Address</label>
+                            <input id="nodeIP" onchange="updateNodeIP()" type="text" class="form-control" placeholder="0.0.0.0" />
+                            <label for="nodeId">Node Id</label>
+                            <input id="nodeId" onchange="updateNodeIP()" type="text" class="form-control" />
+                            <label for="nodeP2PPort">Node P2P Port</label>
+                            <input id="nodeP2PPort" onchange="updateNodeP2PPort()" type="text" class="form-control" value="26656" />
+                            <label for="nodeGRPCPort">Node GRPC Port</label>
+                            <input id="nodeGRPCPort" onchange="updateNodeGRPCPort()" type="text" class="form-control" value="26657" />
+                            <label for="nodeRPCPort">Node RPC Port</label>
+                            <input id="nodeRPCPort" onchange="updateNodeRPCPort()" type="text" class="form-control" value="8545" />
+                            <label for="genesisURL">Genesis URL</label>
                             <input id="genesisURL" onchange="updateGenesisURL()" type="text" class="form-control" placeholder="http://localhost:26657/genesis-raw" />
+                            <label for="moniker">Name of your Validator</label>
                             <input id="moniker" onchange="updateNodeMoniker()" type="text" class="form-control" placeholder="name-of-your-node (moniker)" />
+                            <label for="chainId">Chain Id</label>
                             <input id="chainId" type="text" class="form-control" placeholder="4242 (chainId)" />
                         </div>
                         <p class="info-text">Select an official node for the existing genesis option.</p>
@@ -160,6 +173,67 @@
                 }
             }
 
+            async function updateNodeIP() {
+                const nodeIp = document.getElementById('nodeIP').value;
+                const nodeGrpcPort = document.getElementById('nodeGRPCPort').value;
+
+                if (nodeIp === '') {
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/fetch-external-node-genesis', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            ip: nodeIp,
+                            grpcPort: nodeGrpcPort
+                        })
+                    });
+                    const result = await response.json();
+
+                    if (result.genesis.chain_id !== undefined) {
+                        document.getElementById('chainId').value = result.genesis.chain_id;
+                        document.getElementById('genesisURL').value = `http://${nodeIp}:${nodeGrpcPort}/genesis-raw`;
+                    }
+                    if (result.status.node_info.id !== undefined) {
+                        document.getElementById('nodeId').value = result.status.node_info.id;
+                    }
+                } catch (e) {
+                    console.error('Invalid URL');
+                }
+            }
+
+            async function updateNodeP2PPort() {
+                const nodeIP = document.getElementById('nodeIP').value;
+
+                if (nodeIP === '') {
+                    return;
+                }
+                await updateNodeIP();
+            }
+
+            async function updateNodeGRPCPort() {
+                const nodeIP = document.getElementById('nodeIP').value;
+
+                if (nodeIP === '') {
+                    return;
+                }
+                await updateNodeIP();
+            }
+
+            async function updateNodeRPCPort() {
+                const nodeIP = document.getElementById('nodeIP').value;
+
+                if (nodeIP === '') {
+                    return;
+                }
+                await updateNodeIP();
+            }
+
             async function updateGenesisURL() {
                 const genesisURL = document.getElementById('genesisURL').value;
 
@@ -192,9 +266,6 @@
             }
 
             function startWith(value) {
-                const fromExistingGenesisTr = document.getElementById('fromExistingGenesisTr');
-                const genesisURL = document.getElementById('genesisURL');
-                
                 if (value === 'existingGenesis') {
                     document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
                     document.getElementById('existingGenesisBtn').style.border = 'none';
@@ -204,8 +275,16 @@
                     document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
                     document.getElementById('existingGenesisBtn').disabled = true;
                     document.getElementById('newGenesisBtn').disabled = false;
-                    fromExistingGenesisTr.style.display = '';
-                    genesisURL.style.display = '';
+                    document.getElementById('fromExistingGenesisTr').style.display = '';
+                    document.getElementById('genesisURL').style.display = '';
+                    document.getElementById('nodeIP').style.display = '';
+                    ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
+                        document.getElementById(x).style.display = '';
+                        document.querySelectorAll(`label[for="${x}"]`)[0].style.display = '';
+                    });
+                    document.getElementById('nodeId').disabled = true;
+                    document.getElementById('chainId').disabled = true;
+                    document.getElementById('genesisURL').disabled = true;
                     fromGenesisType = value;
                 } else {
                     document.getElementById('newGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
@@ -216,8 +295,15 @@
                     document.getElementById('existingGenesisBtn').style.color = '#A3A7AB';
                     document.getElementById('existingGenesisBtn').disabled = false;
                     document.getElementById('newGenesisBtn').disabled = true;
-                    fromExistingGenesisTr.style.display = '';
-                    genesisURL.style.display = 'none';
+                    document.getElementById('fromExistingGenesisTr').style.display = '';
+                    document.getElementById('genesisURL').style.display = 'none';
+                    ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
+                        document.getElementById(x).style.display = 'none';
+                        document.querySelectorAll(`label[for="${x}"]`)[0].style.display = 'none';
+                    });
+                    document.getElementById('nodeId').disabled = true;
+                    document.getElementById('chainId').disabled = false;
+                    document.getElementById('genesisURL').disabled = true;
                     fromGenesisType = value;
                 }
                 validateGenesisFields();
@@ -298,7 +384,14 @@
                 const genesisURLElement = document.getElementById('genesisURL');
                 const monikerElement = document.getElementById('moniker');
                 const chainIdElement = document.getElementById('chainId');
+                const nodeIdElement = document.getElementById('nodeId');
+                const nodeIPElement = document.getElementById('nodeIP');
+                const nodeP2PPortElement = document.getElementById('nodeP2PPort');
+                const nodeRPCPortElement = document.getElementById('nodeRPCPort');
+                const nodeGRPCPortElement = document.getElementById('nodeGRPCPort');
+
                 const fireButton = document.querySelector('.navigation-buttons .primary-button');
+
 
                 fireButton.disabled = true;
 
@@ -314,27 +407,68 @@
                     showError(monikerElement, 'Moniker is required');
                     monikerElement.classList.add('error');
                     hasError = true;
+                    return ;
                 } else if (!/^[a-z0-9-]+$/.test(monikerElement.value)) {
                     showError(monikerElement, 'Moniker must contain only lowercase letters, numbers, and hyphens');
                     monikerElement.classList.add('error');
                     hasError = true;
+                    return ;
                 }
 
                 if (!chainIdElement.value.trim()) {
                     showError(chainIdElement, 'Chain ID is required');
                     chainIdElement.classList.add('error');
                     hasError = true;
+                    return ;
                 } else if (isNaN(chainIdElement.value)) {
                     showError(chainIdElement, 'Chain ID must be a number');
                     chainIdElement.classList.add('error');
                     hasError = true;
+                    return ;
                 }
 
                 if (fromGenesisType === 'existingGenesis') {
+
+                    if (!nodeIPElement.value.trim()) {
+                        showError(nodeIPElement, 'Node IP is required');
+                        nodeIPElement.classList.add('error');
+                        hasError = true;
+                        return ;
+                    }
+
+                    if (!nodeIdElement.value.trim()) {
+                        showError(nodeIdElement, 'Node Id is required');
+                        nodeIdElement.classList.add('error');
+                        hasError = true;
+                        return ;
+                    }
+
+                    if (!nodeP2PPortElement.value.trim()) {
+                        showError(nodeP2PPortElement, 'Node P2P Port is required');
+                        nodeP2PPortElement.classList.add('error');
+                        hasError = true;
+                        return ;
+                    }
+
+                    if (!nodeRPCPortElement.value.trim()) {
+                        showError(nodeRPCPortElement, 'Node RPC Port is required');
+                        nodeRPCPortElement.classList.add('error');
+                        hasError = true;
+                        return ;
+                    }
+
+                    if (!nodeGRPCPortElement.value.trim()) {
+                        showError(nodeGRPCPortElement, 'Node GRPC Port is required');
+                        nodeGRPCPortElement.classList.add('error');
+                        hasError = true;
+                        return ;
+                    }
+
                     if (!genesisURLElement.value.trim()) {
                         showError(genesisURLElement, 'Genesis URL is required');
                         genesisURLElement.classList.add('error');
                         hasError = true;
+                        return ;
                     } else {
                         try {
                             new URL(genesisURLElement.value);
@@ -342,6 +476,7 @@
                             showError(genesisURLElement, 'Please enter a valid URL');
                             genesisURLElement.classList.add('error');
                             hasError = true;
+                            return ;
                         }
                     }
                 }
@@ -367,7 +502,12 @@
                             fromGenesisType: fromGenesisType,
                             genesisURL: fromGenesisType === 'existingGenesis' ? genesisURLElement.value : '',
                             moniker: monikerElement.value,
-                            chainId: chainIdElement.value
+                            chainId: chainIdElement.value,
+                            nodeIP: fromGenesisType === 'existingGenesis' ? nodeIPElement.value : '',
+                            nodeId: fromGenesisType === 'existingGenesis' ? nodeIdElement.value : '',
+                            nodeGRPCPort: fromGenesisType === 'existingGenesis' ? nodeGRPCPortElement.value : '',
+                            nodeRPCPort: fromGenesisType === 'existingGenesis' ? nodeRPCPortElement.value : '',
+                            nodeP2PPort: fromGenesisType === 'existingGenesis' ? nodeP2PPortElement.value : '',
                         })
                     });
                     const jsonResult = await result.json();
@@ -446,6 +586,7 @@
                     return ;
                 }
                 document.querySelectorAll('.setup-box')[0].style.display = '';
+                startWith('existingGenesis');
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

@@ -16,7 +16,7 @@ const decrypt2 = async (json, password) => {
     return privateKey.toString('hex');
 }
 
-const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGenesisType, genesisContent) => {
+const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGenesisType, genesisContent, nodeInfos) => {
 
     const jsonKeyStoreNode = JSON.parse(keyStoreNode);
 
@@ -39,6 +39,13 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
     if (fromGenesisType === 'existingGenesis') {
         const destGenesisPath = path.join(homedir, '.heliades/config/genesis.json');
         fs.writeFileSync(destGenesisPath, genesisContent);
+
+        // nodeInfos
+        let configTomlPath = path.join(homedir, '.heliades/config/config.toml');
+        let configToml = fs.readFileSync(configTomlPath).toString();
+
+        const peerNode = `${nodeInfos.nodeId}@${nodeInfos.nodeIP}:${nodeInfos.nodeP2PPort}`;
+        fs.writeFileSync(configTomlPath, configToml.replace(/persistent_peers \= \"\"/gm, `persistent_peers = "${peerNode}"`))
     } else {
         let address = await execWrapper(`heliades keys show node -a --keyring-backend="local"`)
         await execWrapper(`heliades add-genesis-account --chain-id ${chainId} ${address.trim()} 1000000000000000000000000ahelios --keyring-backend="local"`);
@@ -58,6 +65,11 @@ const setupNode = (app, environement) => {
             const genesisURL = req.body['genesisURL'];
             const moniker = req.body['moniker'];
             const chainId = req.body['chainId'];
+            const nodeIP = req.body['nodeIP'];
+            const nodeId = req.body['nodeId'];
+            const nodeGRPCPort = req.body['nodeGRPCPort'];
+            const nodeRPCPort = req.body['nodeRPCPort'];
+            const nodeP2PPort = req.body['nodeP2PPort'];
 
             if (!fs.existsSync('./node')) {
                 fs.mkdirSync('./node');
@@ -77,7 +89,13 @@ const setupNode = (app, environement) => {
                 return ;
             }
 
-            await install(keyStoreNode, passwordCrypted, moniker, chainId, fromGenesisType, genesisContent);
+            await install(keyStoreNode, passwordCrypted, moniker, chainId, fromGenesisType, genesisContent, {
+                nodeIP: nodeIP,
+                nodeId: nodeId,
+                nodeGRPCPort: nodeGRPCPort,
+                nodeRPCPort: nodeRPCPort,
+                nodeP2PPort: nodeP2PPort
+            });
 
             app.node.setup = true;
 
