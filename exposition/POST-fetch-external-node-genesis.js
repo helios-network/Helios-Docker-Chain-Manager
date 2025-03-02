@@ -4,9 +4,11 @@ const fetchExternalNodeGenesis = (app, environement) => {
             const nodeIp = req.body['ip'];
             const nodeGrpcPort = req.body['grpcPort'];
 
+            console.log(req.body)
+
             const nodeGrpcURL = `http://${nodeIp}:${nodeGrpcPort}`;
 
-            new URL(nodeGrpcURL); // try format url
+            // new URL(nodeGrpcURL); // try format url
 
             const responseGenesis = await fetch(`${nodeGrpcURL}/genesis-raw`, {
                 method: 'GET',
@@ -16,6 +18,8 @@ const fetchExternalNodeGenesis = (app, environement) => {
             });
             const genesis = await responseGenesis.json();
 
+            console.log(genesis)
+
             const responseStatus = await fetch(`${nodeGrpcURL}/status`, {
                 method: 'GET',
                 headers: {
@@ -23,6 +27,8 @@ const fetchExternalNodeGenesis = (app, environement) => {
                 }
             });
             const status = (await responseStatus.json()).result;
+
+            console.log(status)
 
             if (genesis.chain_id !== undefined) {
                 res.send({
