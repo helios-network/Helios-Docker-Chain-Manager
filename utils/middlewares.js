@@ -64,25 +64,22 @@ module.exports = {
                 return ;
             }
 
+            if (req.path === '/auth-subscribe') {
+                if (fs.existsSync('./.password')
+                    || req.body['password'] == undefined
+                    || req.body['password'] == '') {
+                    res.send(false);
+                    return ;
+                }
+                environement.password = req.body['password'];
+                fs.writeFileSync('./.password', environement.password);
+                res.send(true);
+                return ;
+            }
+
             const isExcludedRoute = excludedRoutes.find(x =>  `${x}` === req.path);
 
             if (!isExcludedRoute) { // route who needed permissions
-                if (req.query[accessCodeKey] == undefined && req.headers[accessCodeKey] == undefined) {
-                    res.send((fs.readFileSync(notFounHtmlFilePath)).toString());
-                    return ;
-                }
-                if (environement.password == undefined && fs.existsSync('./.password')) {
-                    const pass = fs.readFileSync('./.password').toString();
-                    environement.password = pass;
-                }
-                if (req.headers[accessCodeKey] != undefined && environement.password == undefined) {
-                    environement.password = req.headers[accessCodeKey];
-                    fs.writeFileSync('./.password', environement.password);
-                }
-                if (req.query[accessCodeKey] != undefined && environement.password == undefined) {
-                    environement.password = req.query[accessCodeKey];
-                    fs.writeFileSync('./.password', environement.password);
-                }
                 if (req.headers[accessCodeKey] != environement.password
                 && req.query[accessCodeKey] != environement.password) {
                     res.sendStatus(502); // simulate server is offline (Bad Gateway code).

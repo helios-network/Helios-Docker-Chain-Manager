@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  node1:
+    build: .
+    container_name: node1
+    ports:
+      - "8080:8080"
+      - "8545:8545"
+      - "1317:1317"
+      - "26657:26657"
+      - "26656:26656"
+      - "10337:10337"
+      - "9090:9090"
+    networks:
+      - heliosnet
+    command: npm run prod
+
+  node2:
+    build: .
+    container_name: node2
+    ports:
+      - "8081:8080"
+      - "8546:8545"
+      - "1318:1317"
+      - "27657:26657"
+      - "27656:26656"
+      - "11337:10337"
+      - "9190:9090"
+    networks:
+      - heliosnet
+    command: npm run prod
+
+networks:
+  heliosnet:
+    driver: bridge

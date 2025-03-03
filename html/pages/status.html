@@ -243,6 +243,12 @@
                     return ;
                 }
 
+                if (!(await apiTestPassword(password))) {
+                    window.localStorage.removeItem('access-code');
+                    window.location = '/';
+                    return ;
+                }
+
                 document.querySelectorAll('.main-content')[0].style.display = '';
 
                 const setup = await isSetup();

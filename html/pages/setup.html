@@ -581,6 +581,12 @@
                     return ;
                 }
 
+                if (!(await apiTestPassword(password))) {
+                    window.localStorage.removeItem('access-code');
+                    window.location = '/';
+                    return ;
+                }
+
                 if (await isSetup() === true) {
                     window.location = '/status';
                     return ;

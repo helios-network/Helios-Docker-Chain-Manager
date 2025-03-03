@@ -123,8 +123,9 @@
                         document.getElementById('access-password').value = '';
                     }
                     return ;
+                } else {
+                    await apiSetPassword(password);
                 }
-
                 window.localStorage.setItem("access-code", password);
                 window.location.href = `/setup`;
             }

@@ -43,7 +43,19 @@
         </div>
 
         <div class="main-content" style="display: none">
-            
+            <div class="container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <i class="material-icons">how_to_reg</i>
+                            <span>Validator Information</span>
+                        </div>
+                    </div>
+                    <div class="section-content" id="validator-info">
+                        <!-- Les informations du validator seront affichées ici -->
+                    </div>
+                </div>
+            </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
@@ -59,6 +71,28 @@
                     return ;
                 }
                 document.querySelectorAll('.main-content')[0].style.display = '';
+
+                const validatorAndHisDelegation = await apiGetValidatorAndHisDelegation();
+                displayValidatorInfo(validatorAndHisDelegation.validator);
+                console.log(validatorAndHisDelegation);
+            }
+
+            const displayValidatorInfo = (validator) => {
+                const validatorInfoDiv = document.getElementById('validator-info');
+                validatorInfoDiv.innerHTML = `
+                    <p><strong>APR:</strong> ${validator.apr}</p>
+                    <p><strong>Moniker:</strong> ${validator.moniker}</p>
+                    <p><strong>Jailed:</strong> ${validator.jailed}</p>
+                    <p><strong>Min Self Delegation:</strong> ${validator.minSelfDelegation}</p>
+                    <p><strong>Shares:</strong> ${validator.shares}</p>
+                    <p><strong>Status:</strong> ${validator.status}</p>
+                    <p><strong>Validator Address:</strong> ${validator.validatorAddress}</p>
+                    <h3>Commission Rates</h3>
+                    <p><strong>Rate:</strong> ${validator.commission.commission_rates.rate}</p>
+                    <p><strong>Max Rate:</strong> ${validator.commission.commission_rates.max_rate}</p>
+                    <p><strong>Max Change Rate:</strong> ${validator.commission.commission_rates.max_change_rate}</p>
+                    <p><strong>Commission Update Time:</strong> ${validator.commission.update_time}</p>
+                `;
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
