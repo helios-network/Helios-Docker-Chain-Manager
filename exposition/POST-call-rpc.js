@@ -3,7 +3,13 @@ const callRpc = (app, environement) => {
         try {
             // "eth_getValidatorAndHisDelegation"
 
+            if (await app.node.status() == '0') { // node offline
+                res.send(false);
+                return ;
+            }
+
             const address = await app.node.getAddress();
+            console.log(address);
             const response = await fetch(`http://localhost:8545`, {
                 method: 'POST',
                 headers: {

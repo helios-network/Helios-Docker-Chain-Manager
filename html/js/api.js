@@ -55,6 +55,7 @@ const apiGetValidatorAndHisDelegation = async () => {
     const response = await fetch('/call-rpc', {
             method: 'POST',
             headers: {
+                'Access-Code': password,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -74,6 +75,7 @@ const apiValidatorClaim = async (walletPassword) => {
     const response = await fetch('/validator-claim', {
         method: 'POST',
         headers: {
+            'Access-Code': password,
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({

@@ -15,9 +15,7 @@ const reinitializeNode = (app, environement) => {
                 fs.mkdirSync(heliadesPath);
             }
 
-            await app.node.checkIsAlive();
-
-            if (app.node.status != '0') {
+            if (await app.node.status() != '0') {
                 await app.node.stop();
             }
 
