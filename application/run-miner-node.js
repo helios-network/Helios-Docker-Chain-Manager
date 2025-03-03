@@ -60,13 +60,9 @@ const runMinerNode = async (app, environement) => {
         app.node.logs.push(`[EXIT] ${code}`);
     });
 
-    app.node.checkIsAlive = async () => {
-        app.node.status = childProcess.exitCode == undefined ? '1' : '0';
-        if (app.node.status == '1') {
-            // todo check if is mining
-        }
-        app.node.mining = '0';
-    };
+    app.node.status = async () => {
+        return childProcess.exitCode == undefined ? '1' : '0';
+    }
 
     app.node.getInfos = async () => {
         try {
@@ -88,17 +84,17 @@ const runMinerNode = async (app, environement) => {
     }
 
     app.node.getHeliosAddress = async () => {
-        const data = await execWrapper(`heliades keys show node -a --bech=acc --keyring-backend="local"`);
+        const data = await execWrapper(`heliades keys show user0 -a --bech=acc --keyring-backend="local"`);
         return data.trim();
     }
 
     app.node.getHeliosValAddress = async () => {
-        const data = await execWrapper(`heliades keys show node -a --bech=val --keyring-backend="local"`);
+        const data = await execWrapper(`heliades keys show user0 -a --bech=val --keyring-backend="local"`);
         return data.trim();
     }
 
     app.node.getAddress = async () => {
-        const data = await execWrapper(`heliades keys show node -e --keyring-backend="local"`);
+        const data = await execWrapper(`heliades keys show user0 -e --keyring-backend="local"`);
         return data.trim();
     }
 

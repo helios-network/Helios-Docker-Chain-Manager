@@ -37,8 +37,9 @@ const main = async () => {
       mining: '0',
       setup: false,
       logs: [],
-      checkIsAlive: async () => {},
-      stop: async () => {}
+      status: async () => '0',
+      stop: async () => {},
+      getInfos: async () => ({})
   };
 
   ////////////////////////////////////////////

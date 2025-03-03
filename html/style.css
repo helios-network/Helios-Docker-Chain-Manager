@@ -1158,3 +1158,25 @@ button:disabled {
         width: calc(90vw - 200px);
     }
 }
+
+.pw_prompt {
+    position:fixed;
+    left: 50%;
+    top: calc(50% - 100px);
+    margin-left:-100px;
+    padding:15px;
+    width:200px;
+    border:1px solid black;
+    z-index: 10000;
+    background-color: black;
+    border-radius: 7px;
+}
+.pw_prompt label {
+    display:block; 
+    margin-bottom:5px;
+    text-align: center;
+}
+.pw_prompt input {
+    margin-bottom:10px;
+    width: 100%;
+}

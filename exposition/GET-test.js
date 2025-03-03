@@ -7,9 +7,8 @@ const test = (app, environement) => {
             await app.node.checkIsAlive();
 
             data.node = {
-                status: app.node?.status ? app.node?.status : '0',
-                mining: app.node?.mining ? app.node?.mining : '0',
-                logs: app.node?.logs ? app.node?.logs : []
+                status: await app.node.status(),
+                logs: app.node.logs
             };
 
             if (app.node.status == '1') {

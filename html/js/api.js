@@ -52,13 +52,34 @@ const apiSetPassword = async (password) => {
 }
 
 const apiGetValidatorAndHisDelegation = async () => {
-    const response = await fetch('/get-validator', {
+    const response = await fetch('/call-rpc', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({})
+            body: JSON.stringify({
+                method: 'eth_getValidatorAndHisDelegation',
+                params: ['$address']
+            })
         });
+    const result = await response.json();
+
+    if (result === false) {
+        return undefined;
+    }
+    return result;
+}
+
+const apiValidatorClaim = async (walletPassword) => {
+    const response = await fetch('/validator-claim', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            password: btoa(rot13(walletPassword))
+        })
+    });
     const result = await response.json();
 
     if (result === false) {

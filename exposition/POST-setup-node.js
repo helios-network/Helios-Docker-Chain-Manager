@@ -29,9 +29,9 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
 
     const initResult = await execWrapper(`heliades init ${moniker} --chain-id ${chainId}`);
 
-    const resultKeyAdd = await execWrapper(`heliades keys add node --from-private-key="${await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)))}" --keyring-backend="local"`);
+    const resultKeyAdd = await execWrapper(`heliades keys add user0 --from-private-key="${await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)))}" --keyring-backend="local"`);
 
-    if (!resultKeyAdd.includes("name: node")) {
+    if (!resultKeyAdd.includes("name: user0")) {
         console.log(resultKeyAdd);
         return false;
     }
@@ -47,9 +47,9 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
         const peerNode = `${nodeInfos.nodeId}@${nodeInfos.nodeIP}:${nodeInfos.nodeP2PPort}`;
         fs.writeFileSync(configTomlPath, configToml.replace(/persistent_peers \= \"\"/gm, `persistent_peers = "${peerNode}"`))
     } else {
-        let address = await execWrapper(`heliades keys show node -a --keyring-backend="local"`)
+        let address = await execWrapper(`heliades keys show user0 -a --keyring-backend="local"`)
         await execWrapper(`heliades add-genesis-account --chain-id ${chainId} ${address.trim()} 1000000000000000000000000ahelios --keyring-backend="local"`);
-        await execWrapper(`heliades gentx node 1000000000000000000000ahelios --chain-id ${chainId} --keyring-backend="local" --gas-prices "1000000000ahelios"`);
+        await execWrapper(`heliades gentx user0 1000000000000000000000ahelios --chain-id ${chainId} --keyring-backend="local" --gas-prices "1000000000ahelios"`);
         await execWrapper(`heliades collect-gentxs`);
         await execWrapper(`heliades validate-genesis`);
     }

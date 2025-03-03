@@ -56,6 +56,20 @@
                     </div>
                 </div>
             </div>
+
+            <div class="container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <i class="material-icons">how_to_reg</i>
+                            <span>My Delegations</span>
+                        </div>
+                    </div>
+                    <div class="section-content" id="delegation-info">
+                        <!-- Les informations de delagation seront affichées ici -->
+                    </div>
+                </div>
+            </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
@@ -74,7 +88,29 @@
 
                 const validatorAndHisDelegation = await apiGetValidatorAndHisDelegation();
                 displayValidatorInfo(validatorAndHisDelegation.validator);
+                displayDelegationInfo(validatorAndHisDelegation.delegation);
                 console.log(validatorAndHisDelegation);
+            }
+
+            const unbond = async () => {
+
+            }
+
+            const claim = async () => {
+                const walletPassword = await new Promise((resolve) => {
+                    try {
+                        pw_prompt({
+                            lm: "Please enter your wallet password:", 
+                            callback: function(password) {
+                                resolve(password);
+                            }
+                        });
+                    } catch (e) {
+                        resolve('');
+                    }
+                })
+                await apiValidatorClaim(walletPassword)
+                window.location.reload();
             }
 
             const displayValidatorInfo = (validator) => {
@@ -92,7 +128,35 @@
                     <p><strong>Max Rate:</strong> ${validator.commission.commission_rates.max_rate}</p>
                     <p><strong>Max Change Rate:</strong> ${validator.commission.commission_rates.max_change_rate}</p>
                     <p><strong>Commission Update Time:</strong> ${validator.commission.update_time}</p>
+                    <div class="button-group grp3">
+                        <button id="unbond" class="button primary" onclick="unbond()">
+                            <i class="material-icons">play_arrow</i>
+                            <span>Unbond</span>
+                        </button>
+                    </div>
                 `;
+            }
+
+            const displayDelegationInfo = (delegation) => {
+                const delegationInfoDiv = document.getElementById('delegation-info');
+
+                let html = '';
+
+                html += delegation.assets.map(asset => {
+                    return `<p><strong>${asset.symbol}:</strong>${Web3.utils.fromWei(asset.amount, 'ether')}</p>`;
+                }).join('');
+
+                html += `<p><strong>Rewards:</strong> ${Web3.utils.fromWei(delegation.rewards.amount, 'ether')} ${delegation.rewards.denom}</p>`;
+
+                html += `
+                    <div class="button-group grp3">
+                        <button id="unbond" class="button primary" onclick="claim()">
+                            <span>Claim</span>
+                        </button>
+                    </div>
+                `;
+
+                delegationInfoDiv.innerHTML = html;
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
