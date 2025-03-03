@@ -4,8 +4,6 @@ const test = (app, environement) => {
         let data = {};
 
         if (app.node) {
-            await app.node.checkIsAlive();
-
             data.node = {
                 status: await app.node.status(),
                 logs: app.node.logs
