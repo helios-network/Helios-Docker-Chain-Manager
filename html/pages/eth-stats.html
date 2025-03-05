@@ -2,92 +2,16 @@
     <head>
         <title>Helios Node</title>
         <link rel="icon" type="image/png" href="favicon.png">
-        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="./logo.png" alt="Logo">
-            </div>
-            <div class="sidebar-logo-mobile">
-                <img src="./icon.png" alt="Logo">
-            </div>
-            <a href="status" class="sidebar-button" title="Home">
-                <i class="material-icons">home</i>
-                <span>Node</span>
-            </a>
-            <a href="validator" class="sidebar-button mt-1" title="Validator">
-                <i class="material-icons">how_to_reg</i>
-                <span>Validator</span>
-            </a>
-            <a href="settings" class="sidebar-button mt-1" title="Settings">
-                <i class="material-icons">settings</i>
-                <span>Settings</span>
-            </a>
-            <a href="eth-stats" class="sidebar-button mt-1" title="EthStats">
-                <i class="material-icons">analytics</i>
-                <span>EthStats</span>
-            </a>
-            <a href="hyperions" class="sidebar-button mt-1" title="Hyperions">
-                <i class="material-icons">blur_on</i>
-                <span>Hyperions</span>
-            </a>
-            <a href="ibc-relayers" class="sidebar-button mt-1" title="IBC Relayers">
-                <i class="material-icons">multiple_stop</i>
-                <span>IBC Relayers</span>
-            </a>
-        </div>
+        <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
             <div class="container">
-                <div class="grid-container-one">
-
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">analytics</i>
-                                <span>EthStats Configuration</span>
-                            </div>
-                            <div id="ethStats-status" class="status-badge inactive">
-                                <i class="material-icons">fiber_manual_record</i>
-                                <span>Inactive</span>
-                            </div>
-                        </div>
-                        
-                        <div class="section-content">
-                            <div class="form-group">
-                                <label for="ethStats-server-url">Server URL</label>
-                                <input id="ethStats-server-url" 
-                                       type="text" 
-                                       class="form-control" 
-                                       placeholder="Enter EthStats server URL">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="ethStats-node-name">Node Name</label>
-                                <input id="ethStats-node-name" 
-                                       type="text" 
-                                       class="form-control" 
-                                       placeholder="Enter node name">
-                            </div>
-
-                            <div class="button-group">
-                                <button id="ethStats-button-start" class="button primary" onclick="startEthStats(this)">
-                                    <i class="material-icons">play_arrow</i>
-                                    <span>Start</span>
-                                </button>
-                                <button id="ethStats-button-stop" class="button secondary" onclick="stopEthStats(this)">
-                                    <i class="material-icons">stop</i>
-                                    <span>Stop</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                <div id="eth-stats" class="grid-container-one">
                 </div>
             </div>
         </div>
@@ -104,6 +28,77 @@
                     window.location = '/setup';
                     return ;
                 }
+                displaySideBar();
+
+                const minLengthValidator = (len) => {
+                    return (control) => {
+                        if (control.value.length < len) {
+                            return { 'lenError': `Min length is ${len}.` };
+                        }
+                        return null;
+                    }
+                };
+
+                const displayRepresentation = [
+                    {
+                        type: "content",
+                        icon: "analytics",
+                        title: "EthStats Configuration",
+                        content: [
+                            {
+                                type: "form-group",
+                                key: "formGroup",
+                                label: "EthStats Configuration",
+                                controls: [
+                                    {
+                                        key: "server-url",
+                                        label: "Server URL",
+                                        type: "text",
+                                        placeholder: "Enter EthStats server URL",
+                                        onChange: (control) => {
+                                            console.log(control.value, control.valid);
+                                        }
+                                    },
+                                    {
+                                        key: "node-name",
+                                        label: "Node Name",
+                                        type: "text",
+                                        placeholder: "Enter node name",
+                                        validators: [minLengthValidator(4)],
+                                        onChange: (control) => {
+                                            console.log(control.value, control.valid);
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                type: "raw",
+                                nbr: 2,
+                                content: [
+                                    {
+                                        key: 'btnStart',
+                                        type: "button",
+                                        icon: "play_arrow",
+                                        text: "Start",
+                                        onclick: () => startEthStats(this)
+                                    },
+                                    {
+                                        key: 'btnStop',
+                                        type: "button",
+                                        icon: "stop",
+                                        text: "Stop",
+                                        onclick: () => stopEthStats(this)
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+
+                const displayResult = buildDisplay(displayRepresentation, document.getElementById('eth-stats'));
+
+                console.log('ready', displayResult);
+
                 document.querySelectorAll('.main-content')[0].style.display = '';
             }
 
@@ -112,6 +107,7 @@
             });
 
         </script>
+        <script src="js/side-bar.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>

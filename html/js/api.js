@@ -1,11 +1,12 @@
 
 const isSetup = async () => {
     const response = await fetch('/is-setup', {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Access-Code': password,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify({})
         });
     const isSetup = await response.text();
 
@@ -59,7 +60,7 @@ const apiGetValidatorAndHisDelegation = async () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                method: 'eth_getValidatorAndHisDelegation',
+                method: 'eth_getValidatorWithHisDelegationAndCommission',
                 params: ['$address']
             })
         });
@@ -73,6 +74,25 @@ const apiGetValidatorAndHisDelegation = async () => {
 
 const apiValidatorClaim = async (walletPassword) => {
     const response = await fetch('/validator-claim', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            password: btoa(rot13(walletPassword))
+        })
+    });
+    const result = await response.json();
+
+    if (result === false) {
+        return undefined;
+    }
+    return result;
+}
+
+const apiValidatorClaimCommission = async (walletPassword) => {
+    const response = await fetch('/validator-claim-commission', {
         method: 'POST',
         headers: {
             'Access-Code': password,

@@ -2,67 +2,17 @@
     <head>
         <title>Helios Node</title>
         <link rel="icon" type="image/png" href="favicon.png">
-        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="./logo.png" alt="Logo">
-            </div>
-            <div class="sidebar-logo-mobile">
-                <img src="./icon.png" alt="Logo">
-            </div>
-            <a href="status" class="sidebar-button" title="Home">
-                <i class="material-icons">home</i>
-                <span>Node</span>
-            </a>
-            <a href="validator" class="sidebar-button mt-1" title="Validator">
-                <i class="material-icons">how_to_reg</i>
-                <span>Validator</span>
-            </a>
-            <a href="settings" class="sidebar-button mt-1" title="Settings">
-                <i class="material-icons">settings</i>
-                <span>Settings</span>
-            </a>
-            <a href="eth-stats" class="sidebar-button mt-1" title="EthStats">
-                <i class="material-icons">analytics</i>
-                <span>EthStats</span>
-            </a>
-            <a href="hyperions" class="sidebar-button mt-1" title="Hyperions">
-                <i class="material-icons">blur_on</i>
-                <span>Hyperions</span>
-            </a>
-            <a href="ibc-relayers" class="sidebar-button mt-1" title="IBC Relayers">
-                <i class="material-icons">multiple_stop</i>
-                <span>IBC Relayers</span>
-            </a>
-        </div>
+        <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
             <div class="container">
-                <div class="grid-container-one">
-
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">settings</i>
-                                <span>Reinitialize the node</span>
-                            </div>
-                        </div>
-                        <div class="section-content">
-                            <div class="button-group-one">
-                                <button id="ethStats-button-stop" class="button danger" onclick="reinitialize(this)">
-                                    <i class="material-icons">restart_alt</i>
-                                    <span>Reset</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                <div id="reinitialize-content" class="grid-container-one">
+                    <!-- Le contenu sera généré ici -->
                 </div>
             </div>
         </div>
@@ -94,6 +44,78 @@
                     window.location = '/setup';
                     return ;
                 }
+                displaySideBar();
+                const displayRepresentation = [
+                    {
+                        type: "content",
+                        icon: "settings", // Icône pour le contenu
+                        title: "Reinitialize the node",
+                        content: [
+                            {
+                                type: "button",
+                                id: "ethStats-button-stop",
+                                class: "button danger",
+                                onclick: async () => {
+                                    await reinitialize(this);
+                                },
+                                icon: "restart_alt",
+                                text: "Reset"
+                            }
+                        ]
+                    },
+                    {
+                        type: "content",
+                        icon: "file_download", // Icône pour le contenu de téléchargement
+                        title: "Download Configuration Files",
+                        content: [
+                            {
+                                type: "raw",
+                                nbr: 2,
+                                content: [{
+                                    type: "button",
+                                    id: "download-config",
+                                    class: "button primary",
+                                    onclick: () => {
+                                        window.location.href = '/download/config.toml'; // Lien pour télécharger config.toml
+                                    },
+                                    icon: "file_download",
+                                    text: "Download config.toml"
+                                },
+                                {
+                                    type: "button",
+                                    id: "download-app",
+                                    class: "button primary",
+                                    onclick: () => {
+                                        window.location.href = '/download/app.toml'; // Lien pour télécharger app.toml
+                                    },
+                                    icon: "file_download",
+                                    text: "Download app.toml"
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        type: "content",
+                        icon: "file_download", // Icône pour le contenu de téléchargement de genesis.json
+                        title: "Download Genesis File",
+                        content: [
+                            {
+                                type: "button",
+                                id: "download-genesis",
+                                class: "button primary",
+                                onclick: () => {
+                                    window.location.href = '/download/genesis.json'; // Lien pour télécharger genesis.json
+                                },
+                                icon: "file_download",
+                                text: "Download genesis.json"
+                            }
+                        ]
+                    }
+                ];
+
+                // Utilisation de buildDisplay pour créer le contenu
+                const targetElement = document.getElementById('reinitialize-content'); // Assurez-vous d'avoir un conteneur avec cet ID
+                buildDisplay(displayRepresentation, targetElement);
                 document.querySelectorAll('.main-content')[0].style.display = '';
             }
 
@@ -102,6 +124,7 @@
             });
 
         </script>
+        <script src="js/side-bar.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>

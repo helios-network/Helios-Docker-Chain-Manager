@@ -363,9 +363,30 @@ button:disabled {
     margin-bottom: 2rem;
 }
 
+.button-group.grp1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.button-group.grp2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
 .button-group.grp3 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.button-group.grp4 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 1rem;
     margin-bottom: 2rem;
 }
@@ -1055,7 +1076,7 @@ button:disabled {
     text-decoration: none;
 }
 
-.sidebar-button:hover {
+.sidebar-button:hover, .sidebar-button.selected {
     background: rgba(255, 255, 255, 0.1);
     color: #FFFFFF;
     transform: translateY(-2px);
@@ -1136,7 +1157,7 @@ button:disabled {
         right: -1rem;
     }
 
-    .button-group, .button-group.grp3 {
+    .button-group, .button-group.grp2, .button-group.grp3, .button-group.grp4 {
         grid-template-columns: 1fr;
     }
 

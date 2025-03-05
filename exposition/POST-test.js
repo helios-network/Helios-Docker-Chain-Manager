@@ -1,5 +1,5 @@
 const test = (app, environement) => {
-    app.get('/test', async (req, res) => {
+    app.post('/test', async (req, res) => {
 
         let data = {};
 

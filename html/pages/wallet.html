@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <title>Helios Node</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="sidebar"></div>
+        <div class="main-content" style="display: none">
+            <div class="container">
+                <div id="wallet-container" class="grid-container-one">
+
+                </div>
+            </div>
+        </div>
+        <script>
+            let password = window.localStorage.getItem("access-code");
+
+            const main = async () => {
+
+                if (password == undefined) {
+                    window.location = '/';
+                    return ;
+                }
+                if (!(await isSetup())) {
+                    window.location = '/setup';
+                    return ;
+                }
+                displaySideBar();
+                document.querySelectorAll('.main-content')[0].style.display = '';
+
+                // Exemple de displayRepresentation pour la page "wallet"
+                const displayRepresentation = [
+                    {
+                        type: "content",
+                        icon: "wallet", // Icône pour le contenu
+                        title: "Wallet",
+                        badge: { icon: "account_balance_wallet", value: "Balance: 0.00 ETH" }, // Badge pour la balance
+                        content: [
+                            {
+                                type: "address",
+                                address: "0x1234567890abcdef1234567890abcdef12345678", // Adresse à afficher
+                            },
+                            {
+                                type: "text",
+                                text: "Balance: 0.00 ETH", // Affichage de la balance
+                                align: "left" // Alignement à gauche
+                            },
+                            {
+                                type: "list",
+                                listStyleType: 'none',
+                                horizontal: true,
+                                justifyContent: 'center',
+                                items: [
+                                    {
+                                        type: "iconButton",
+                                        icon: "swap_horiz", // Icône pour le bouton swap
+                                        text: "Swap"
+                                    },
+                                    {
+                                        type: "iconButton",
+                                        icon: "send", // Icône pour le bouton send
+                                        text: "Send"
+                                    },
+                                    {
+                                        type: "iconButton",
+                                        icon: "link", // Icône pour le bouton bridge
+                                        text: "Bridge"
+                                    },
+                                    {
+                                        type: "iconButton",
+                                        icon: "arrow_forward", // Icône pour le bouton receive
+                                        text: "Receive"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ];
+
+                // Utilisation de buildDisplay pour créer le contenu
+                const targetElement = document.getElementById('wallet-container'); // Assurez-vous d'avoir un conteneur avec cet ID
+                buildDisplay(displayRepresentation, targetElement);
+            }
+
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
+            });
+
+        </script>
+        <script src="js/side-bar.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    </body>
+</html>

@@ -15,8 +15,8 @@ const environement = environementLoader.load();
 const app = express();
 app.use(express.json()) //Notice express.json middleware
 corsUtils.setCors(app, ['*']);
-middlewares.asFile(app, ['favicon.png', 'favicon.ico', 'logo.png', 'icon.png', 'style.css', 'js/utils.js', 'js/api.js']);
-middlewares.asPageFile(app, [{ file: 'login', path: '/' }, 'login', 'setup', 'status', 'validator', 'settings', 'eth-stats', 'hyperions', 'ibc-relayers']);
+middlewares.asFile(app, ['favicon.png', 'favicon.ico', 'logo.png', 'icon.png', 'style.css', 'js/utils.js', 'js/api.js', 'js/side-bar.js']);
+middlewares.asPageFile(app, [{ file: 'login', path: '/' }, 'login', 'setup', 'status', 'validator', 'settings', 'eth-stats', 'wallet', 'hyperions', 'ibc-relayers']);
 middlewares.auth(app, environement, './html/pages/404.html', 'access-code', []);
 middlewares.setHeaders(app, [
   ['Access-Control-Allow-Origin', '*'],

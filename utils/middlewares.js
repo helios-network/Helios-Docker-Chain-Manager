@@ -87,6 +87,13 @@ module.exports = {
                 }
                 // end auth
             }
+
+            if (!app._router.stack.some(layer => 
+                layer.route && 
+                layer.route.path === req.path)) {
+                res.send((fs.readFileSync(notFounHtmlFilePath)).toString());
+                return ;
+            }
             next();
         });
     },

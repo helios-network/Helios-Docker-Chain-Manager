@@ -2,48 +2,18 @@
     <head>
         <title>Helios Node</title>
         <link rel="icon" type="image/png" href="favicon.png">
-        <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-        <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div class="sidebar">
-            <div class="sidebar-logo">
-                <img src="./logo.png" alt="Logo">
-            </div>
-            <div class="sidebar-logo-mobile">
-                <img src="./icon.png" alt="Logo">
-            </div>
-            <a href="status" class="sidebar-button" title="Home">
-                <i class="material-icons">home</i>
-                <span>Node</span>
-            </a>
-            <a href="validator" class="sidebar-button mt-1" title="Validator">
-                <i class="material-icons">how_to_reg</i>
-                <span>Validator</span>
-            </a>
-            <a href="settings" class="sidebar-button mt-1" title="Settings">
-                <i class="material-icons">settings</i>
-                <span>Settings</span>
-            </a>
-            <a href="eth-stats" class="sidebar-button mt-1" title="EthStats">
-                <i class="material-icons">analytics</i>
-                <span>EthStats</span>
-            </a>
-            <a href="hyperions" class="sidebar-button mt-1" title="Hyperions">
-                <i class="material-icons">blur_on</i>
-                <span>Hyperions</span>
-            </a>
-            <a href="ibc-relayers" class="sidebar-button mt-1" title="IBC Relayers">
-                <i class="material-icons">multiple_stop</i>
-                <span>IBC Relayers</span>
-            </a>
-        </div>
+        <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
-            <div class="container">
+
+            <div id="validator-form-container"></div>
+            
+            <div id="validator-info-container" class="container">
                 <div class="section">
                     <div class="section-header">
                         <div class="section-title">
@@ -57,7 +27,21 @@
                 </div>
             </div>
 
-            <div class="container">
+            <div id="validator-commission-info-container" class="container">
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            <i class="material-icons">how_to_reg</i>
+                            <span>My Commissions</span>
+                        </div>
+                    </div>
+                    <div class="section-content" id="commissions-info">
+                        <!-- Les informations de delagation seront affichées ici -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="validator-delegation-info-container" class="container">
                 <div class="section">
                     <div class="section-header">
                         <div class="section-title">
@@ -84,12 +68,27 @@
                     window.location = '/setup';
                     return ;
                 }
+                displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
 
                 const validatorAndHisDelegation = await apiGetValidatorAndHisDelegation();
-                displayValidatorInfo(validatorAndHisDelegation.validator);
-                displayDelegationInfo(validatorAndHisDelegation.delegation);
-                console.log(validatorAndHisDelegation);
+
+                if (validatorAndHisDelegation == undefined) {
+                    console.log('displayCreateValidator')
+                    document.getElementById('validator-form-container').style.display = '';
+                    document.getElementById('validator-info-container').style.display = 'none';
+                    document.getElementById('validator-commission-info-container').style.display = 'none';
+                    document.getElementById('validator-delegation-info-container').style.display = 'none';
+                    displayCreateValidator();
+                } else {
+                    document.getElementById('validator-form-container').style.display = 'none';
+                    document.getElementById('validator-info-container').style.display = '';
+                    document.getElementById('validator-commission-info-container').style.display = '';
+                    document.getElementById('validator-delegation-info-container').style.display = '';
+                    displayValidatorInfo(validatorAndHisDelegation.validator);
+                    displayDelegationInfo(validatorAndHisDelegation.delegation);
+                    displayCommissionInfo(validatorAndHisDelegation.commission);
+                }
             }
 
             const unbond = async () => {
@@ -111,6 +110,164 @@
                 })
                 await apiValidatorClaim(walletPassword)
                 window.location.reload();
+            }
+
+            const claimCommission = async () => {
+                const walletPassword = await new Promise((resolve) => {
+                    try {
+                        pw_prompt({
+                            lm: "Please enter your wallet password:", 
+                            callback: function(password) {
+                                resolve(password);
+                            }
+                        });
+                    } catch (e) {
+                        resolve('');
+                    }
+                })
+                await apiValidatorClaimCommission(walletPassword)
+                window.location.reload();
+            }
+
+            const displayCreateValidator = () => {
+                const displayRepresentation = [
+                    {
+                        type: "content",
+                        title: "Create Validator",
+                        icon: "how_to_reg",
+                        content: [
+                            {
+                                type: "form-group",
+                                id: "validator-description",
+                                label: "Validator Description",
+                                controls: [
+                                    {
+                                        id: "validator-moniker",
+                                        label: "Moniker",
+                                        type: "text",
+                                        placeholder: "Enter validator moniker"
+                                    },
+                                    {
+                                        id: "validator-identity",
+                                        label: "Identity",
+                                        type: "text",
+                                        placeholder: "Enter validator identity"
+                                    },
+                                    {
+                                        id: "validator-website",
+                                        label: "Website",
+                                        type: "text",
+                                        placeholder: "Enter validator website"
+                                    },
+                                    {
+                                        id: "validator-security-contact",
+                                        label: "Security Contact",
+                                        type: "text",
+                                        placeholder: "Enter security contact"
+                                    },
+                                    {
+                                        id: "validator-details",
+                                        label: "Details",
+                                        type: "text",
+                                        placeholder: "Enter additional details"
+                                    }
+                                ]
+                            },
+                            {
+                                type: "form-group",
+                                id: "commission-rates",
+                                label: "Commission Rates",
+                                controls: [
+                                    {
+                                        id: "commission-rate",
+                                        label: "Rate",
+                                        type: "number",
+                                        placeholder: "Enter commission rate"
+                                    },
+                                    {
+                                        id: "commission-max-rate",
+                                        label: "Max Rate",
+                                        type: "number",
+                                        placeholder: "Enter maximum commission rate"
+                                    },
+                                    {
+                                        id: "commission-max-change-rate",
+                                        label: "Max Change Rate",
+                                        type: "number",
+                                        placeholder: "Enter maximum change rate"
+                                    }
+                                ]
+                            },
+                            {
+                                type: "form-group",
+                                id: "validator-settings",
+                                label: "Validator Settings",
+                                controls: [
+                                    {
+                                        id: "min-self-delegation",
+                                        label: "Min Self Delegation",
+                                        type: "number",
+                                        placeholder: "Enter minimum self delegation"
+                                    },
+                                    {
+                                        id: "validator-address",
+                                        label: "Validator Address",
+                                        type: "text",
+                                        placeholder: "Enter validator address"
+                                    },
+                                    {
+                                        id: "pubkey",
+                                        label: "Public Key",
+                                        type: "text",
+                                        placeholder: "Enter public key"
+                                    },
+                                    {
+                                        id: "value",
+                                        label: "Value",
+                                        type: "number",
+                                        placeholder: "Enter value"
+                                    }
+                                ]
+                            },
+                            {
+                                type: "button",
+                                class: "primary",
+                                text: "Create Validator",
+                                onclick: async () => {
+                                    // Récupérer les valeurs des champs et appeler la fonction createValidator
+                                    const description = {
+                                        moniker: document.getElementById('validator-moniker').value,
+                                        identity: document.getElementById('validator-identity').value,
+                                        website: document.getElementById('validator-website').value,
+                                        securityContact: document.getElementById('validator-security-contact').value,
+                                        details: document.getElementById('validator-details').value
+                                    };
+
+                                    const commissionRates = {
+                                        rate: document.getElementById('commission-rate').value,
+                                        maxRate: document.getElementById('commission-max-rate').value,
+                                        maxChangeRate: document.getElementById('commission-max-change-rate').value
+                                    };
+
+                                    const minSelfDelegation = document.getElementById('min-self-delegation').value;
+                                    const validatorAddress = document.getElementById('validator-address').value;
+                                    const pubkey = document.getElementById('pubkey').value;
+                                    const value = document.getElementById('value').value;
+
+                                    // Appeler la fonction createValidator ici
+                                    const success = await createValidator(description, commissionRates, minSelfDelegation, validatorAddress, pubkey, value);
+                                    if (success) {
+                                        alert("Validator created successfully!");
+                                    } else {
+                                        alert("Failed to create validator.");
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ];
+
+                buildDisplay(displayRepresentation, document.getElementById('validator-form-container'));
             }
 
             const displayValidatorInfo = (validator) => {
@@ -140,23 +297,31 @@
             const displayDelegationInfo = (delegation) => {
                 const delegationInfoDiv = document.getElementById('delegation-info');
 
-                let html = '';
+                const displayedDelegation = buildDisplay([
+                    { key: "raw", type: "raw", nbr: 1, content: [] },
+                    { key: "rewards", type: "text", text: `Rewards: ${Web3.utils.fromWei(delegation.rewards.amount, 'ether')} ${delegation.rewards.denom}` },
+                    { type: "raw", nbr: 1, content: [{ type: "button", text: 'Claim', onclick: async () => {
+                        await claim();
+                    } }] }
+                ], delegationInfoDiv);
 
-                html += delegation.assets.map(asset => {
-                    return `<p><strong>${asset.symbol}:</strong>${Web3.utils.fromWei(asset.amount, 'ether')}</p>`;
-                }).join('');
+                delegation.assets.forEach(asset => {
+                    buildDisplay([{ key: "commission", type: "text", text: `${Web3.utils.fromWei(asset.amount, 'ether')} ${asset.symbol}` }], displayedDelegation.raw.element);
+                });
+            }
 
-                html += `<p><strong>Rewards:</strong> ${Web3.utils.fromWei(delegation.rewards.amount, 'ether')} ${delegation.rewards.denom}</p>`;
+            const displayCommissionInfo = (commission) => {
+                const commissionInfoDiv = document.getElementById('commissions-info');
 
-                html += `
-                    <div class="button-group grp3">
-                        <button id="unbond" class="button primary" onclick="claim()">
-                            <span>Claim</span>
-                        </button>
-                    </div>
-                `;
+                const displayedCommission = buildDisplay([
+                    { key: "commission", type: "text", text: `Loading ...` },
+                    { type: "raw", nbr: 1, content: [{ type: "button", text: 'Claim', onclick: async () => {
+                        await claimCommission();
+                    } }] }
+                ], commissionInfoDiv);
 
-                delegationInfoDiv.innerHTML = html;
+                const amount = Web3.utils.fromWei(commission.amount, 'ether');
+                displayedCommission.commission.element.innerText = `${amount} ${commission.denom}`;
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
@@ -164,6 +329,7 @@
             });
 
         </script>
+        <script src="js/side-bar.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
