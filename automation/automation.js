@@ -15,6 +15,44 @@ const actionSetup = async (app, environement, action) => {
     }
 }
 
+const actionMultiTransfer = async (app, environement, action) => {
+    try {
+        const recipientAddresses = action.to;
+        const amountInEther = action.value;
+
+        const RPC_URL = 'http://localhost:8545';
+        const provider = new ethers.JsonRpcProvider(RPC_URL);
+        const wallet = new ethers.Wallet(environement.walletPrivateKey, provider);
+
+        // Convertir le montant en wei
+        const amountInWei = ethers.parseEther(amountInEther);
+
+        const transactionResponses = await Promise.all(recipientAddresses.map(recipientAddress => {
+            // Créer la transaction
+            const tx = {
+                to: recipientAddress,
+                value: amountInWei,
+            };
+
+            return wallet.sendTransaction(tx);
+        }));
+
+        transactionResponses.forEach(transactionResponse => {
+            console.log('Transaction sent:', transactionResponse.hash);
+        })
+
+        const transactionResponsesWaited = await Promise.all(transactionResponses.map(transactionResponse => {
+            return transactionResponse.wait();
+        }));
+
+        transactionResponsesWaited.forEach(transactionReceipt => {
+            console.log('Transaction mined in block:', transactionReceipt.blockNumber);
+        })
+    } catch (error) {
+        console.error('Error sending Multi transaction:', error);
+    }
+}
+
 const actionTransfer = async (app, environement, action) => {
     try {
         const recipientAddress = action.to;
@@ -50,6 +88,9 @@ const doAction = async (app, environement, action) => {
             break ;
         case "transfer":
             await actionTransfer(app, environement, action);
+            break ;
+        case "multiTransfer":
+            await actionMultiTransfer(app, environement, action);
             break ;
         case "wait": // nothing
             break ;
