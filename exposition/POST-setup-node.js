@@ -22,6 +22,7 @@ const install = async (keyStoreNode, passwordCrypted, moniker, chainId, fromGene
 
     fs.writeFileSync(`./node/id`, jsonKeyStoreNode.address);
     fs.writeFileSync(`./node/keystore`, keyStoreNode);
+    fs.writeFileSync(`./node/moniker`, moniker);
 
     const homedir = os.homedir();
 

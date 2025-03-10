@@ -111,12 +111,11 @@ const validatorCreate = (app, environement) => {
             const passwordCrypted = req.body['password'];
             const address = await app.node.getAddress();
 
-            const moniker = req.body['moniker'];
-
             const RPC_URL = 'http://localhost:8545';
             const provider = new ethers.JsonRpcProvider(RPC_URL);
 
             const keyStoreNode = fs.readFileSync(`./node/keystore`).toString();
+            const nodeMoniker = fs.readFileSync(`./node/moniker`).toString();
 
             const privateKey = await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)));
             const wallet = new ethers.Wallet(privateKey, provider);
@@ -125,7 +124,7 @@ const validatorCreate = (app, environement) => {
             console.log("wallet : ", wallet.address)
 
             const description = {
-              moniker:          moniker ?? "MyNode",
+              moniker:          nodeMoniker,
               identity:         "",
               website:          "https://mynode.example",
               securityContact:  "mynode@example.com",

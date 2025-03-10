@@ -129,7 +129,7 @@
                 window.location.reload();
             }
 
-            const createValidator = async (monikerName) => {
+            const createValidator = async () => {
                 const walletPassword = await new Promise((resolve) => {
                     try {
                         pw_prompt({
@@ -142,9 +142,7 @@
                         resolve('');
                     }
                 })
-                await apiValidatorCreate(walletPassword, {
-                    moniker: monikerName
-                })
+                await apiValidatorCreate(walletPassword)
                 window.location.reload();
             }
 
@@ -156,19 +154,19 @@
                         title: "Create Validator",
                         icon: "how_to_reg",
                         content: [
-                            {
-                                type: "form-group",
-                                id: "validator-description",
-                                label: "Validator Description",
-                                controls: [
-                                    {
-                                        key: "moniker",
-                                        label: "Moniker",
-                                        type: "text",
-                                        placeholder: "Enter validator moniker"
-                                    }
-                                ]
-                            },
+                            // {
+                            //     type: "form-group",
+                            //     id: "validator-description",
+                            //     label: "Validator Description",
+                            //     controls: [
+                            //         {
+                            //             key: "moniker",
+                            //             label: "Moniker",
+                            //             type: "text",
+                            //             placeholder: "Enter validator moniker"
+                            //         }
+                            //     ]
+                            // },
                             // {
                             //     type: "form-group",
                             //     id: "commission-rates",
@@ -230,12 +228,7 @@
                                 class: "primary",
                                 text: "Create Validator",
                                 onclick: async () => {
-                                    const success = await createValidator(displayedValidator.view.moniker.element.value);
-                                    if (success) {
-                                        alert("Validator created successfully!");
-                                    } else {
-                                        alert("Failed to create validator.");
-                                    }
+                                    await createValidator();
                                 }
                             }
                         ]
