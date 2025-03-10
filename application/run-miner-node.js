@@ -19,7 +19,7 @@ const runMinerNode = async (app, environement) => {
         [
             'start',
             '--chain-id=4242',
-            '--log_level=info',
+            '--log_level=debug',
             `--rpc.laddr=${rpcLAddr}`,
             '--minimum-gas-prices=0.1helios',
             '--grpc.enable=true',
