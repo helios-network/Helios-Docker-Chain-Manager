@@ -20,34 +20,13 @@ const actionMultiTransfer = async (app, environement, action) => {
         const recipientAddresses = action.to;
         const amountInEther = action.value;
 
-        const RPC_URL = 'http://localhost:8545';
-        const provider = new ethers.JsonRpcProvider(RPC_URL);
-        const wallet = new ethers.Wallet(environement.walletPrivateKey, provider);
-
-        // Convertir le montant en wei
-        const amountInWei = ethers.parseEther(amountInEther);
-
-        const transactionResponses = await Promise.all(recipientAddresses.map(recipientAddress => {
-            // Créer la transaction
-            const tx = {
+        for (let recipientAddress of recipientAddresses) {
+            await actionTransfer(app, environement, {
                 to: recipientAddress,
-                value: amountInWei,
-            };
-
-            return wallet.sendTransaction(tx);
-        }));
-
-        transactionResponses.forEach(transactionResponse => {
-            console.log('Transaction sent:', transactionResponse.hash);
-        })
-
-        const transactionResponsesWaited = await Promise.all(transactionResponses.map(transactionResponse => {
-            return transactionResponse.wait();
-        }));
-
-        transactionResponsesWaited.forEach(transactionReceipt => {
-            console.log('Transaction mined in block:', transactionReceipt.blockNumber);
-        })
+                value: amountInEther
+            });
+        }
+        
     } catch (error) {
         console.error('Error sending Multi transaction:', error);
     }
