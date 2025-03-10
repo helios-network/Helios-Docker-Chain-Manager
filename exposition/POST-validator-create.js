@@ -140,8 +140,11 @@ const validatorCreate = (app, environement) => {
 
             const minSelfDelegation = "1";
 
-            const pubkey = (await execWrapper("heliades tendermint show-validator")).trim()
+            const pubkeyJson = (await execWrapper("heliades tendermint show-validator")).trim()
+            const pubkey = JSON.parse(pubkeyJson).key;
             const value             = ethers.parseUnits("10", 18);
+
+            console.log('pubkey', pubkey);
 
             const contract = new ethers.Contract('0x0000000000000000000000000000000000000800', createValidatorAbi, wallet);
             const tx = await contract.createValidator(
