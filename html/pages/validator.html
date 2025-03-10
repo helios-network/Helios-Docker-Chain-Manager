@@ -149,6 +149,7 @@
             }
 
             const displayCreateValidator = () => {
+                let displayedValidator = {};
                 const displayRepresentation = [
                     {
                         type: "content",
@@ -229,7 +230,7 @@
                                 class: "primary",
                                 text: "Create Validator",
                                 onclick: async () => {
-                                    const success = await createValidator(displayRepresentation.moniker.element.value);
+                                    const success = await createValidator(displayedValidator.view.moniker.element.value);
                                     if (success) {
                                         alert("Validator created successfully!");
                                     } else {
@@ -240,7 +241,7 @@
                         ]
                     }
                 ];
-                buildDisplay(displayRepresentation, document.getElementById('validator-form-container'));
+                displayedValidator.view = buildDisplay(displayRepresentation, document.getElementById('validator-form-container'));
             }
 
             const displayValidatorInfo = (validator) => {
