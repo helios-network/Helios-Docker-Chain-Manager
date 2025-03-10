@@ -269,6 +269,10 @@
             }
 
             const displayDelegationInfo = (delegation) => {
+
+                if (delegation == undefined || delegation.rewards == undefined) {
+                    return ;
+                }
                 const delegationInfoDiv = document.getElementById('delegation-info');
 
                 const displayedDelegation = buildDisplay([
@@ -285,6 +289,9 @@
             }
 
             const displayCommissionInfo = (commission) => {
+                if (commission == undefined || commission.amount == undefined) {
+                    return ;
+                }
                 const commissionInfoDiv = document.getElementById('commissions-info');
 
                 const displayedCommission = buildDisplay([
