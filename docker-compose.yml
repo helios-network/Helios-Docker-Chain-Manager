@@ -15,6 +15,9 @@ services:
     networks:
       - heliosnet
     command: npm run prod
+    environment:
+      PASSWORD: test
+      MANAGER_ACTIONS: '[{ "type": "setup", "walletPrivateKey": "da8b1967d390929c785c4da297682b55a2ee4fc02eceae1a1b2bf364d6b75288", "walletPassword": "test", "moniker": "node1", "chainId": 4242 }]'
 
   node2:
     build: .
@@ -30,6 +33,52 @@ services:
     networks:
       - heliosnet
     command: npm run prod
+
+  node3:
+    build: .
+    container_name: node3
+    ports:
+      - "8082:8080"
+      - "8547:8545"
+      - "1319:1317"
+      - "28657:26657"
+      - "28656:26656"
+      - "12337:10337"
+      - "9290:9090"
+    networks:
+      - heliosnet
+    command: npm run prod
+
+  node4:
+    build: .
+    container_name: node4
+    ports:
+      - "8083:8080"
+      - "8548:8545"
+      - "1320:1317"
+      - "29657:26657"
+      - "29656:26656"
+      - "13337:10337"
+      - "9390:9090"
+    networks:
+      - heliosnet
+    command: npm run prod
+
+  node5:
+    build: .
+    container_name: node5
+    ports:
+      - "8084:8080"
+      - "8549:8545"
+      - "1321:1317"
+      - "30657:26657"
+      - "30656:26656"
+      - "14337:10337"
+      - "9490:9090"
+    networks:
+      - heliosnet
+    command: npm run prod
+  
 
 networks:
   heliosnet:
