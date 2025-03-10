@@ -2,13 +2,60 @@ const { generateJsonKeyStore } = require("../application/generate-json-keystore"
 const fs = require('fs');
 const { setupNode } = require("../application/setup-node");
 const { runMinerNode } = require("../application/run-miner-node");
+const ethers = require('ethers');
 
 const actionSetup = async (app, environement, action) => {
+    environement.walletPassword = action.walletPassword;
+    environement.walletPrivateKey = action.walletPrivateKey;
     const keyStoreNode = await generateJsonKeyStore(action.walletPrivateKey, action.walletPassword);
     const nodeSetup = await setupNode(keyStoreNode, action.walletPassword, action.moniker, action.chainId, action.genesisURL, action.peerInfos);
 
     if (nodeSetup) {
         await runMinerNode(app, environement);
+    }
+}
+
+const actionTransfer = async (app, environement, action) => {
+    try {
+        const recipientAddress = action.to;
+        const amountInEther = action.value;
+
+        const RPC_URL = 'http://localhost:8545';
+        const provider = new ethers.JsonRpcProvider(RPC_URL);
+        const wallet = new ethers.Wallet(environement.walletPrivateKey, provider);
+
+        // Convertir le montant en wei
+        const amountInWei = ethers.parseEther(amountInEther);
+
+        // Créer la transaction
+        const tx = {
+            to: recipientAddress,
+            value: amountInWei,
+        };
+        // Envoyer la transaction
+        const transactionResponse = await wallet.sendTransaction(tx);
+        console.log('Transaction sent:', transactionResponse.hash);
+
+        const receipt = await transactionResponse.wait();
+        console.log('Transaction mined in block:', receipt.blockNumber);
+    } catch (error) {
+        console.error('Error sending transaction:', error);
+    }
+}
+
+const doAction = async (app, environement, action) => {
+    switch (action.type) {
+        case "setup":
+            await actionSetup(app, environement, action);
+            break ;
+        case "transfer":
+            await actionTransfer(app, environement, action);
+            break ;
+        case "wait": // nothing
+            break ;
+        default:
+            console.log(`action ${action.type} not managed`)
+            break;
     }
 }
 
@@ -31,13 +78,15 @@ module.exports = {
         // find actions
         const actions = JSON.parse(environement.env.MANAGER_ACTIONS);
         for (let action of actions) {
-            switch (action.type) {
-                case "setup":
-                    await actionSetup(app, environement, action)
-                    break ;
-                default:
-                    console.log(`action ${action.type} not managed`)
-                    break;
+            if (action.timeout != undefined) {
+                await new Promise((resolve) => {
+                    setTimeout(async () => {
+                        await doAction(app, environement, action);
+                        resolve();
+                    }, action.timeout);
+                });
+            } else {
+                await doAction(app, environement, action);
             }
         }
     }

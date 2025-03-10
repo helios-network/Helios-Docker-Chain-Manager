@@ -18,7 +18,7 @@ services:
     command: npm run prod
     environment:
       PASSWORD: test
-      MANAGER_ACTIONS: '[{ "type": "setup", "walletPrivateKey": "da8b1967d390929c785c4da297682b55a2ee4fc02eceae1a1b2bf364d6b75288", "walletPassword": "test", "moniker": "node1", "chainId": 4242 }]'
+      MANAGER_ACTIONS: '[{ "type": "setup", "walletPrivateKey": "da8b1967d390929c785c4da297682b55a2ee4fc02eceae1a1b2bf364d6b75288", "walletPassword": "test", "moniker": "node1", "chainId": 4242 }, { "type": "transfer", "timeout": 3000, "to": "0x17267eB1FEC301848d4B5140eDDCFC48945427Ab", "value": "500" }]'
 
   node2:
     build: .
