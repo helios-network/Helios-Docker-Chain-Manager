@@ -129,6 +129,25 @@
                 window.location.reload();
             }
 
+            const createValidator = async (monikerName) => {
+                const walletPassword = await new Promise((resolve) => {
+                    try {
+                        pw_prompt({
+                            lm: "Please enter your wallet password:", 
+                            callback: function(password) {
+                                resolve(password);
+                            }
+                        });
+                    } catch (e) {
+                        resolve('');
+                    }
+                })
+                await apiValidatorCreate(walletPassword, {
+                    moniker: monikerName
+                })
+                window.location.reload();
+            }
+
             const displayCreateValidator = () => {
                 const displayRepresentation = [
                     {
@@ -142,120 +161,75 @@
                                 label: "Validator Description",
                                 controls: [
                                     {
-                                        id: "validator-moniker",
+                                        id: "moniker",
                                         label: "Moniker",
                                         type: "text",
                                         placeholder: "Enter validator moniker"
-                                    },
-                                    {
-                                        id: "validator-identity",
-                                        label: "Identity",
-                                        type: "text",
-                                        placeholder: "Enter validator identity"
-                                    },
-                                    {
-                                        id: "validator-website",
-                                        label: "Website",
-                                        type: "text",
-                                        placeholder: "Enter validator website"
-                                    },
-                                    {
-                                        id: "validator-security-contact",
-                                        label: "Security Contact",
-                                        type: "text",
-                                        placeholder: "Enter security contact"
-                                    },
-                                    {
-                                        id: "validator-details",
-                                        label: "Details",
-                                        type: "text",
-                                        placeholder: "Enter additional details"
                                     }
                                 ]
                             },
-                            {
-                                type: "form-group",
-                                id: "commission-rates",
-                                label: "Commission Rates",
-                                controls: [
-                                    {
-                                        id: "commission-rate",
-                                        label: "Rate",
-                                        type: "number",
-                                        placeholder: "Enter commission rate"
-                                    },
-                                    {
-                                        id: "commission-max-rate",
-                                        label: "Max Rate",
-                                        type: "number",
-                                        placeholder: "Enter maximum commission rate"
-                                    },
-                                    {
-                                        id: "commission-max-change-rate",
-                                        label: "Max Change Rate",
-                                        type: "number",
-                                        placeholder: "Enter maximum change rate"
-                                    }
-                                ]
-                            },
-                            {
-                                type: "form-group",
-                                id: "validator-settings",
-                                label: "Validator Settings",
-                                controls: [
-                                    {
-                                        id: "min-self-delegation",
-                                        label: "Min Self Delegation",
-                                        type: "number",
-                                        placeholder: "Enter minimum self delegation"
-                                    },
-                                    {
-                                        id: "validator-address",
-                                        label: "Validator Address",
-                                        type: "text",
-                                        placeholder: "Enter validator address"
-                                    },
-                                    {
-                                        id: "pubkey",
-                                        label: "Public Key",
-                                        type: "text",
-                                        placeholder: "Enter public key"
-                                    },
-                                    {
-                                        id: "value",
-                                        label: "Value",
-                                        type: "number",
-                                        placeholder: "Enter value"
-                                    }
-                                ]
-                            },
+                            // {
+                            //     type: "form-group",
+                            //     id: "commission-rates",
+                            //     label: "Commission Rates",
+                            //     controls: [
+                            //         {
+                            //             id: "commission-rate",
+                            //             label: "Rate",
+                            //             type: "number",
+                            //             placeholder: "Enter commission rate"
+                            //         },
+                            //         {
+                            //             id: "commission-max-rate",
+                            //             label: "Max Rate",
+                            //             type: "number",
+                            //             placeholder: "Enter maximum commission rate"
+                            //         },
+                            //         {
+                            //             id: "commission-max-change-rate",
+                            //             label: "Max Change Rate",
+                            //             type: "number",
+                            //             placeholder: "Enter maximum change rate"
+                            //         }
+                            //     ]
+                            // },
+                            // {
+                            //     type: "form-group",
+                            //     id: "validator-settings",
+                            //     label: "Validator Settings",
+                            //     controls: [
+                            //         {
+                            //             id: "min-self-delegation",
+                            //             label: "Min Self Delegation",
+                            //             type: "number",
+                            //             placeholder: "Enter minimum self delegation"
+                            //         },
+                            //         {
+                            //             id: "validator-address",
+                            //             label: "Validator Address",
+                            //             type: "text",
+                            //             placeholder: "Enter validator address"
+                            //         },
+                            //         {
+                            //             id: "pubkey",
+                            //             label: "Public Key",
+                            //             type: "text",
+                            //             placeholder: "Enter public key"
+                            //         },
+                            //         {
+                            //             id: "value",
+                            //             label: "Value",
+                            //             type: "number",
+                            //             placeholder: "Enter value"
+                            //         }
+                            //     ]
+                            // },
                             {
                                 type: "button",
                                 class: "primary",
                                 text: "Create Validator",
                                 onclick: async () => {
-                                    // Récupérer les valeurs des champs et appeler la fonction createValidator
-                                    const description = {
-                                        moniker: document.getElementById('validator-moniker').value,
-                                        identity: document.getElementById('validator-identity').value,
-                                        website: document.getElementById('validator-website').value,
-                                        securityContact: document.getElementById('validator-security-contact').value,
-                                        details: document.getElementById('validator-details').value
-                                    };
-
-                                    const commissionRates = {
-                                        rate: document.getElementById('commission-rate').value,
-                                        maxRate: document.getElementById('commission-max-rate').value,
-                                        maxChangeRate: document.getElementById('commission-max-change-rate').value
-                                    };
-
-                                    const minSelfDelegation = document.getElementById('min-self-delegation').value;
-                                    const validatorAddress = document.getElementById('validator-address').value;
-                                    const pubkey = document.getElementById('pubkey').value;
-                                    const value = document.getElementById('value').value;
-
-                                    // Appeler la fonction createValidator ici
-                                    const success = await createValidator(description, commissionRates, minSelfDelegation, validatorAddress, pubkey, value);
+                                    const success = await createValidator(displayRepresentation.moniker.element.value);
                                     if (success) {
                                         alert("Validator created successfully!");
                                     } else {
@@ -266,7 +240,6 @@
                         ]
                     }
                 ];
-
                 buildDisplay(displayRepresentation, document.getElementById('validator-form-container'));
             }
 
