@@ -16,7 +16,7 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
     fs.writeFileSync(`./node/id`, jsonKeyStoreNode.address);
     fs.writeFileSync(`./node/keystore`, keyStoreNode);
     fs.writeFileSync(`./node/moniker`, moniker);
-    fs.writeFileSync('./node/chainId', chainId);
+    fs.writeFileSync('./node/chainId', `${chainId}`);
 
     let genesisContent = undefined;
     if (genesisURL != undefined) {
