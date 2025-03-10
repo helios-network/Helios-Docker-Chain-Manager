@@ -3,12 +3,40 @@ const fs = require('fs');
 const { setupNode } = require("../application/setup-node");
 const { runMinerNode } = require("../application/run-miner-node");
 const ethers = require('ethers');
+const { getExternalNodeGenesisAndStatus } = require("../application/get-external-node-genesis-and-status");
 
 const actionSetup = async (app, environement, action) => {
     environement.walletPassword = action.walletPassword;
     environement.walletPrivateKey = action.walletPrivateKey;
     const keyStoreNode = await generateJsonKeyStore(action.walletPrivateKey, action.walletPassword);
     const nodeSetup = await setupNode(keyStoreNode, action.walletPassword, action.moniker, action.chainId, action.genesisURL, action.peerInfos);
+
+    if (nodeSetup) {
+        await runMinerNode(app, environement);
+    }
+}
+
+const actionSetupToPeer = async (app, environement, action) => {
+    environement.walletPassword = action.walletPassword;
+    environement.walletPrivateKey = action.walletPrivateKey;
+    const keyStoreNode = await generateJsonKeyStore(action.walletPrivateKey, action.walletPassword);
+    const peerIp = action.peerIp;
+    const peerGRPCPort = 26657;
+    const peerP2PPort = 26656;
+    const genesisAndStatus = await getExternalNodeGenesisAndStatus(peerIp, peerGRPCPort);
+
+    if (genesisAndStatus == undefined) {
+        console.log('Load genesisAndStatus failed');
+        return ;
+    }
+
+    const peerInfos = {
+        nodeP2PPort: peerP2PPort,
+        nodeId: genesisAndStatus.status.node_info.id,
+        nodeIP: peerIp
+    };
+
+    const nodeSetup = await setupNode(keyStoreNode, action.walletPassword, action.moniker, action.chainId, genesisAndStatus.genesisURL, peerInfos);
 
     if (nodeSetup) {
         await runMinerNode(app, environement);
@@ -64,6 +92,9 @@ const doAction = async (app, environement, action) => {
     switch (action.type) {
         case "setup":
             await actionSetup(app, environement, action);
+            break ;
+        case "setupToPeer":
+            await actionSetupToPeer(app, environement, action);
             break ;
         case "transfer":
             await actionTransfer(app, environement, action);

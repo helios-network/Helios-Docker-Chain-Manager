@@ -1,3 +1,5 @@
+const { getExternalNodeGenesisAndStatus } = require('../application/get-external-node-genesis-and-status');
+
 const fetchExternalNodeGenesis = (app, environement) => {
     app.post('/fetch-external-node-genesis', async (req, res) => {
         try {
@@ -6,35 +8,10 @@ const fetchExternalNodeGenesis = (app, environement) => {
 
             console.log(req.body)
 
-            const nodeGrpcURL = `http://${nodeIp}:${nodeGrpcPort}`;
+            const externalNodeGenesisAndStatus = await getExternalNodeGenesisAndStatus(nodeIp, nodeGrpcPort);
 
-            // new URL(nodeGrpcURL); // try format url
-
-            const responseGenesis = await fetch(`${nodeGrpcURL}/genesis-raw`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const genesis = await responseGenesis.json();
-
-            console.log(genesis)
-
-            const responseStatus = await fetch(`${nodeGrpcURL}/status`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            const status = (await responseStatus.json()).result;
-
-            console.log(status)
-
-            if (genesis.chain_id !== undefined) {
-                res.send({
-                    genesis: genesis,
-                    status: status
-                });
+            if (externalNodeGenesisAndStatus.genesis?.chain_id !== undefined) {
+                res.send(externalNodeGenesisAndStatus);
                 return ;
             }
             res.send(false);
