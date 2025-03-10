@@ -153,7 +153,11 @@ const validatorCreate = (app, environement) => {
               minSelfDelegation,
               wallet.address,
               pubkey,
-              value
+              {
+                gasPrice: 50000000000,
+                gasLimit: 500000,
+                value: value
+              }
             );
             console.log('Transaction envoyée, hash :', tx.hash);
 
