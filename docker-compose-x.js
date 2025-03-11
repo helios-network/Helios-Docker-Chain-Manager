@@ -51,7 +51,7 @@ const generateDockerCompose = (numNodes, walletsFile) => {
                 MANAGER_ACTIONS: JSON.stringify([
                     {
                         type: "setupToPeer",
-                        timeout: 20000,//randomBetween(10000, 100000),
+                        timeout: 20000 * (1 + Math.floor((i - 1) / 40)),//randomBetween(10000, 100000),
                         walletPrivateKey: privateKey,
                         walletPassword: "test",
                         moniker: nodeName,
