@@ -39,7 +39,7 @@ services:
       PRIVATE_KEY: 2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036
       ADDRESS: "0x17267eB1FEC301848d4B5140eDDCFC48945427Ab"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":10000,"walletPrivateKey":"2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036","walletPassword":"test","moniker":"node2","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":60000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036","walletPassword":"test","moniker":"node2","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node3:
     build: .
     container_name: node3
@@ -59,7 +59,7 @@ services:
       PRIVATE_KEY: 7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9
       ADDRESS: "0xD1cFBbB140972530A3798fe1Ba11312eB8C99582"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9","walletPassword":"test","moniker":"node3","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":70000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9","walletPassword":"test","moniker":"node3","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node4:
     build: .
     container_name: node4
@@ -79,7 +79,7 @@ services:
       PRIVATE_KEY: e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483
       ADDRESS: "0xc9728bFb36F8D2f9d39a5e7ce19AA11aF27dB440"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":30000,"walletPrivateKey":"e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483","walletPassword":"test","moniker":"node4","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":80000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483","walletPassword":"test","moniker":"node4","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node5:
     build: .
     container_name: node5
@@ -99,7 +99,7 @@ services:
       PRIVATE_KEY: 7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e
       ADDRESS: "0x5EB1275822495570f48b8E573431D217d5708197"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e","walletPassword":"test","moniker":"node5","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":90000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e","walletPassword":"test","moniker":"node5","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node6:
     build: .
     container_name: node6
@@ -119,7 +119,7 @@ services:
       PRIVATE_KEY: 4ff7912bf06fc260564b11d57241cd5469d12ae7e0681f4f8724e418130c85ed
       ADDRESS: "0xdBdfcb666Ab19AaF1A0EeA742EC58740F57905ea"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":50000,"walletPrivateKey":"4ff7912bf06fc260564b11d57241cd5469d12ae7e0681f4f8724e418130c85ed","walletPassword":"test","moniker":"node6","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":100000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"4ff7912bf06fc260564b11d57241cd5469d12ae7e0681f4f8724e418130c85ed","walletPassword":"test","moniker":"node6","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node7:
     build: .
     container_name: node7
@@ -139,7 +139,7 @@ services:
       PRIVATE_KEY: b70fb4c23e2b3829185b2347ab64855a59ed2ebf22bb346091a5182691dc38d2
       ADDRESS: "0x5D9b5ac406C18f5b492B5454fA2D59130440fc1A"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":60000,"walletPrivateKey":"b70fb4c23e2b3829185b2347ab64855a59ed2ebf22bb346091a5182691dc38d2","walletPassword":"test","moniker":"node7","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":110000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"b70fb4c23e2b3829185b2347ab64855a59ed2ebf22bb346091a5182691dc38d2","walletPassword":"test","moniker":"node7","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node8:
     build: .
     container_name: node8
@@ -159,7 +159,7 @@ services:
       PRIVATE_KEY: 20a7c5d756faded18935b90baa3b744bd97ecc132ad2b98e7d5b335232e7fcff
       ADDRESS: "0xb7876a87029f51ae8DC05B114a5Bf43D652F6105"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":70000,"walletPrivateKey":"20a7c5d756faded18935b90baa3b744bd97ecc132ad2b98e7d5b335232e7fcff","walletPassword":"test","moniker":"node8","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":120000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"20a7c5d756faded18935b90baa3b744bd97ecc132ad2b98e7d5b335232e7fcff","walletPassword":"test","moniker":"node8","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node9:
     build: .
     container_name: node9
@@ -179,7 +179,7 @@ services:
       PRIVATE_KEY: aea81d23ea236951b68af87cfd97de4b71ca959f4049156d07d9501f0d567074
       ADDRESS: "0xA10408f0f9720Cee93ECA5Db5b9E38E700CB8e3D"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":80000,"walletPrivateKey":"aea81d23ea236951b68af87cfd97de4b71ca959f4049156d07d9501f0d567074","walletPassword":"test","moniker":"node9","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":130000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"aea81d23ea236951b68af87cfd97de4b71ca959f4049156d07d9501f0d567074","walletPassword":"test","moniker":"node9","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node10:
     build: .
     container_name: node10
@@ -199,7 +199,7 @@ services:
       PRIVATE_KEY: ced46f0b0255c173a1a33f4805bb16ad646b0649cdd18d6c4c08cf3db3024a95
       ADDRESS: "0x0b7464676A14A499088B5F69F02BdF2f398d63f6"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":90000,"walletPrivateKey":"ced46f0b0255c173a1a33f4805bb16ad646b0649cdd18d6c4c08cf3db3024a95","walletPassword":"test","moniker":"node10","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":140000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"ced46f0b0255c173a1a33f4805bb16ad646b0649cdd18d6c4c08cf3db3024a95","walletPassword":"test","moniker":"node10","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node11:
     build: .
     container_name: node11
@@ -219,7 +219,7 @@ services:
       PRIVATE_KEY: 543753c36a458b3c6278bec70f0bfb0a62018b6fd2dcb8e40e5bf5689cd7c94a
       ADDRESS: "0x4B49bFA85B1dfDB43D6463b3DFB342A38D672eE1"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":100000,"walletPrivateKey":"543753c36a458b3c6278bec70f0bfb0a62018b6fd2dcb8e40e5bf5689cd7c94a","walletPassword":"test","moniker":"node11","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":150000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"543753c36a458b3c6278bec70f0bfb0a62018b6fd2dcb8e40e5bf5689cd7c94a","walletPassword":"test","moniker":"node11","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node12:
     build: .
     container_name: node12
@@ -239,7 +239,7 @@ services:
       PRIVATE_KEY: d05054f6a8643eee044b5579dfcabf1637db3700157e781ed58cf228b7104698
       ADDRESS: "0x8CBaaC917738e5d2E6413F1052C30dD5496c7631"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":110000,"walletPrivateKey":"d05054f6a8643eee044b5579dfcabf1637db3700157e781ed58cf228b7104698","walletPassword":"test","moniker":"node12","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":160000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"d05054f6a8643eee044b5579dfcabf1637db3700157e781ed58cf228b7104698","walletPassword":"test","moniker":"node12","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node13:
     build: .
     container_name: node13
@@ -259,7 +259,7 @@ services:
       PRIVATE_KEY: 6375b82581b5ec382a62746fb2e9e18fa9163fbd1c1da63b981d6e39d3286fa9
       ADDRESS: "0xe63De22317326d4bF5D8299d7c40763239DD5536"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":120000,"walletPrivateKey":"6375b82581b5ec382a62746fb2e9e18fa9163fbd1c1da63b981d6e39d3286fa9","walletPassword":"test","moniker":"node13","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":170000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"6375b82581b5ec382a62746fb2e9e18fa9163fbd1c1da63b981d6e39d3286fa9","walletPassword":"test","moniker":"node13","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node14:
     build: .
     container_name: node14
@@ -279,7 +279,7 @@ services:
       PRIVATE_KEY: 2535b5bdf1720f9fe7d06d2bf4a58b875141cb7a2d8df35a75118107027b860c
       ADDRESS: "0x93cCeAdf676f4D3FCB62Fe6Fb8487dd2868D6591"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":130000,"walletPrivateKey":"2535b5bdf1720f9fe7d06d2bf4a58b875141cb7a2d8df35a75118107027b860c","walletPassword":"test","moniker":"node14","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":180000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"2535b5bdf1720f9fe7d06d2bf4a58b875141cb7a2d8df35a75118107027b860c","walletPassword":"test","moniker":"node14","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node15:
     build: .
     container_name: node15
@@ -299,7 +299,7 @@ services:
       PRIVATE_KEY: cbf6e51ca4ab5231e3c6bd5b04ecf10ec7261b3532a03ed7c0f798acf5055f29
       ADDRESS: "0x6E5782e36832e3c839657e0F86C129378EB59f8E"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":140000,"walletPrivateKey":"cbf6e51ca4ab5231e3c6bd5b04ecf10ec7261b3532a03ed7c0f798acf5055f29","walletPassword":"test","moniker":"node15","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":190000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"cbf6e51ca4ab5231e3c6bd5b04ecf10ec7261b3532a03ed7c0f798acf5055f29","walletPassword":"test","moniker":"node15","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node16:
     build: .
     container_name: node16
@@ -319,7 +319,7 @@ services:
       PRIVATE_KEY: bcb64de408f6f829487d5677ac3d5b3149888a4e687193fd8c7b1e3fe24c8ca7
       ADDRESS: "0xCEd44719e1ead872FA2745cE027267d83DE5449c"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":150000,"walletPrivateKey":"bcb64de408f6f829487d5677ac3d5b3149888a4e687193fd8c7b1e3fe24c8ca7","walletPassword":"test","moniker":"node16","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":200000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"bcb64de408f6f829487d5677ac3d5b3149888a4e687193fd8c7b1e3fe24c8ca7","walletPassword":"test","moniker":"node16","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node17:
     build: .
     container_name: node17
@@ -339,7 +339,7 @@ services:
       PRIVATE_KEY: 444041fc4d4ebe6f7367ba52dddf3cec727bf492d36a32a2e27fd48e5ee9bb06
       ADDRESS: "0x2244c6e62980a292E56B716F08229fB6e41ccaDB"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":160000,"walletPrivateKey":"444041fc4d4ebe6f7367ba52dddf3cec727bf492d36a32a2e27fd48e5ee9bb06","walletPassword":"test","moniker":"node17","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":210000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"444041fc4d4ebe6f7367ba52dddf3cec727bf492d36a32a2e27fd48e5ee9bb06","walletPassword":"test","moniker":"node17","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node18:
     build: .
     container_name: node18
@@ -359,7 +359,7 @@ services:
       PRIVATE_KEY: ee679933995636e46442e8a898b759344c9ff1b3f875023a66dee87b96e1fc26
       ADDRESS: "0x78155DE3b9B8149Dc92f72aaf43DBf6bB7Bd897e"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":170000,"walletPrivateKey":"ee679933995636e46442e8a898b759344c9ff1b3f875023a66dee87b96e1fc26","walletPassword":"test","moniker":"node18","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":220000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"ee679933995636e46442e8a898b759344c9ff1b3f875023a66dee87b96e1fc26","walletPassword":"test","moniker":"node18","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node19:
     build: .
     container_name: node19
@@ -379,7 +379,7 @@ services:
       PRIVATE_KEY: 29ae9695f6f4503cd8a066a9f6b1b34edc9147ce34798f2d34a0bf6b280c8c4b
       ADDRESS: "0x1289724892E930A984277cc2332A4c1D7a66c779"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":180000,"walletPrivateKey":"29ae9695f6f4503cd8a066a9f6b1b34edc9147ce34798f2d34a0bf6b280c8c4b","walletPassword":"test","moniker":"node19","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":230000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"29ae9695f6f4503cd8a066a9f6b1b34edc9147ce34798f2d34a0bf6b280c8c4b","walletPassword":"test","moniker":"node19","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node20:
     build: .
     container_name: node20
@@ -399,7 +399,7 @@ services:
       PRIVATE_KEY: cca818d70d9a79b40237b1f08c62e7189fd25cd86833c46d950d72ddc11fc8d8
       ADDRESS: "0x0Da9B6d7d4FF363481A5fc5413F6c6555b63651B"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":190000,"walletPrivateKey":"cca818d70d9a79b40237b1f08c62e7189fd25cd86833c46d950d72ddc11fc8d8","walletPassword":"test","moniker":"node20","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":240000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"cca818d70d9a79b40237b1f08c62e7189fd25cd86833c46d950d72ddc11fc8d8","walletPassword":"test","moniker":"node20","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node21:
     build: .
     container_name: node21
@@ -419,7 +419,7 @@ services:
       PRIVATE_KEY: b3edbbe06ce4b29774d7208673e89c1869a8bf8cb9e6f373b58c6a100596c183
       ADDRESS: "0xC5818438Cbc9fbFF5e722216140C3118f0a0fE29"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":200000,"walletPrivateKey":"b3edbbe06ce4b29774d7208673e89c1869a8bf8cb9e6f373b58c6a100596c183","walletPassword":"test","moniker":"node21","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":250000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"b3edbbe06ce4b29774d7208673e89c1869a8bf8cb9e6f373b58c6a100596c183","walletPassword":"test","moniker":"node21","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node22:
     build: .
     container_name: node22
@@ -439,7 +439,7 @@ services:
       PRIVATE_KEY: 82a96d49dc1885f2b9e73b83ba39ea74d421be67a6ac341dfb72f06db0792ba3
       ADDRESS: "0x8F01CB9DFfB48a64A25B7c3ca93607E5237e9076"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":210000,"walletPrivateKey":"82a96d49dc1885f2b9e73b83ba39ea74d421be67a6ac341dfb72f06db0792ba3","walletPassword":"test","moniker":"node22","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":260000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"82a96d49dc1885f2b9e73b83ba39ea74d421be67a6ac341dfb72f06db0792ba3","walletPassword":"test","moniker":"node22","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node23:
     build: .
     container_name: node23
@@ -459,7 +459,7 @@ services:
       PRIVATE_KEY: d37e14196f75670070e97f34a443e4612c8e7286b2c2049fad41edd468309276
       ADDRESS: "0x1b192f01174b3eFD9D1E719D9626978a9c44cD9A"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":220000,"walletPrivateKey":"d37e14196f75670070e97f34a443e4612c8e7286b2c2049fad41edd468309276","walletPassword":"test","moniker":"node23","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":270000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"d37e14196f75670070e97f34a443e4612c8e7286b2c2049fad41edd468309276","walletPassword":"test","moniker":"node23","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node24:
     build: .
     container_name: node24
@@ -479,7 +479,7 @@ services:
       PRIVATE_KEY: c9b1e3e0b0bc8008fb479b34ca5acc7242b14da2f94cac24ee923c9ff7be8dda
       ADDRESS: "0x03Ce64E3130467F03C1f620d404520a1075CE4D7"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":230000,"walletPrivateKey":"c9b1e3e0b0bc8008fb479b34ca5acc7242b14da2f94cac24ee923c9ff7be8dda","walletPassword":"test","moniker":"node24","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":280000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"c9b1e3e0b0bc8008fb479b34ca5acc7242b14da2f94cac24ee923c9ff7be8dda","walletPassword":"test","moniker":"node24","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node25:
     build: .
     container_name: node25
@@ -499,7 +499,7 @@ services:
       PRIVATE_KEY: 7bdd9c3c141831bf6a780fd6d4d934008626a78ea015f0a0f330a6b05d157be8
       ADDRESS: "0xEB9948Da66d43A64a08Cb2165B9a552FE8F12bC1"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":240000,"walletPrivateKey":"7bdd9c3c141831bf6a780fd6d4d934008626a78ea015f0a0f330a6b05d157be8","walletPassword":"test","moniker":"node25","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":290000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7bdd9c3c141831bf6a780fd6d4d934008626a78ea015f0a0f330a6b05d157be8","walletPassword":"test","moniker":"node25","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node26:
     build: .
     container_name: node26
@@ -519,7 +519,7 @@ services:
       PRIVATE_KEY: ec3ac7abdbab5ff11df9a0a5ab63f96192986bc049b12cca10579b2d6c3bdaf8
       ADDRESS: "0x2c314C3eCe611ebA9dA29a321d6565b3D5fd9A2a"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":250000,"walletPrivateKey":"ec3ac7abdbab5ff11df9a0a5ab63f96192986bc049b12cca10579b2d6c3bdaf8","walletPassword":"test","moniker":"node26","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":300000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"ec3ac7abdbab5ff11df9a0a5ab63f96192986bc049b12cca10579b2d6c3bdaf8","walletPassword":"test","moniker":"node26","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node27:
     build: .
     container_name: node27
@@ -539,7 +539,7 @@ services:
       PRIVATE_KEY: d2a5ce8d6c8f46d39b26a3d69c056d605f7b79cfb80e82834dcd84ac9367c38e
       ADDRESS: "0x9f4c1FAb2dbD28e5b3C128A8B83B240D2A2e0198"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":260000,"walletPrivateKey":"d2a5ce8d6c8f46d39b26a3d69c056d605f7b79cfb80e82834dcd84ac9367c38e","walletPassword":"test","moniker":"node27","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":310000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"d2a5ce8d6c8f46d39b26a3d69c056d605f7b79cfb80e82834dcd84ac9367c38e","walletPassword":"test","moniker":"node27","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node28:
     build: .
     container_name: node28
@@ -559,7 +559,7 @@ services:
       PRIVATE_KEY: 5fe2d2d0e0e3d2295d594baeed83e222e454c7bf3fe47bd2f7d7e130ef3ea7e5
       ADDRESS: "0xbEADFDfF2d454f14b77755a313d62F7b9D430b4e"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":270000,"walletPrivateKey":"5fe2d2d0e0e3d2295d594baeed83e222e454c7bf3fe47bd2f7d7e130ef3ea7e5","walletPassword":"test","moniker":"node28","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":320000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"5fe2d2d0e0e3d2295d594baeed83e222e454c7bf3fe47bd2f7d7e130ef3ea7e5","walletPassword":"test","moniker":"node28","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node29:
     build: .
     container_name: node29
@@ -579,7 +579,7 @@ services:
       PRIVATE_KEY: 7d35931e5b23c1e37ecd53f5f68e60944a94b0fc33330e85d190a896423c3495
       ADDRESS: "0x625a4164d94a166d2c35b7e622466b6c72554155"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":280000,"walletPrivateKey":"7d35931e5b23c1e37ecd53f5f68e60944a94b0fc33330e85d190a896423c3495","walletPassword":"test","moniker":"node29","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":330000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7d35931e5b23c1e37ecd53f5f68e60944a94b0fc33330e85d190a896423c3495","walletPassword":"test","moniker":"node29","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node30:
     build: .
     container_name: node30
@@ -599,7 +599,7 @@ services:
       PRIVATE_KEY: 0627e975014e656433163ea0920843790d18c8f0694c6008d05f00152641d9e1
       ADDRESS: "0x709d93d624985bc180c5Db5896226D1531b8c00e"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":290000,"walletPrivateKey":"0627e975014e656433163ea0920843790d18c8f0694c6008d05f00152641d9e1","walletPassword":"test","moniker":"node30","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":340000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"0627e975014e656433163ea0920843790d18c8f0694c6008d05f00152641d9e1","walletPassword":"test","moniker":"node30","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node31:
     build: .
     container_name: node31
@@ -619,7 +619,7 @@ services:
       PRIVATE_KEY: 765973ebb920fc874999e44680e3d798b095a0e3bdaf37f34eeeba5260ef845a
       ADDRESS: "0x1FEA9adB65b472166f5d62f8BC7cF80F7b41d8C7"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":300000,"walletPrivateKey":"765973ebb920fc874999e44680e3d798b095a0e3bdaf37f34eeeba5260ef845a","walletPassword":"test","moniker":"node31","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":350000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"765973ebb920fc874999e44680e3d798b095a0e3bdaf37f34eeeba5260ef845a","walletPassword":"test","moniker":"node31","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node32:
     build: .
     container_name: node32
@@ -639,7 +639,7 @@ services:
       PRIVATE_KEY: bc7203d5c39ed51f5e6d5ecead56e1c9fa9a4c2ecd896c5b8ccbe03a3df35d86
       ADDRESS: "0x0A7Ec480a611a58a98B5C2173573734BCE9aeb53"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":310000,"walletPrivateKey":"bc7203d5c39ed51f5e6d5ecead56e1c9fa9a4c2ecd896c5b8ccbe03a3df35d86","walletPassword":"test","moniker":"node32","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":360000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"bc7203d5c39ed51f5e6d5ecead56e1c9fa9a4c2ecd896c5b8ccbe03a3df35d86","walletPassword":"test","moniker":"node32","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node33:
     build: .
     container_name: node33
@@ -659,7 +659,7 @@ services:
       PRIVATE_KEY: 7047371ed88bcaf3ca44968891ebf6f51d6a4c410c110a409b380bb8b3ddbac1
       ADDRESS: "0x51645a6c6952168CF549fccc2B263120aa99c18F"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":320000,"walletPrivateKey":"7047371ed88bcaf3ca44968891ebf6f51d6a4c410c110a409b380bb8b3ddbac1","walletPassword":"test","moniker":"node33","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":370000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7047371ed88bcaf3ca44968891ebf6f51d6a4c410c110a409b380bb8b3ddbac1","walletPassword":"test","moniker":"node33","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node34:
     build: .
     container_name: node34
@@ -679,7 +679,7 @@ services:
       PRIVATE_KEY: 319141fb29a90fd15f4cc850f9c56550bbeb01650a47f418f9f763499b15709f
       ADDRESS: "0x429514B063b69E31466d734151FA0ac4BBB297B4"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":330000,"walletPrivateKey":"319141fb29a90fd15f4cc850f9c56550bbeb01650a47f418f9f763499b15709f","walletPassword":"test","moniker":"node34","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":380000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"319141fb29a90fd15f4cc850f9c56550bbeb01650a47f418f9f763499b15709f","walletPassword":"test","moniker":"node34","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node35:
     build: .
     container_name: node35
@@ -699,7 +699,7 @@ services:
       PRIVATE_KEY: 93e85b334c017a0a40a559c5ed368288a0a51616331d991b164c0197eb9ae6c4
       ADDRESS: "0x6902051dB3664c805F0986194db594519D48dA5E"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":340000,"walletPrivateKey":"93e85b334c017a0a40a559c5ed368288a0a51616331d991b164c0197eb9ae6c4","walletPassword":"test","moniker":"node35","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":390000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"93e85b334c017a0a40a559c5ed368288a0a51616331d991b164c0197eb9ae6c4","walletPassword":"test","moniker":"node35","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node36:
     build: .
     container_name: node36
@@ -719,7 +719,7 @@ services:
       PRIVATE_KEY: 560ec9a844425439fe29156be11dbe41d8a0c88c0c38d15930e89ffaf24607fe
       ADDRESS: "0x01425815a204de9017B36762eF711404620433F2"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":350000,"walletPrivateKey":"560ec9a844425439fe29156be11dbe41d8a0c88c0c38d15930e89ffaf24607fe","walletPassword":"test","moniker":"node36","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":400000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"560ec9a844425439fe29156be11dbe41d8a0c88c0c38d15930e89ffaf24607fe","walletPassword":"test","moniker":"node36","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node37:
     build: .
     container_name: node37
@@ -739,7 +739,7 @@ services:
       PRIVATE_KEY: 06fe5b6cc3b841165171a0fc4c1b0c50fe329376ea8dbe974aa3cbc020344559
       ADDRESS: "0xd1523350AAd9dC8925e9eB2713d7e4dFfC97e38c"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":360000,"walletPrivateKey":"06fe5b6cc3b841165171a0fc4c1b0c50fe329376ea8dbe974aa3cbc020344559","walletPassword":"test","moniker":"node37","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":410000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"06fe5b6cc3b841165171a0fc4c1b0c50fe329376ea8dbe974aa3cbc020344559","walletPassword":"test","moniker":"node37","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node38:
     build: .
     container_name: node38
@@ -759,7 +759,7 @@ services:
       PRIVATE_KEY: c9b5ec85d2a83786d6b1d94cdf839e1c5cdf5c17874150dc1cfaf44102e14a7b
       ADDRESS: "0x52CE924019Fa9425f0C734fBe0089B0d9699f8E8"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":370000,"walletPrivateKey":"c9b5ec85d2a83786d6b1d94cdf839e1c5cdf5c17874150dc1cfaf44102e14a7b","walletPassword":"test","moniker":"node38","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":420000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"c9b5ec85d2a83786d6b1d94cdf839e1c5cdf5c17874150dc1cfaf44102e14a7b","walletPassword":"test","moniker":"node38","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node39:
     build: .
     container_name: node39
@@ -779,7 +779,7 @@ services:
       PRIVATE_KEY: aaee2ec061b2960d7508eaadf61217888121cf09cd2df23cf76f046f8038fffd
       ADDRESS: "0xB07c5410358F17371c840948A12CEA771589Fde1"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":380000,"walletPrivateKey":"aaee2ec061b2960d7508eaadf61217888121cf09cd2df23cf76f046f8038fffd","walletPassword":"test","moniker":"node39","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":430000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"aaee2ec061b2960d7508eaadf61217888121cf09cd2df23cf76f046f8038fffd","walletPassword":"test","moniker":"node39","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node40:
     build: .
     container_name: node40
@@ -799,7 +799,7 @@ services:
       PRIVATE_KEY: c5e089117b7c76a74c54d706078cb7a4b04106b0497b4da1da4ff317f9119a04
       ADDRESS: "0x6e662C4fD0518B429906802818C6e812f83d1a4F"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":390000,"walletPrivateKey":"c5e089117b7c76a74c54d706078cb7a4b04106b0497b4da1da4ff317f9119a04","walletPassword":"test","moniker":"node40","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":440000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"c5e089117b7c76a74c54d706078cb7a4b04106b0497b4da1da4ff317f9119a04","walletPassword":"test","moniker":"node40","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node41:
     build: .
     container_name: node41
@@ -819,7 +819,7 @@ services:
       PRIVATE_KEY: c3d59824a40c521c8b3f1f2801c0910d55b08be1b7ec85373d14bfc79dd5288a
       ADDRESS: "0xAa1bdfc0CFe9f756472a2Bb215c80414ff395976"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":400000,"walletPrivateKey":"c3d59824a40c521c8b3f1f2801c0910d55b08be1b7ec85373d14bfc79dd5288a","walletPassword":"test","moniker":"node41","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":450000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"c3d59824a40c521c8b3f1f2801c0910d55b08be1b7ec85373d14bfc79dd5288a","walletPassword":"test","moniker":"node41","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node42:
     build: .
     container_name: node42
@@ -839,7 +839,7 @@ services:
       PRIVATE_KEY: af2bb6a633f6d40461e2e3423655a8a5f6b5065ba687aedabc4a16b15251fc46
       ADDRESS: "0xfe0B882738D15380e804616f95871C6Cb7661dc2"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":410000,"walletPrivateKey":"af2bb6a633f6d40461e2e3423655a8a5f6b5065ba687aedabc4a16b15251fc46","walletPassword":"test","moniker":"node42","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":460000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"af2bb6a633f6d40461e2e3423655a8a5f6b5065ba687aedabc4a16b15251fc46","walletPassword":"test","moniker":"node42","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node43:
     build: .
     container_name: node43
@@ -859,7 +859,7 @@ services:
       PRIVATE_KEY: bcb685bdc5ffa1b9a03a9e2f5123d7b40244686af5ee197ecc838aa53c25ad4c
       ADDRESS: "0x7B16E5F9873a8a5B47b3BD9587F3a8E1C98EFDB7"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":420000,"walletPrivateKey":"bcb685bdc5ffa1b9a03a9e2f5123d7b40244686af5ee197ecc838aa53c25ad4c","walletPassword":"test","moniker":"node43","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":470000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"bcb685bdc5ffa1b9a03a9e2f5123d7b40244686af5ee197ecc838aa53c25ad4c","walletPassword":"test","moniker":"node43","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node44:
     build: .
     container_name: node44
@@ -879,7 +879,7 @@ services:
       PRIVATE_KEY: 6cdde19ebcd14bdd4068d083928100b66e63708200b838f1a61fa86e4c86daa9
       ADDRESS: "0x9dE19e16457B59E9e189D27D39a05c4944DcFe3C"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":430000,"walletPrivateKey":"6cdde19ebcd14bdd4068d083928100b66e63708200b838f1a61fa86e4c86daa9","walletPassword":"test","moniker":"node44","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":480000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"6cdde19ebcd14bdd4068d083928100b66e63708200b838f1a61fa86e4c86daa9","walletPassword":"test","moniker":"node44","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node45:
     build: .
     container_name: node45
@@ -899,7 +899,7 @@ services:
       PRIVATE_KEY: 8282691ea0fc65a2db76d355bd57993a20c6dc2f11d9260e74eec94e37e41d51
       ADDRESS: "0x67E15F302DecBa03EB15DEdDe6235FD21334AD97"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":440000,"walletPrivateKey":"8282691ea0fc65a2db76d355bd57993a20c6dc2f11d9260e74eec94e37e41d51","walletPassword":"test","moniker":"node45","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":490000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"8282691ea0fc65a2db76d355bd57993a20c6dc2f11d9260e74eec94e37e41d51","walletPassword":"test","moniker":"node45","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node46:
     build: .
     container_name: node46
@@ -919,7 +919,7 @@ services:
       PRIVATE_KEY: 2ccbdcf51de5df86b54b64b2c78ce7f151447c0fd780a529e68da7e490ad53a1
       ADDRESS: "0xC9C9Bf5A40F514EB29b71BD13C6d2C4EDF4fA412"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":450000,"walletPrivateKey":"2ccbdcf51de5df86b54b64b2c78ce7f151447c0fd780a529e68da7e490ad53a1","walletPassword":"test","moniker":"node46","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":500000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"2ccbdcf51de5df86b54b64b2c78ce7f151447c0fd780a529e68da7e490ad53a1","walletPassword":"test","moniker":"node46","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node47:
     build: .
     container_name: node47
@@ -939,7 +939,7 @@ services:
       PRIVATE_KEY: 21a4f2075730168fab590fc233cbea9dd8581d1c2b403c89a2b1b928b9c40992
       ADDRESS: "0x46F2E73A804071B1e4bAeF5e78B658Ff34E384e5"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":460000,"walletPrivateKey":"21a4f2075730168fab590fc233cbea9dd8581d1c2b403c89a2b1b928b9c40992","walletPassword":"test","moniker":"node47","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":510000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"21a4f2075730168fab590fc233cbea9dd8581d1c2b403c89a2b1b928b9c40992","walletPassword":"test","moniker":"node47","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node48:
     build: .
     container_name: node48
@@ -959,7 +959,7 @@ services:
       PRIVATE_KEY: 6ba4d155539466c9b8811fd19a8b6b64c3f7c56662d938f4326b2e565b143cf3
       ADDRESS: "0xAc70BD4B63e2385E242c7bc83AF2Bf532A3b8D29"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":470000,"walletPrivateKey":"6ba4d155539466c9b8811fd19a8b6b64c3f7c56662d938f4326b2e565b143cf3","walletPassword":"test","moniker":"node48","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":520000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"6ba4d155539466c9b8811fd19a8b6b64c3f7c56662d938f4326b2e565b143cf3","walletPassword":"test","moniker":"node48","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node49:
     build: .
     container_name: node49
@@ -979,7 +979,7 @@ services:
       PRIVATE_KEY: 5751fcfecc37e51ba0605a8af1139f39709c98f2e39a313da973859d6c74c426
       ADDRESS: "0x1d183a28cf4eE7F966E43492D7aDC04D07f85803"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":480000,"walletPrivateKey":"5751fcfecc37e51ba0605a8af1139f39709c98f2e39a313da973859d6c74c426","walletPassword":"test","moniker":"node49","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":530000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"5751fcfecc37e51ba0605a8af1139f39709c98f2e39a313da973859d6c74c426","walletPassword":"test","moniker":"node49","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
   node50:
     build: .
     container_name: node50
@@ -999,7 +999,7 @@ services:
       PRIVATE_KEY: 401bc233e8a8e1d4bc57bf0f330d1053a038b81b9a96ba49d9689f6f0de1dc79
       ADDRESS: "0x0C89ACFc5d05f9bAFEC7C9da4003F8179694C56f"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":490000,"walletPrivateKey":"401bc233e8a8e1d4bc57bf0f330d1053a038b81b9a96ba49d9689f6f0de1dc79","walletPassword":"test","moniker":"node50","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":540000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":40000,"walletPrivateKey":"401bc233e8a8e1d4bc57bf0f330d1053a038b81b9a96ba49d9689f6f0de1dc79","walletPassword":"test","moniker":"node50","chainId":4242,"peerIp":"192.168.1.3"},{"type":"createValidator","timeout":30000}]'
 networks:
   heliosnet:
     driver: bridge
