@@ -152,9 +152,12 @@ const createValidator = async (password, retry = 0) => {
         return true;
     } catch (e) {
         if (retry >= 3) {
+            console.log('createValidator failed.');
             console.log(e);
             return false;
         }
+        console.log('createValidator failed retry...');
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         return createValidator(password, retry + 1);
     }
 }
