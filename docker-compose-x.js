@@ -51,14 +51,14 @@ const generateDockerCompose = (numNodes, walletsFile) => {
                 MANAGER_ACTIONS: JSON.stringify([
                     {
                         type: "setupToPeer",
-                        timeout: randomBetween(10000, 50000),
+                        timeout: 20000,//randomBetween(10000, 100000),
                         walletPrivateKey: privateKey,
                         walletPassword: "test",
                         moniker: nodeName,
                         chainId: 4242,
-                        peerIp: "192.168.1.2"
+                        peerIp: `192.168.1.${2 + Math.floor((i - 1) / 40)}` // max_num_inbound_peers = 40 in nodes
                     },
-                    { type: "createValidator", timeout: randomBetween(20000, 50000) }
+                    { type: "createValidator", timeout: 30000 }
                 ])
             }
         };
