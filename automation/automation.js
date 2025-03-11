@@ -86,8 +86,9 @@ const actionTransfer = async (app, environement, action) => {
         const transactionResponse = await wallet.sendTransaction(tx);
         console.log('Transaction sent:', transactionResponse.hash);
 
-        const receipt = await transactionResponse.wait();
-        console.log('Transaction mined in block:', receipt.blockNumber);
+        transactionResponse.wait().then((receipt) => {
+            console.log('Transaction mined in block:', receipt.blockNumber);
+        });
     } catch (error) {
         console.error('Error sending transaction:', error);
     }

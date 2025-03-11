@@ -37,7 +37,7 @@ services:
     command: npm run prod
     environment:
       PASSWORD: test
-      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036", "walletPassword": "test", "moniker": "node2", "chainId": 4242, "peerIp": "192.168.1.2" }, { "action": "createValidator", "timeout": 50000 }]'
+      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036", "walletPassword": "test", "moniker": "node2", "chainId": 4242, "peerIp": "192.168.1.2" }, { "type": "createValidator", "timeout": 50000 }]'
 
   node3:
     build: .
@@ -56,7 +56,7 @@ services:
     command: npm run prod
     environment:
       PASSWORD: test
-      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9", "walletPassword": "test", "moniker": "node3", "chainId": 4242, "peerIp": "192.168.1.2" }, { "action": "createValidator", "timeout": 50000 }]'
+      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9", "walletPassword": "test", "moniker": "node3", "chainId": 4242, "peerIp": "192.168.1.2" }, { "type": "createValidator", "timeout": 50000 }]'
 
   node4:
     build: .
@@ -75,7 +75,7 @@ services:
     command: npm run prod
     environment:
       PASSWORD: test
-      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483", "walletPassword": "test", "moniker": "node4", "chainId": 4242, "peerIp": "192.168.1.2" }, { "action": "createValidator", "timeout": 50000 }]'
+      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483", "walletPassword": "test", "moniker": "node4", "chainId": 4242, "peerIp": "192.168.1.2" }, { "type": "createValidator", "timeout": 50000 }]'
 
   node5:
     build: .
@@ -94,7 +94,7 @@ services:
     command: npm run prod
     environment:
       PASSWORD: test
-      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e", "walletPassword": "test", "moniker": "node5", "chainId": 4242, "peerIp": "192.168.1.2" }, { "action": "createValidator", "timeout": 50000 }]'
+      MANAGER_ACTIONS: '[{ "type": "setupToPeer", "timeout": 60000, "walletPrivateKey": "7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e", "walletPassword": "test", "moniker": "node5", "chainId": 4242, "peerIp": "192.168.1.2" }, { "type": "createValidator", "timeout": 50000 }]'
   
 
 networks:
