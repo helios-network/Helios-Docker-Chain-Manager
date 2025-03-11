@@ -85,3 +85,5 @@ docker compose up
 ```
 
 And voila!
+
+For having more docker-compose cases you can generate some docker-compose by using docker-compose-x.js

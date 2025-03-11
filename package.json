@@ -42,6 +42,7 @@
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "systeminformation": "^5.17.12",
-    "web3-0.x-wrapper": "^1.0.0"
+    "web3-0.x-wrapper": "^1.0.0",
+    "yaml": "^2.7.0"
   }
 }

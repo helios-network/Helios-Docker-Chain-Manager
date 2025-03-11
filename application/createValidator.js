@@ -94,7 +94,7 @@ const createValidatorAbi = [
     }
 ];
 
-const createValidator = async (password) => {
+const createValidator = async (password, retry = 0) => {
     try {
         const RPC_URL = 'http://localhost:8545';
         const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -151,8 +151,11 @@ const createValidator = async (password) => {
         console.log("Validateur créé avec succès !");
         return true;
     } catch (e) {
-        console.log(e);
-        return false;
+        if (retry >= 3) {
+            console.log(e);
+            return false;
+        }
+        return createValidator(password, retry + 1);
     }
 }
 
