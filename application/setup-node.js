@@ -38,7 +38,7 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
 
     let appTomlPath = path.join(homedir, '.heliades/config/app.toml');
     let appToml = fs.readFileSync(appTomlPath).toString();
-    fs.writeFileSync(appToml, appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317"));
+    fs.writeFileSync(appTomlPath, appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317"));
 
     if (genesisContent != undefined && genesisContent != '') { // sync to peer
         const destGenesisPath = path.join(homedir, '.heliades/config/genesis.json');
