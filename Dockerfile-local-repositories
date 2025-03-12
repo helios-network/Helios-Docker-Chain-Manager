@@ -6,9 +6,10 @@ COPY ./cosmos-sdk ./cosmos-sdk
 COPY ./Helios-Docker-Chain-Manager ./Helios-Docker-Chain-Manager
 # Stage 2
 FROM golang:1.23.3-bullseye AS build
+WORKDIR /
+COPY --from=clone /cosmos-sdk ./cosmos-sdk
 WORKDIR /helios-core
 COPY --from=clone /helios-core/ .
-COPY --from=clone /cosmos-sdk/ ..
 RUN go build ./cmd/heliades/
 # Stage 3
 FROM node:18.16.0 AS final
