@@ -6,7 +6,30 @@ const randomBetween = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-const generateDockerCompose = (numNodes, walletsFile) => {
+const getBuildType = (args) => {
+
+    const isLocalRepositoriesMode = args.find(x => x == '--local-repositories') != undefined;
+
+    if (isLocalRepositoriesMode) {
+        return {
+            context : '../',
+            dockerfile: './Helios-Docker-Chain-Manager/Dockerfile-local-repositories',
+        };
+    }
+    return '.';
+}
+
+const getImageType = (args) => {
+
+    const isLocalRepositoriesMode = args.find(x => x == '--local-repositories') != undefined;
+
+    if (isLocalRepositoriesMode) {
+        return 'docker-helios-nodemanager';
+    }
+    return undefined;
+}
+
+const generateDockerCompose = (numNodes, walletsFile, args) => {
     const wallets = fs.readFileSync(walletsFile, 'utf-8')
         .trim()
         .split('\n')
@@ -29,7 +52,8 @@ const generateDockerCompose = (numNodes, walletsFile) => {
         const nodeName = `node${i + 1}`;
 
         services[nodeName] = {
-            build: '.',
+            build: getBuildType(args),
+            image: getImageType(args),
             container_name: nodeName,
             ports: [
                 `${8080 + i}:8080`,
@@ -98,6 +122,6 @@ const generateDockerCompose = (numNodes, walletsFile) => {
 // Utilisation : node docker-compose-x.js 50 wallets.txt
 const args = process.argv.slice(2);
 const numNodes = parseInt(args[0], 10);
-const walletsFile = args[1] || 'wallets.txt';
+const walletsFile = 'wallets.txt';
 
-generateDockerCompose(numNodes, walletsFile);
+generateDockerCompose(numNodes, walletsFile, args);

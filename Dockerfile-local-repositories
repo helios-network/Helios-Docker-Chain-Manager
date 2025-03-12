@@ -1,0 +1,23 @@
+# Stage 1
+FROM alpine/git as clone
+WORKDIR /
+COPY ./helios-core ./helios-core
+COPY ./cosmos-sdk ./cosmos-sdk
+COPY ./Helios-Docker-Chain-Manager ./Helios-Docker-Chain-Manager
+# Stage 2
+FROM golang:1.23.3-bullseye AS build
+WORKDIR /helios-core
+COPY --from=clone /helios-core/ .
+COPY --from=clone /cosmos-sdk/ ..
+RUN go build ./cmd/heliades/
+# Stage 3
+FROM node:18.16.0 AS final
+WORKDIR /app
+COPY --from=build /helios-core/heliades /usr/bin/heliades
+COPY --from=clone /Helios-Docker-Chain-Manager/ .
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.2/libwasmvm.x86_64.so /lib/libwasmvm.x86_64.so
+ADD https://github.com/CosmWasm/wasmvm/releases/download/v2.1.2/libwasmvm.aarch64.so /lib/libwasmvm.aarch64.so
+RUN npm install
+RUN apt-get update
+RUN apt-get install jq --yes
+ENTRYPOINT ["npm", "run", "prod"]
