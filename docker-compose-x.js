@@ -55,7 +55,7 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
             build: getBuildType(args),
             image: getImageType(args),
             container_name: nodeName,
-            ports: [
+            ports: i < 30 ? [
                 `${8080 + i}:8080`,
                 `${8545 + i}:8545`,
                 `${1317 + i}:1317`,
@@ -63,7 +63,7 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                 `${26656 + (i * 100)}:26656`,
                 `${10337 + (i * 10)}:10337`,
                 `${9090 + (i * 100)}:9090`
-            ],
+            ] : [],
             networks: {
                 heliosnet: { ipv4_address: `192.168.1.${baseIp + i}` }
             },
