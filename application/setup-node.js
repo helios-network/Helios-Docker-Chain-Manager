@@ -63,9 +63,21 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
         // genesisJson.app_state.mint.params.mint_denom = "ahelios";
         // genesisJson.app_state.staking.params.unbonding_time = "5s";
 
-        // genesisJson.app_state.staking.params.epoch_length = "100"; // Set epoch_length to 100
-        // genesisJson.app_state.staking.params.validators_per_epoch = "100"; // Set validators_per_epoch to 100
-        // genesisJson.app_state.staking.params.epoch_enabled = true; // Enable epoch-based validator rotation
+        genesisJson.app_state.staking.params.epoch_length = "100"; // Set epoch_length to 100
+        genesisJson.app_state.staking.params.validators_per_epoch = "100"; // Set validators_per_epoch to 100
+        genesisJson.app_state.staking.params.epoch_enabled = true; // Enable epoch-based validator rotation
+
+        genesisJson.app_state.staking.params.stake_weight_factor = "85"; // Enable epoch-based validator rotation
+        genesisJson.app_state.staking.params.baseline_chance_factor = "5";
+        genesisJson.app_state.staking.params.randomness_factor = "10";
+
+        // New parameters for delegator stake reduction
+        genesisJson.app_state.staking.params.delegator_stake_reduction = {
+            enabled: true,
+            dominance_threshold: "0.05",
+            max_reduction: "0.90",
+            curve_steepness: "10.0"
+        };
         
         // genesisJson.app_state.auction.params.auction_period = "10";
         // genesisJson.app_state.ocr.params.module_admin = 'helios1q0d2nv8xpf9qy22djzgrkgrrcst9frcs34fqra';
