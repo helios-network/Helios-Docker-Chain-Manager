@@ -79,6 +79,11 @@ const createValidatorAbi = [
           "internalType": "uint256",
           "name": "value",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minDelegation",
+          "type": "uint256"
         }
       ],
       "name": "createValidator",
@@ -126,7 +131,7 @@ const createValidator = async (password, retry = 0) => {
 
         const pubkeyJson = (await execWrapper("heliades tendermint show-validator")).trim()
         const pubkey = JSON.parse(pubkeyJson).key;
-        const value             = ethers.parseUnits("10", 18);
+        const value             = ethers.parseUnits("1", 18);
 
         console.log('pubkey', pubkey);
 
@@ -138,10 +143,7 @@ const createValidator = async (password, retry = 0) => {
           wallet.address,
           pubkey,
           value,
-          {
-            gasPrice: 50000000000,
-            gasLimit: 500000
-          }
+          0
         );
         console.log('Transaction envoyée, hash :', tx.hash);
 
