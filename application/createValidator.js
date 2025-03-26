@@ -99,7 +99,7 @@ const createValidatorAbi = [
     }
 ];
 
-const createValidator = async (password, retry = 0) => {
+const createValidator = async (password, validatorData, retry = 0) => {
     try {
         const RPC_URL = 'http://localhost:8545';
         const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -110,41 +110,55 @@ const createValidator = async (password, retry = 0) => {
         const privateKey = await keyStoreRecover(keyStoreNode, password);
         const wallet = new ethers.Wallet(privateKey, provider);
 
-        // const validatorAddress = address; // Adresse Cosmos du validateur
-        console.log("wallet : ", wallet.address)
+        console.log("Données reçues dans createValidator:", validatorData); // Debug log
+
+        if (!validatorData || !validatorData.moniker) {
+            throw new Error(`Données invalides: ${JSON.stringify(validatorData)}`);
+        }
 
         const description = {
-          moniker:          nodeMoniker,
-          identity:         "",
-          website:          "https://mynode.example",
-          securityContact:  "mynode@example.com",
-          details:          "This is my great node"
+            moniker: validatorData.moniker || nodeMoniker,
+            identity: "",
+            website: "https://mynode.example",
+            securityContact: "mynode@example.com",
+            details: "This is my great node"
         };
 
         const commissionRates = {
-          rate:          ethers.parseUnits("0.05", 18),  // 5%
-          maxRate:       ethers.parseUnits("0.20", 18),  // 20%
-          maxChangeRate: ethers.parseUnits("0.01", 18),  // 1%
+            rate: ethers.parseUnits(validatorData.commission.rate.toString(), 18),
+            maxRate: ethers.parseUnits(validatorData.commission.maxRate.toString(), 18),
+            maxChangeRate: ethers.parseUnits(validatorData.commission.maxChangeRate.toString(), 18)
         };
 
-        const minSelfDelegation = "1";
+        const minSelfDelegation = ethers.parseUnits(validatorData.minSelfDelegation.toString(), 18);
 
-        const pubkeyJson = (await execWrapper("heliades tendermint show-validator")).trim()
+        const validatorAddress = wallet.address;
+
+        const pubkeyJson = (await(execWrapper(`heliades tendermint show-validator`))).trim();
         const pubkey = JSON.parse(pubkeyJson).key;
-        const value             = ethers.parseUnits("1", 18);
+        const value = ethers.parseUnits(validatorData.value.toString(), 18);
 
-        console.log('pubkey', pubkey);
+        console.log('Données formatées:', {
+            description,
+            commissionRates,
+            minSelfDelegation,
+            validatorAddress,
+            pubkey,
+            value
+        });
 
         const contract = new ethers.Contract('0x0000000000000000000000000000000000000800', createValidatorAbi, wallet);
+        
         const tx = await contract.createValidator(
-          description,
-          commissionRates,
-          minSelfDelegation,
-          wallet.address,
-          pubkey,
-          value,
-          0
+            description,
+            commissionRates,
+            minSelfDelegation,
+            validatorAddress,
+            pubkey,
+            value,
+            0 // minDelegation
         );
+
         console.log('Transaction envoyée, hash :', tx.hash);
 
         const receipt = await tx.wait();
@@ -153,6 +167,7 @@ const createValidator = async (password, retry = 0) => {
         console.log("Validateur créé avec succès !");
         return true;
     } catch (e) {
+        console.log('Erreur complète:', e);
         if (retry >= 3) {
             console.log('createValidator failed.');
             console.log(e);
@@ -160,7 +175,7 @@ const createValidator = async (password, retry = 0) => {
         }
         console.log('createValidator failed retry...');
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return createValidator(password, retry + 1);
+        return createValidator(password, validatorData, retry + 1);
     }
 }
 

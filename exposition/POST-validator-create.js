@@ -7,19 +7,24 @@ const unrot13 = str => str.split('')
 const validatorCreate = (app, environement) => {
     app.post('/validator-create', async (req, res) => {
         try {
-          const passwordCrypted = req.body['password'];
-          const password = unrot13(atob(passwordCrypted));
+            const passwordCrypted = req.body.password;
+            const password = unrot13(atob(passwordCrypted));
+            const validatorData = req.body.validatorData; // Récupérer l'objet complet
 
-          const success = await createValidator(password);
+            if (!validatorData) {
+                throw new Error('Données du validateur manquantes');
+            }
+
+            const success = await createValidator(password, validatorData);
             
-          res.send(success);
+            res.send(success);
         } catch (e) {
-            console.log(e);
+            console.log('Erreur dans validatorCreate:', e);
             res.send(false);
         }
     });
 };
 
 module.exports = {
-  validatorCreate
+    validatorCreate
 };

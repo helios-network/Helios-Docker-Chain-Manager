@@ -110,7 +110,7 @@ const apiValidatorClaimCommission = async (walletPassword) => {
     return result;
 }
 
-const apiValidatorCreate = async (walletPassword, body = {}) => {
+const apiValidatorCreate = async (walletPassword, validatorData) => {
     const response = await fetch('/validator-create', {
         method: 'POST',
         headers: {
@@ -119,12 +119,11 @@ const apiValidatorCreate = async (walletPassword, body = {}) => {
         },
         body: JSON.stringify({
             password: btoa(rot13(walletPassword)),
-            ... body
+            validatorData: validatorData
         })
     });
     const result = await response.json();
 
-    console.log('apiValidatorCreate', result);
     if (result === false) {
         return undefined;
     }
