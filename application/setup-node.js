@@ -27,7 +27,9 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
     }
 
     const homedir = os.homedir();
-    const removeBlockChainResult = await execWrapper(`rm -rf ${path.join(homedir, '.heliades')}`);
+    const removeBlockChainResult = await execWrapper(`rm -rf ${path.join(homedir, '.heliades/config')}`);
+    await execWrapper(`rm -rf ${path.join(homedir, '.heliades/keyring-local')}`);
+    await execWrapper(`rm -rf ${path.join(homedir, '.heliades/data')}`);
     const initResult = await execWrapper(`heliades init ${moniker} --chain-id ${chainId}`);
     const resultKeyAdd = await execWrapper(`heliades keys add user0 --from-private-key="${privateKey}" --keyring-backend="local"`);
 

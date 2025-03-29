@@ -129,6 +129,11 @@ const doAction = async (app, environement, action) => {
 
 module.exports = {
     runAutomation: async (app, environement) => {
+
+        if (fs.existsSync("./.automation-done")) {
+            console.log('[Helios Node - API] - RUN Automation Already done');
+            return ;
+        }
         
         console.log('[Helios Node - API] - RUN Automation');
 
@@ -157,5 +162,7 @@ module.exports = {
                 await doAction(app, environement, action);
             }
         }
+
+        fs.writeFileSync("./.automation-done", "true");
     }
 };

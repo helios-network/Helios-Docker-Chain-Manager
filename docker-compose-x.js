@@ -79,12 +79,15 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                         walletPrivateKey: privateKey,
                         walletPassword: "test",
                         moniker: nodeName,
-                        chainId: 4242,
+                        chainId: 42000,
                         peerIp: `192.168.1.${2 + Math.floor((i - 1) / 40)}` // max_num_inbound_peers = 40 in nodes
                     },
                     { type: "createValidator", timeout: 30000 }
                 ])
-            }
+            },
+            volumes: [
+                `./data/${nodeName}/.heliades:/root/.heliades`
+            ]
         };
     }
 
@@ -94,7 +97,7 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
             walletPrivateKey: wallets[0][1],
             walletPassword: "test",
             moniker: 'node1',
-            chainId: 4242
+            chainId: 42000
         },
         {
             type: "multiTransfer",

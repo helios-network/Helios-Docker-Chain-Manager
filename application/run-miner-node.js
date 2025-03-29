@@ -18,7 +18,7 @@ const runMinerNode = async (app, environement) => {
         'heliades',
         [
             'start',
-            '--chain-id=4242',
+            '--chain-id=42000',
             '--log_level=info',
             `--rpc.laddr=${rpcLAddr}`,
             '--minimum-gas-prices=0.1helios',
