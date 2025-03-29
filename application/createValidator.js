@@ -112,12 +112,12 @@ const createValidator = async (password, validatorData, retry = 0) => {
 
         console.log("Données reçues dans createValidator:", validatorData); // Debug log
 
-        if (!validatorData || !validatorData.moniker) {
+        if (!validatorData) {
             throw new Error(`Données invalides: ${JSON.stringify(validatorData)}`);
         }
 
         const description = {
-            moniker: validatorData.moniker || nodeMoniker,
+            moniker: nodeMoniker,
             identity: "",
             website: "https://mynode.example",
             securityContact: "mynode@example.com",
@@ -130,7 +130,7 @@ const createValidator = async (password, validatorData, retry = 0) => {
             maxChangeRate: ethers.parseUnits(validatorData.commission.maxChangeRate.toString(), 18)
         };
 
-        const minSelfDelegation = ethers.parseUnits(validatorData.minSelfDelegation.toString(), 18);
+        const minSelfDelegation = validatorData.minSelfDelegation.toString(); // minimum share
 
         const validatorAddress = wallet.address;
 

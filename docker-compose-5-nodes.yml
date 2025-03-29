@@ -114,7 +114,7 @@ services:
       PRIVATE_KEY: 7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e
       ADDRESS: "0x5EB1275822495570f48b8E573431D217d5708197"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e","walletPassword":"test","moniker":"node5","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e","walletPassword":"test","moniker":"node5","chainId":4242,"peerIp":"192.168.1.2"}]'
 networks:
   heliosnet:
     driver: bridge

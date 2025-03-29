@@ -157,22 +157,6 @@
                         </div>
                         <div class="section-content">
                             <form id="validator-form">
-                                <!-- Validator Description -->
-                                <div class="form-group">
-                                    <h3>Validator Description</h3>
-                                    <div class="input-group">
-                                        <label for="moniker">Moniker *</label>
-                                        <input type="text" 
-                                               id="moniker" 
-                                               name="moniker" 
-                                               class="form-control" 
-                                               placeholder="Enter validator name (min 3 characters)"
-                                               minlength="3"
-                                               required>
-                                        <small class="form-text text-muted">Le nom public de votre validateur</small>
-                                    </div>
-                                </div>
-
                                 <!-- Commission Rates -->
                                 <div class="form-group">
                                     <h3>Commission Rates</h3>
@@ -187,7 +171,7 @@
                                                max="1"
                                                step="0.01"
                                                required>
-                                        <small class="form-text text-muted">Taux de commission initial (ex: 0.05 pour 5%)</small>
+                                        <small class="form-text text-muted">Initial commission rate (ex: 0.05 for 5%)</small>
                                     </div>
 
                                     <div class="input-group">
@@ -201,7 +185,7 @@
                                                max="1"
                                                step="0.01"
                                                required>
-                                        <small class="form-text text-muted">Taux maximum de commission possible</small>
+                                        <small class="form-text text-muted">Max rate possible</small>
                                     </div>
 
                                     <div class="input-group">
@@ -215,7 +199,7 @@
                                                max="1"
                                                step="0.01"
                                                required>
-                                        <small class="form-text text-muted">Changement maximum du taux par mise à jour</small>
+                                        <small class="form-text text-muted">Max change per update</small>
                                     </div>
                                 </div>
 
@@ -223,7 +207,7 @@
                                 <div class="form-group">
                                     <h3>Validator Settings</h3>
                                     <div class="input-group">
-                                        <label for="min-self-delegation">Min Self Delegation *</label>
+                                        <label for="min-self-delegation">Min Self Delegation * (1 = 1 share)</label>
                                         <input type="number" 
                                                id="min-self-delegation" 
                                                name="min-self-delegation" 
@@ -232,11 +216,11 @@
                                                min="1"
                                                step="1"
                                                required>
-                                        <small class="form-text text-muted">Montant minimum d'auto-délégation</small>
+                                        <small class="form-text text-muted">Minimum self delegation amount</small>
                                     </div>
 
                                     <div class="input-group">
-                                        <label for="value">Value *</label>
+                                        <label for="value">Value * (1 = 1 HLS)</label>
                                         <input type="number" 
                                                id="value" 
                                                name="value" 
@@ -245,7 +229,7 @@
                                                min="1"
                                                step="1"
                                                required>
-                                        <small class="form-text text-muted">Montant initial de staking</small>
+                                        <small class="form-text text-muted">Initial staking amount</small>
                                     </div>
                                 </div>
 
@@ -299,7 +283,6 @@
                     
                     try {
                         const formData = {
-                            moniker: document.getElementById('moniker').value,
                             commission: {
                                 rate: document.getElementById('commission-rate').value,
                                 maxRate: document.getElementById('commission-max-rate').value,
@@ -310,10 +293,6 @@
                         };
 
                         // Validation des données
-                        if (!formData.moniker || formData.moniker.length < 3) {
-                            alert("Le moniker doit contenir au moins 3 caractères");
-                            return;
-                        }
 
                         const rate = parseFloat(formData.commission.rate);
                         const maxRate = parseFloat(formData.commission.maxRate);
@@ -372,7 +351,7 @@
                 validatorInfoDiv.innerHTML = `
                     <p><strong>APR:</strong> ${validator.apr || 'N/A'}</p>
                     <p><strong>Moniker:</strong> ${validator.moniker || 'N/A'}</p>
-                    <p><strong>Jailed:</strong> ${validator.jailed || 'N/A'}</p>
+                    <p><strong>Jailed:</strong> ${validator.jailed ? 'Yes' : 'No'}</p>
                     <p><strong>Min Self Delegation:</strong> ${validator.minSelfDelegation || 'N/A'}</p>
                     <p><strong>Shares:</strong> ${validator.shares || 'N/A'}</p>
                     <p><strong>Status:</strong> ${validator.status || 'N/A'}</p>
@@ -382,12 +361,6 @@
                     <p><strong>Max Rate:</strong> ${validator.commission?.commission_rates?.max_rate || 'N/A'}</p>
                     <p><strong>Max Change Rate:</strong> ${validator.commission?.commission_rates?.max_change_rate || 'N/A'}</p>
                     <p><strong>Commission Update Time:</strong> ${validator.commission?.update_time || 'N/A'}</p>
-                    <div class="button-group grp3">
-                        <button id="unbond" class="button primary" onclick="unbond()">
-                            <i class="material-icons">play_arrow</i>
-                            <span>Unbond</span>
-                        </button>
-                    </div>
                 `;
             }
 
@@ -407,7 +380,7 @@
                 ], delegationInfoDiv);
 
                 delegation.assets.forEach(asset => {
-                    buildDisplay([{ key: "commission", type: "text", text: `${Web3.utils.fromWei(asset.amount, 'ether')} ${asset.symbol}` }], displayedDelegation.raw.element);
+                    buildDisplay([{ key: "commission", type: "text", text: `${Web3.utils.fromWei(asset.amount, 'ether')} ${asset.denom}` }], displayedDelegation.raw.element);
                 });
             }
 

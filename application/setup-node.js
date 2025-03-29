@@ -78,6 +78,8 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
             max_reduction: "0.90",
             curve_steepness: "10.0"
         };
+
+        genesisJson.consensus.params.block.max_gas = "500000000" // (500000000 == 1000 normal tx)
         
         // genesisJson.app_state.auction.params.auction_period = "10";
         // genesisJson.app_state.ocr.params.module_admin = 'helios1q0d2nv8xpf9qy22djzgrkgrrcst9frcs34fqra';

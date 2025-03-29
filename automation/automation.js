@@ -45,7 +45,15 @@ const actionSetupToPeer = async (app, environement, action) => {
 }
 
 const actionCreateValidator = async (app, environement, action) => {
-    const success = await createValidator(environement.walletPassword);
+    const success = await createValidator(environement.walletPassword, {
+        commission: {
+            rate: "0.10",
+            maxRate: "0.20",
+            maxChangeRate: "0.01"
+        },
+        minSelfDelegation: "1",
+        value: "1",
+    });
 }
 
 const actionMultiTransfer = async (app, environement, action) => {
