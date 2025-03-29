@@ -85,9 +85,9 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                     { type: "createValidator", timeout: 30000 }
                 ])
             },
-            volumes: [
-                `./data/${nodeName}/.heliades:/root/.heliades`
-            ]
+            // volumes: [
+            //     `./data/${nodeName}/.heliades:/root/.heliades`
+            // ]
         };
     }
 
