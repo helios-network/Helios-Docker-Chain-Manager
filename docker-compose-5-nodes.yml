@@ -9,6 +9,8 @@ services:
     ports:
       - 8080:8080
       - 8545:8545
+      - 8546:8546
+      - 8547:8547
       - 1317:1317
       - 26657:26657
       - 26656:26656
@@ -22,9 +24,7 @@ services:
       PRIVATE_KEY: da8b1967d390929c785c4da297682b55a2ee4fc02eceae1a1b2bf364d6b75288
       ADDRESS: "0x9bFE7f4Aae74EF013e821ef93c092c2d42eac4dd"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setup","walletPrivateKey":"da8b1967d390929c785c4da297682b55a2ee4fc02eceae1a1b2bf364d6b75288","walletPassword":"test","moniker":"node1","chainId":4242},{"type":"multiTransfer","timeout":10000,"to":["0x17267eB1FEC301848d4B5140eDDCFC48945427Ab","0xD1cFBbB140972530A3798fe1Ba11312eB8C99582","0xc9728bFb36F8D2f9d39a5e7ce19AA11aF27dB440","0x5EB1275822495570f48b8E573431D217d5708197"],"value":"500"}]'
-    volumes:
-      - ./data/node1/.heliades:/root/.heliades
+      MANAGER_ACTIONS: '[{"type":"setup","walletPrivateKey":"da8b1967d390929c785c4da297682b55a2ee4fc02eceae1a1b2bf364d6b75288","walletPassword":"test","moniker":"node1","chainId":42000},{"type":"multiTransfer","timeout":10000,"to":["0x17267eB1FEC301848d4B5140eDDCFC48945427Ab","0xD1cFBbB140972530A3798fe1Ba11312eB8C99582","0xc9728bFb36F8D2f9d39a5e7ce19AA11aF27dB440","0x5EB1275822495570f48b8E573431D217d5708197"],"value":"500"}]'
   node2:
     build:
       context: ../
@@ -33,7 +33,9 @@ services:
     container_name: node2
     ports:
       - 8081:8080
-      - 8546:8545
+      - 8548:8545
+      - 8549:8546
+      - 8550:8547
       - 1318:1317
       - 26757:26657
       - 26756:26656
@@ -47,9 +49,7 @@ services:
       PRIVATE_KEY: 2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036
       ADDRESS: "0x17267eB1FEC301848d4B5140eDDCFC48945427Ab"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036","walletPassword":"test","moniker":"node2","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
-    volumes:
-      - ./data/node2/.heliades:/root/.heliades
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"2c37c3d09d7a1c957f01ad200cec69bc287d0a9cc85b4dce694611a4c9c24036","walletPassword":"test","moniker":"node2","chainId":42000,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node3:
     build:
       context: ../
@@ -58,7 +58,9 @@ services:
     container_name: node3
     ports:
       - 8082:8080
-      - 8547:8545
+      - 8551:8545
+      - 8552:8546
+      - 8553:8547
       - 1319:1317
       - 26857:26657
       - 26856:26656
@@ -72,23 +74,14 @@ services:
       PRIVATE_KEY: 7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9
       ADDRESS: "0xD1cFBbB140972530A3798fe1Ba11312eB8C99582"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9","walletPassword":"test","moniker":"node3","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
-    volumes:
-      - ./data/node3/.heliades:/root/.heliades
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7772559a45ee3b391d7e87851e2d31381a25813e55c18ecdc8faabb339f105f9","walletPassword":"test","moniker":"node3","chainId":42000,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node4:
     build:
       context: ../
       dockerfile: ./Helios-Docker-Chain-Manager/Dockerfile-local-repositories
     image: docker-helios-nodemanager
     container_name: node4
-    ports:
-      - 8083:8080
-      - 8548:8545
-      - 1320:1317
-      - 26957:26657
-      - 26956:26656
-      - 10367:10337
-      - 9390:9090
+    ports: []
     networks:
       heliosnet:
         ipv4_address: 192.168.1.5
@@ -97,23 +90,14 @@ services:
       PRIVATE_KEY: e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483
       ADDRESS: "0xc9728bFb36F8D2f9d39a5e7ce19AA11aF27dB440"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483","walletPassword":"test","moniker":"node4","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
-    volumes:
-      - ./data/node4/.heliades:/root/.heliades
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"e1ab51c450698b0af4722e074e39394bd99822f0b00f1a787a131b48c14d4483","walletPassword":"test","moniker":"node4","chainId":42000,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
   node5:
     build:
       context: ../
       dockerfile: ./Helios-Docker-Chain-Manager/Dockerfile-local-repositories
     image: docker-helios-nodemanager
     container_name: node5
-    ports:
-      - 8084:8080
-      - 8549:8545
-      - 1321:1317
-      - 27057:26657
-      - 27056:26656
-      - 10377:10337
-      - 9490:9090
+    ports: []
     networks:
       heliosnet:
         ipv4_address: 192.168.1.6
@@ -122,9 +106,7 @@ services:
       PRIVATE_KEY: 7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e
       ADDRESS: "0x5EB1275822495570f48b8E573431D217d5708197"
       PASSWORD: test
-      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e","walletPassword":"test","moniker":"node5","chainId":4242,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
-    volumes:
-      - ./data/node5/.heliades:/root/.heliades
+      MANAGER_ACTIONS: '[{"type":"setupToPeer","timeout":20000,"walletPrivateKey":"7868d2cf01302d516d21efab6198ce79910cc0619885f8fa2eb65a5587f7602e","walletPassword":"test","moniker":"node5","chainId":42000,"peerIp":"192.168.1.2"},{"type":"createValidator","timeout":30000}]'
 networks:
   heliosnet:
     driver: bridge

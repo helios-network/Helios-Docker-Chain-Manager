@@ -55,10 +55,11 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
             build: getBuildType(args),
             image: getImageType(args),
             container_name: nodeName,
-            ports: i < 30 ? [
+            ports: i < 3 ? [
                 `${8080 + i}:8080`,
-                `${8545 + (i * 2)}:8545`,
-                `${(8545 + (i * 2)) + 1}:8546`,
+                `${8545 + (i * 3)}:8545`,
+                `${(8545 + (i * 3)) + 1}:8546`,
+                `${(8545 + (i * 3)) + 2}:8547`,
                 `${1317 + i}:1317`,
                 `${26657 + (i * 100)}:26657`,
                 `${26656 + (i * 100)}:26656`,
