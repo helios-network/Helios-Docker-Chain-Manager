@@ -5,6 +5,7 @@ const { runMinerNode } = require("../application/run-miner-node");
 const ethers = require('ethers');
 const { getExternalNodeGenesisAndStatus } = require("../application/get-external-node-genesis-and-status");
 const { createValidator } = require("../application/createValidator");
+const { delegate } = require("../application/delegate");
 
 const actionSetup = async (app, environement, action) => {
     environement.walletPassword = action.walletPassword;
@@ -54,6 +55,10 @@ const actionCreateValidator = async (app, environement, action) => {
         minSelfDelegation: "1",
         value: "1",
     });
+}
+
+const actionDelegate = async (app, environement, action) => {
+    const success = await delegate(environement.walletPassword);
 }
 
 const actionMultiTransfer = async (app, environement, action) => {
@@ -118,6 +123,9 @@ const doAction = async (app, environement, action) => {
             break ;
         case "createValidator":
             await actionCreateValidator(app, environement, action);
+            break ;
+        case "delegate":
+            await actionDelegate(app, environement, action);
             break ;
         case "wait": // nothing
             break ;

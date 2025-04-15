@@ -133,76 +133,20 @@ const createValidatorAbi = [
     }
 ];
 
-const createValidator = async (password, validatorData, retry = 0) => {
+const delegate = async (password, retry = 0) => {
     try {
         const RPC_URL = 'http://localhost:8545';
         const provider = new ethers.JsonRpcProvider(RPC_URL);
 
         const keyStoreNode = fs.readFileSync(`./node/keystore`).toString();
-        const nodeMoniker = fs.readFileSync(`./node/moniker`).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
         const wallet = new ethers.Wallet(privateKey, provider);
 
-        console.log("Données reçues dans createValidator:", validatorData); // Debug log
-
-        if (!validatorData) {
-            throw new Error(`Données invalides: ${JSON.stringify(validatorData)}`);
-        }
-
-        const description = {
-            moniker: nodeMoniker,
-            identity: "",
-            website: "https://mynode.example",
-            securityContact: "mynode@example.com",
-            details: "This is my great node"
-        };
-
-        const commissionRates = {
-            rate: ethers.parseUnits(validatorData.commission.rate.toString(), 18),
-            maxRate: ethers.parseUnits(validatorData.commission.maxRate.toString(), 18),
-            maxChangeRate: ethers.parseUnits(validatorData.commission.maxChangeRate.toString(), 18)
-        };
-
-        const minSelfDelegation = validatorData.minSelfDelegation.toString(); // minimum share
-
         const validatorAddress = wallet.address;
-
-        const pubkeyJson = (await(execWrapper(`heliades tendermint show-validator`))).trim();
-        const pubkey = JSON.parse(pubkeyJson).key;
-        const value = ethers.parseUnits(validatorData.value.toString(), 18);
-
-        console.log('Données formatées:', {
-            description,
-            commissionRates,
-            minSelfDelegation,
-            validatorAddress,
-            pubkey,
-            value
-        });
+        const valueDelegate = ethers.parseUnits("10", 18);
 
         const contract = new ethers.Contract('0x0000000000000000000000000000000000000800', createValidatorAbi, wallet);
-        
-        const tx = await contract.createValidator(
-            description,
-            commissionRates,
-            minSelfDelegation,
-            validatorAddress,
-            pubkey,
-            value,
-            0 // minDelegation
-        );
-
-        console.log('Transaction envoyée, hash :', tx.hash);
-
-        const receipt = await tx.wait();
-        console.log('Transaction confirmée dans le bloc :', receipt.blockNumber);
-
-        console.log("Validateur créé avec succès !");
-
-        await new Promise((resolve) => setTimeout(resolve, 60000));
-
-        const valueDelegate = ethers.parseUnits("10", 18);
 
         const delegateTx = await contract.delegate(
             validatorAddress,
@@ -225,16 +169,16 @@ const createValidator = async (password, validatorData, retry = 0) => {
     } catch (e) {
         console.log('Erreur complète:', e);
         if (retry >= 0) {
-            console.log('createValidator failed.');
+            console.log('delegate failed.');
             console.log(e);
             return false;
         }
-        console.log('createValidator failed retry...');
+        console.log('delegate failed retry...');
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return createValidator(password, validatorData, retry + 1);
+        return createValidator(password, retry + 1);
     }
 }
 
 module.exports = {
-    createValidator
+  delegate
 }

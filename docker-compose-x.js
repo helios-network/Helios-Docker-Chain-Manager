@@ -82,9 +82,10 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                         walletPassword: "test",
                         moniker: nodeName,
                         chainId: 42000,
-                        peerIp: `192.168.1.${2 + Math.floor((i - 1) / 40)}` // max_num_inbound_peers = 40 in nodes
+                        peerIp: `192.168.1.2` // max_num_inbound_peers = 40 in nodes
                     },
-                    { type: "createValidator", timeout: 30000 }
+                    { type: "createValidator", timeout: 20000 * (i * 2)},
+                    // { type: "delegate", timeout: 10000 }
                 ])
             },
             // volumes: [
@@ -106,6 +107,10 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
             timeout: 10000,
             to: wallets.slice(1).map(w => w[0]),
             value: "500"
+        },
+        {
+            type: "delegate",
+            timeout: 10000,
         }
     ]);
 
