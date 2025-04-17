@@ -200,26 +200,26 @@ const createValidator = async (password, validatorData, retry = 0) => {
 
         console.log("Validateur créé avec succès !");
 
-        await new Promise((resolve) => setTimeout(resolve, 60000));
+        // await new Promise((resolve) => setTimeout(resolve, 10000));
 
-        const valueDelegate = ethers.parseUnits("10", 18);
+        // const valueDelegate = ethers.parseUnits("10", 18);
 
-        const delegateTx = await contract.delegate(
-            validatorAddress,
-            validatorAddress,
-            valueDelegate,
-            "ueth", {
-              gasPrice: 20000000000,
-              gasLimit: 500000
-            }
-        );
+        // const delegateTx = await contract.delegate(
+        //     validatorAddress,
+        //     validatorAddress,
+        //     valueDelegate,
+        //     "ueth", {
+        //       gasPrice: 20000000000,
+        //       gasLimit: 500000
+        //     }
+        // );
 
-        console.log('Transaction envoyée, hash :', delegateTx.hash);
+        // console.log('Transaction envoyée, hash :', delegateTx.hash);
 
-        const delegateReceipt = await delegateTx.wait();
-        console.log('Transaction confirmée dans le bloc :', delegateReceipt.blockNumber);
+        // const delegateReceipt = await delegateTx.wait();
+        // console.log('Transaction confirmée dans le bloc :', delegateReceipt.blockNumber);
 
-        console.log("Délégation réussie !");
+        // console.log("Délégation réussie !");
 
         return true;
     } catch (e) {

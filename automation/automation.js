@@ -6,6 +6,8 @@ const ethers = require('ethers');
 const { getExternalNodeGenesisAndStatus } = require("../application/get-external-node-genesis-and-status");
 const { createValidator } = require("../application/createValidator");
 const { delegate } = require("../application/delegate");
+const { transferToken } = require("../application/transferToken");
+const { createToken } = require("../application/createToken");
 
 const actionSetup = async (app, environement, action) => {
     environement.walletPassword = action.walletPassword;
@@ -78,6 +80,50 @@ const actionMultiTransfer = async (app, environement, action) => {
     }
 }
 
+const actionTransferToken = async (app, environement, action) => {
+    const success = await transferToken(environement.walletPassword, action.tokenAddress, action.to, action.value);
+}
+
+const actionCreateToken = async (app, environement, action) => {
+    const success = await createToken(environement.walletPassword);
+}
+
+const actionCreateTokenAndMultiTransfer = async (app, environement, action) => {
+    const success = await createToken(environement.walletPassword);
+
+    const response = await fetch(`http://localhost:8545`, {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "id": 1,
+          "jsonrpc": "2.0",
+          "method": "eth_getTokensByPageAndSize",
+          "params": [
+            "0x1",
+            "0x100"
+          ]
+        }),
+      })
+    const data = await response.json();
+    const token = data.result.find(x => x.metadata.base == 'uBTC');
+    const tokenAddress = token.metadata.contract_address;
+
+    try {
+        const recipientAddresses = action.to;
+        const amountInEther = action.value;
+
+        for (let recipientAddress of recipientAddresses) {
+            await transferToken(environement.walletPassword, tokenAddress, recipientAddress, amountInEther);
+        }
+        
+    } catch (error) {
+        console.error('Error sending Multi transaction:', error);
+    }
+}
+
 const actionTransfer = async (app, environement, action) => {
     try {
         const recipientAddress = action.to;
@@ -120,6 +166,9 @@ const doAction = async (app, environement, action) => {
             break ;
         case "multiTransfer":
             await actionMultiTransfer(app, environement, action);
+            break ;
+        case "multiTransferToken":
+            await actionCreateTokenAndMultiTransfer(app, environement, action);
             break ;
         case "createValidator":
             await actionCreateValidator(app, environement, action);

@@ -168,14 +168,14 @@ const delegate = async (password, retry = 0) => {
         return true;
     } catch (e) {
         console.log('Erreur complète:', e);
-        if (retry >= 0) {
+        if (retry >= 5) {
             console.log('delegate failed.');
             console.log(e);
             return false;
         }
         console.log('delegate failed retry...');
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        return createValidator(password, retry + 1);
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+        return delegate(password, retry + 1);
     }
 }
 

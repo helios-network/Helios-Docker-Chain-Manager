@@ -84,9 +84,9 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                         chainId: 42000,
                         peerIp: `192.168.1.2` // max_num_inbound_peers = 40 in nodes
                     },
-                    { type: "createValidator", timeout: 20000 * (i * 2)},
-                    // { type: "delegate", timeout: 10000 }
-                ])
+                    { type: "createValidator", timeout: 50000 },
+                    i < 5 ? { type: "delegate", timeout: 10000 + (i * 1000) } : undefined
+                ].filter(x => x != undefined))
             },
             // volumes: [
             //     `./data/${nodeName}/.heliades:/root/.heliades`
@@ -108,10 +108,10 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
             to: wallets.slice(1).map(w => w[0]),
             value: "500"
         },
-        {
-            type: "delegate",
-            timeout: 10000,
-        }
+        // {
+        //     type: "delegate",
+        //     timeout: 10000,
+        // }
     ]);
 
     const dockerCompose = {
