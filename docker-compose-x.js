@@ -85,7 +85,7 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                         peerIp: `192.168.1.2` // max_num_inbound_peers = 40 in nodes
                     },
                     { type: "createValidator", timeout: 50000 },
-                    i < 5 ? { type: "delegate", timeout: 10000 + (i * 1000) } : undefined
+                    i < 5 ? { type: "delegate", timeout: 30000 + (i * 1000) } : undefined
                 ].filter(x => x != undefined))
             },
             // volumes: [
