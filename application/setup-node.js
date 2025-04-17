@@ -67,7 +67,7 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
 
         genesisJson.app_state.staking.params.epoch_length = "100"; // Set epoch_length to 100
         genesisJson.app_state.staking.params.validators_per_epoch = "100"; // Set validators_per_epoch to 100
-        genesisJson.app_state.staking.params.epoch_enabled = false; // Enable epoch-based validator rotation
+        genesisJson.app_state.staking.params.epoch_enabled = true; // Enable epoch-based validator rotation
 
         genesisJson.app_state.staking.params.stake_weight_factor = "85"; // Enable epoch-based validator rotation
         genesisJson.app_state.staking.params.baseline_chance_factor = "5";
@@ -75,7 +75,7 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
 
         // New parameters for delegator stake reduction
         genesisJson.app_state.staking.params.delegator_stake_reduction = {
-            enabled: false,
+            enabled: true,
             dominance_threshold: "0.05",
             max_reduction: "0.90",
             curve_steepness: "10.0"
