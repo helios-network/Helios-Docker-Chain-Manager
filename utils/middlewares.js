@@ -36,10 +36,11 @@ module.exports = {
         });
     },
     auth: (app, environement, notFounHtmlFilePath, accessCodeKey = 'access-code', excludedRoutes) => {
-        app.use((req, res, next) => {
+        app.use(async (req, res, next) => {
 
             if (req.path === '/auth') {
-                if (fs.existsSync('./.password')) {
+                const homeDirectory = await app.actions.getHomeDirectory.use();
+                if (fs.existsSync(path.join(homeDirectory, '.password'))) {
                     res.send(true);
                     return ;
                 }
@@ -48,10 +49,11 @@ module.exports = {
             }
 
             if (req.path === '/auth-try') {
-                if (fs.existsSync('./.password') && req.body['password'] != undefined
+                const homeDirectory = await app.actions.getHomeDirectory.use();
+                if (fs.existsSync(path.join(homeDirectory, '.password')) && req.body['password'] != undefined
                     && (app.lastAuthFailedTime === undefined || moment(app.lastAuthFailedTime).add(10, 'seconds').isBefore(moment())) // anti brut force
                     ) {
-                    const pass = fs.readFileSync('./.password').toString();
+                    const pass = fs.readFileSync(path.join(homeDirectory, '.password')).toString();
                     const equals = req.body['password'] === pass;
 
                     if (!equals) {
@@ -65,14 +67,15 @@ module.exports = {
             }
 
             if (req.path === '/auth-subscribe') {
-                if (fs.existsSync('./.password')
+                const homeDirectory = await app.actions.getHomeDirectory.use();
+                if (fs.existsSync(path.join(homeDirectory, '.password'))
                     || req.body['password'] == undefined
                     || req.body['password'] == '') {
                     res.send(false);
                     return ;
                 }
                 environement.password = req.body['password'];
-                fs.writeFileSync('./.password', environement.password);
+                fs.writeFileSync(path.join(homeDirectory, '.password'), environement.password);
                 res.send(true);
                 return ;
             }

@@ -38,7 +38,7 @@ const postSetupNode = (app, environement) => {
                 genesisContent = (await fileGetContent(genesisURL)).toString();
             }
 
-            await setupNode(keyStoreNode, unrot13(atob(passwordCrypted)), moniker, chainId, genesisURL, {
+            await setupNode(app, keyStoreNode, unrot13(atob(passwordCrypted)), moniker, chainId, genesisURL, {
                 nodeIP: nodeIP,
                 nodeId: nodeId,
                 nodeGRPCPort: nodeGRPCPort,

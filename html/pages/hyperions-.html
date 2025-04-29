@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <title>Helios Node</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="sidebar"></div>
+
+        <div class="main-content" style="display: none">
+            
+        </div>
+        <script>
+            let password = window.localStorage.getItem("access-code");
+
+            const main = async () => {
+
+                if (password == undefined) {
+                    window.location = '/';
+                    return ;
+                }
+                if (!(await isSetup())) {
+                    window.location = '/setup';
+                    return ;
+                }
+                displaySideBar();
+                document.querySelectorAll('.main-content')[0].style.display = '';
+            }
+            
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
+            });
+
+        </script>
+        <script src="js/side-bar.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    </body>
+</html>

@@ -2,6 +2,7 @@ const { keyStoreRecover } = require("../utils/key-store");
 const { execWrapper } = require('../utils/exec-wrapper');
 const fs = require('fs');
 const ethers = require('ethers');
+const path = require('path');
 
 const createTokenAbi = [
   {
@@ -22,12 +23,13 @@ const createTokenAbi = [
   }
 ];
 
-const createToken = async (password, retry = 0) => {
+const createToken = async (app, password, retry = 0) => {
     try {
         const RPC_URL = 'http://localhost:8545';
         const provider = new ethers.JsonRpcProvider(RPC_URL);
 
-        const keyStoreNode = fs.readFileSync(`./node/keystore`).toString();
+        const homeDirectory = await app.actions.getHomeDirectory.use();
+        const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
         const wallet = new ethers.Wallet(privateKey, provider);
@@ -59,7 +61,7 @@ const createToken = async (password, retry = 0) => {
         }
         console.log('createToken failed retry...');
         await new Promise((resolve) => setTimeout(resolve, 5000));
-        return createToken(password, retry + 1);
+        return createToken(app, password, retry + 1);
     }
 }
 

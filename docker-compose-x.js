@@ -88,9 +88,9 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                     i < 5 ? { type: "delegate", timeout: 30000 + (i * 1000) } : undefined
                 ].filter(x => x != undefined))
             },
-            // volumes: [
-            //     `./data/${nodeName}/.heliades:/root/.heliades`
-            // ]
+            volumes: [
+                `./data/${nodeName}/.heliades:/root/.heliades`
+            ]
         };
     }
 
@@ -108,10 +108,7 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
             to: wallets.slice(1).map(w => w[0]),
             value: "500"
         },
-        // {
-        //     type: "delegate",
-        //     timeout: 10000,
-        // }
+        { type: "startHyperion", timeout: 30000, walletPassword: "test" }
     ]);
 
     const dockerCompose = {

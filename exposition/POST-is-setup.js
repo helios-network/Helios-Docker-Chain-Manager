@@ -5,8 +5,8 @@ const path = require('path');
 const isSetup = (app, environement) => {
     app.post('/is-setup', async (req, res) => {
         if (app.node) {
-            const homedir = os.homedir();
-            const genesisPath = path.join(homedir, '.heliades/config/genesis.json');
+            const homeDirectory = await app.actions.getHomeDirectory.use();
+            const genesisPath = path.join(homeDirectory, 'config/genesis.json');
 
             if (fs.existsSync(genesisPath)) {
                 res.send(true);

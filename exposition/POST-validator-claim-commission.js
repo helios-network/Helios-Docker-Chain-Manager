@@ -1,6 +1,7 @@
 const fs = require('fs');
 const keyth = require('keythereum');
 const ethers = require('ethers');
+const path = require('path');
 
 const unrot13 = str => str.split('')
     .map(char => String.fromCharCode(char.charCodeAt(0) - 13))
@@ -56,7 +57,8 @@ const validatorClaimCommission = (app, environement) => {
             const RPC_URL = 'http://localhost:8545';
             const provider = new ethers.JsonRpcProvider(RPC_URL);
 
-            const keyStoreNode = fs.readFileSync(`./node/keystore`).toString();
+            const homeDirectory = await app.actions.getHomeDirectory.use();
+            const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
 
             const privateKey = await decrypt2(keyStoreNode, unrot13(atob(passwordCrypted)));
             const wallet = new ethers.Wallet(privateKey, provider);

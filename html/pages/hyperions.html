@@ -10,10 +10,41 @@
         <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
-            
+            <div class="container">
+                <div id="testdisplay" class="grid-container-one"></div>
+            </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
+
+            async function startHyperion(btn) {
+                btn.disabled = true;
+                let result = await fetch('/action', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            type: "startHyperion",
+                            walletPassword: "test"
+                        })
+                    });
+            }
+
+            async function stopHyperion(btn) {
+                btn.disabled = true;
+                let result = await fetch('/action', {
+                    method: 'POST',
+                    headers: {
+                        'Access-Code': password,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: "stopHyperion",
+                    })
+                });
+            }
 
             const main = async () => {
 
@@ -21,14 +52,95 @@
                     window.location = '/';
                     return ;
                 }
-                if (!(await isSetup())) {
-                    window.location = '/setup';
+
+                if (!(await apiTestPassword(password))) {
+                    window.localStorage.removeItem('access-code');
+                    window.location = '/';
                     return ;
                 }
                 displaySideBar();
+
                 document.querySelectorAll('.main-content')[0].style.display = '';
+
+                const setup = await isSetup();
+
+                if (setup) {
+
+                    const displayRepresentation =
+                        [
+                            {
+                                type: "content",
+                                "title": 'Hyperion Status',
+                                "icon": "account_tree",
+                                "badge": {
+                                    value: 'Inactive'
+                                },
+                                content: [
+                                    {
+                                        "type": 'raw',
+                                        "value": 2,
+                                        content: [
+                                            {
+                                                key: 'btnStart',
+                                                type: "button",
+                                                class: "primary",
+                                                icon: "play_arrow",
+                                                text: "Start",
+                                                disabled: true,
+                                                onclick: function() { startHyperion(this); }
+                                            },
+                                            {
+                                                key: 'btnStop',
+                                                type: "button",
+                                                class: "secondary",
+                                                icon: "stop",
+                                                text: "Stop",
+                                                disabled: true,
+                                                onclick: function() { stopHyperion(this); }
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                type: "content",
+                                title: "Hyperion Logs",
+                                icon: "terminal",
+                                content: [
+                                    {
+                                        key: 'logs',
+                                        type: "logs-container",
+                                        id: "node1-logs",
+                                        // Vous pouvez ajouter d'autres propriétés si nécessaire
+                                    }
+                                ]
+                            }
+                        ];
+
+                    const displayed = buildDisplay(displayRepresentation, document.getElementById('testdisplay'));
+
+                    console.log('ready', displayed);
+                    
+                    setInterval(async () => {
+                        let result = await fetch('/test-hyperion', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Code': password
+                            },
+                            body: JSON.stringify({})
+                        });
+                        let jsonResult = await result.json();
+
+                        displayed.logs.setLog(jsonResult.hyperion.logs.join('\n'));
+                        displayed.btnStart.element.disabled = jsonResult.hyperion.status == '1';
+                        displayed.btnStop.element.disabled = jsonResult.hyperion.status == '0';
+
+                    }, 1000 / 1);
+                } else {
+                    document.getElementById('PageSetup').style.display = 'block';
+                }
             }
-            
+
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
             });

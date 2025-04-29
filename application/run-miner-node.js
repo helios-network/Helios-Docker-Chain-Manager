@@ -1,11 +1,10 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const { execWrapper } = require('../utils/exec-wrapper');
+const path = require('path');
 
 const runMinerNode = async (app, environement) => {
-    if (!fs.existsSync('./node')) {
-        fs.mkdirSync('./node');
-    }
+    const homeDirectory = await app.actions.getHomeDirectory.use();
 
     const rpcLAddr = environement.env['rpc.laddr'] ?? 'tcp://0.0.0.0:26657';
     const grpcAddress = environement.env['grpc.address'] ?? '0.0.0.0:9090';
@@ -33,7 +32,7 @@ const runMinerNode = async (app, environement) => {
             `--json-rpc.ws-address=${jsonRpcWsAddress}`,
             `--p2p.laddr=${p2plAddr}`
         ],
-        { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync('./node/.error.log', 'w')]}
+        { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-node.log'), 'w')]}
     );
     app.node.process = childProcess;
 

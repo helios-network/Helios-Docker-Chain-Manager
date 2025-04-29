@@ -8,47 +8,27 @@ const { createValidator } = require("../application/createValidator");
 const { delegate } = require("../application/delegate");
 const { transferToken } = require("../application/transferToken");
 const { createToken } = require("../application/createToken");
+const { runHyperionNode } = require("../application/run-hyperion-node");
+const path = require('path');
 
-const actionSetup = async (app, environement, action) => {
-    environement.walletPassword = action.walletPassword;
-    environement.walletPrivateKey = action.walletPrivateKey;
-    const keyStoreNode = await generateJsonKeyStore(action.walletPrivateKey, action.walletPassword);
-    const nodeSetup = await setupNode(keyStoreNode, action.walletPassword, action.moniker, action.chainId, action.genesisURL, action.peerInfos);
-
-    if (nodeSetup) {
-        await runMinerNode(app, environement);
-    }
-}
-
-const actionSetupToPeer = async (app, environement, action) => {
-    environement.walletPassword = action.walletPassword;
-    environement.walletPrivateKey = action.walletPrivateKey;
-    const keyStoreNode = await generateJsonKeyStore(action.walletPrivateKey, action.walletPassword);
-    const peerIp = action.peerIp;
-    const peerGRPCPort = 26657;
-    const peerP2PPort = 26656;
-    const genesisAndStatus = await getExternalNodeGenesisAndStatus(peerIp, peerGRPCPort);
-
-    if (genesisAndStatus == undefined) {
-        console.log('Load genesisAndStatus failed');
+const actionStartHyperion = async (app, environement, action) => {
+    if ((await app.hyperion.status()) == '1') {
         return ;
     }
 
-    const peerInfos = {
-        nodeP2PPort: peerP2PPort,
-        nodeId: genesisAndStatus.status.node_info.id,
-        nodeIP: peerIp
-    };
+    await runHyperionNode(app, environement, action.walletPassword);
+}
 
-    const nodeSetup = await setupNode(keyStoreNode, action.walletPassword, action.moniker, action.chainId, genesisAndStatus.genesisURL, peerInfos);
-
-    if (nodeSetup) {
-        await runMinerNode(app, environement);
+const actionStopHyperion = async (app, environement, action) => {
+    if ((await app.hyperion.status()) == '0') {
+        return ;
     }
+
+    await app.hyperion.stop();
 }
 
 const actionCreateValidator = async (app, environement, action) => {
-    const success = await createValidator(environement.walletPassword, {
+    const success = await createValidator(app, environement.walletPassword, {
         commission: {
             rate: "0.10",
             maxRate: "0.20",
@@ -60,7 +40,7 @@ const actionCreateValidator = async (app, environement, action) => {
 }
 
 const actionDelegate = async (app, environement, action) => {
-    const success = await delegate(environement.walletPassword);
+    const success = await delegate(app, environement.walletPassword);
 }
 
 const actionMultiTransfer = async (app, environement, action) => {
@@ -81,15 +61,15 @@ const actionMultiTransfer = async (app, environement, action) => {
 }
 
 const actionTransferToken = async (app, environement, action) => {
-    const success = await transferToken(environement.walletPassword, action.tokenAddress, action.to, action.value);
+    const success = await transferToken(app, environement.walletPassword, action.tokenAddress, action.to, action.value);
 }
 
 const actionCreateToken = async (app, environement, action) => {
-    const success = await createToken(environement.walletPassword);
+    const success = await createToken(app, environement.walletPassword);
 }
 
 const actionCreateTokenAndMultiTransfer = async (app, environement, action) => {
-    const success = await createToken(environement.walletPassword);
+    const success = await createToken(app, environement.walletPassword);
 
     const response = await fetch(`http://localhost:8545`, {
         method: 'POST',
@@ -116,7 +96,7 @@ const actionCreateTokenAndMultiTransfer = async (app, environement, action) => {
         const amountInEther = action.value;
 
         for (let recipientAddress of recipientAddresses) {
-            await transferToken(environement.walletPassword, tokenAddress, recipientAddress, amountInEther);
+            await transferToken(app, environement.walletPassword, tokenAddress, recipientAddress, amountInEther);
         }
         
     } catch (error) {
@@ -156,10 +136,10 @@ const actionTransfer = async (app, environement, action) => {
 const doAction = async (app, environement, action) => {
     switch (action.type) {
         case "setup":
-            await actionSetup(app, environement, action);
+            await app.actions.setupNode.use(app, environement, action);
             break ;
         case "setupToPeer":
-            await actionSetupToPeer(app, environement, action);
+            await app.actions.setupNodeWithPeer.use(app, environement, action);
             break ;
         case "transfer":
             await actionTransfer(app, environement, action);
@@ -173,6 +153,12 @@ const doAction = async (app, environement, action) => {
         case "createValidator":
             await actionCreateValidator(app, environement, action);
             break ;
+        case "startHyperion":
+            await actionStartHyperion(app, environement, action);
+            break ;
+        case "stopHyperion":
+            await actionStopHyperion(app, environement, action);
+            break ;
         case "delegate":
             await actionDelegate(app, environement, action);
             break ;
@@ -185,19 +171,24 @@ const doAction = async (app, environement, action) => {
 }
 
 module.exports = {
+    doAction,
     runAutomation: async (app, environement) => {
 
-        if (fs.existsSync("./.automation-done")) {
+        const homeDirectory = await app.actions.getHomeDirectory.use();
+
+        if (fs.existsSync(path.join(homeDirectory, '.automation-done'))) {
             console.log('[Helios Node - API] - RUN Automation Already done');
+            await runMinerNode(app, environement);
             return ;
         }
         
         console.log('[Helios Node - API] - RUN Automation');
 
         // setup app password
-        if (environement.env.PASSWORD != undefined && !fs.existsSync('./.password')) {
+        
+        if (environement.env.PASSWORD != undefined && !fs.existsSync(path.join(homeDirectory, '.password'))) {
             environement.password = environement.env.PASSWORD;
-            fs.writeFileSync('./.password', environement.password);
+            fs.writeFileSync(path.join(homeDirectory, '.password'), environement.password);
         }
 
         // have actions
@@ -220,6 +211,6 @@ module.exports = {
             }
         }
 
-        fs.writeFileSync("./.automation-done", "true");
+        fs.writeFileSync(path.join(homeDirectory, '.automation-done'), "true");
     }
 };

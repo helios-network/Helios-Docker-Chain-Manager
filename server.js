@@ -33,13 +33,20 @@ const main = async () => {
   // app.pairNodes = await parsePairNodes();
 
   app.node = {
-      status: '0',
       mining: '0',
       setup: false,
       logs: [],
       status: async () => '0',
       stop: async () => {},
       getInfos: async () => ({})
+  };
+
+  app.hyperion = {
+    status: async () => '0',
+    logs: [],
+    start: async () => {},
+    stop: async () => {},
+    getInfos: async () => ({})
   };
 
   ////////////////////////////////////////////
@@ -58,6 +65,29 @@ const main = async () => {
     let path = routeUseFunction.name.replace(`${method}-`, '');
     console.log(`[Helios Node - API] - ${method} - ${path}`);
   });
+
+  ////////////////////////////////////////////
+  // ACTIONS
+  ////////////////////////////////////////////
+
+  let actionsArray = [... fs.readdirSync('./actions')]
+    .filter(x => !['example.js'].includes(x)  && x.endsWith('.js'))
+    .map(x => [x, require(`./actions/${x}`)])
+    .map(x => ({ name: x[0].replace('.js', ''), use: Object.values(x[1])[0], type: 'normal' }));
+
+  app.actions = {};
+
+  [... actionsArray].forEach(action => {
+    let method = action.name;
+    console.log(`[Helios Node - API] - ACTION - ${method}`);
+    app.actions[method] = action;
+  });
+
+  const homeDirectory = await app.actions.getHomeDirectory.use();
+
+  if (!fs.existsSync(homeDirectory)) {
+    fs.mkdirSync(homeDirectory);
+  }
 
   ////////////////////////////////////////////
   // AUTOMATIONS

@@ -2,6 +2,7 @@ const { keyStoreRecover } = require("../utils/key-store");
 const { execWrapper } = require('../utils/exec-wrapper');
 const fs = require('fs');
 const ethers = require('ethers');
+const path = require('path');
 
 const createValidatorAbi = [
     {
@@ -133,13 +134,14 @@ const createValidatorAbi = [
     }
 ];
 
-const createValidator = async (password, validatorData, retry = 0) => {
+const createValidator = async (app, password, validatorData, retry = 0) => {
     try {
         const RPC_URL = 'http://localhost:8545';
         const provider = new ethers.JsonRpcProvider(RPC_URL);
 
-        const keyStoreNode = fs.readFileSync(`./node/keystore`).toString();
-        const nodeMoniker = fs.readFileSync(`./node/moniker`).toString();
+        const homeDirectory = await app.actions.getHomeDirectory.use();
+        const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
+        const nodeMoniker = fs.readFileSync(path.join(homeDirectory, 'moniker')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
         const wallet = new ethers.Wallet(privateKey, provider);
@@ -231,7 +233,7 @@ const createValidator = async (password, validatorData, retry = 0) => {
         }
         console.log('createValidator failed retry...');
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return createValidator(password, validatorData, retry + 1);
+        return createValidator(app, password, validatorData, retry + 1);
     }
 }
 

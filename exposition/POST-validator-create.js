@@ -15,7 +15,7 @@ const validatorCreate = (app, environement) => {
                 throw new Error('Données du validateur manquantes');
             }
 
-            const success = await createValidator(password, validatorData);
+            const success = await createValidator(app, password, validatorData);
             
             res.send(success);
         } catch (e) {

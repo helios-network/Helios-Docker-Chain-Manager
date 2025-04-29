@@ -5,31 +5,28 @@ const path = require('path');
 const os = require('os');
 const { keyStoreRecover } = require('../utils/key-store');
 
-const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos) => {
+const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos) => {
     
     const jsonKeyStoreNode = JSON.parse(keyStoreNode);
     const privateKey = await keyStoreRecover(keyStoreNode, walletPassword);
     
-    if (!fs.existsSync('./node')) {
-        fs.mkdirSync('./node');
-    }
-    fs.writeFileSync(`./node/id`, jsonKeyStoreNode.address);
-    fs.writeFileSync(`./node/keystore`, keyStoreNode);
-    fs.writeFileSync(`./node/moniker`, moniker);
-    fs.writeFileSync('./node/chainId', `${chainId}`);
+    const homeDirectory = await app.actions.getHomeDirectory.use();
+
+    fs.writeFileSync(path.join(homeDirectory, 'id'), jsonKeyStoreNode.address);
+    fs.writeFileSync(path.join(homeDirectory, 'keystore'), keyStoreNode);
+    fs.writeFileSync(path.join(homeDirectory, 'moniker'), moniker);
+    fs.writeFileSync(path.join(homeDirectory, 'chainId'), `${chainId}`);
 
     let genesisContent = undefined;
     if (genesisURL != undefined) {
         genesisContent = (await fileGetContent(genesisURL)).toString();
     }
     if (genesisContent != undefined && genesisContent != '') {
-        fs.writeFileSync('./node/genesis.json', genesisContent.toString());
+        fs.writeFileSync(path.join(homeDirectory, 'genesis.json'), genesisContent.toString());
     }
-
-    const homedir = os.homedir();
-    const removeBlockChainResult = await execWrapper(`rm -rf ${path.join(homedir, '.heliades/config')}`);
-    await execWrapper(`rm -rf ${path.join(homedir, '.heliades/keyring-local')}`);
-    await execWrapper(`rm -rf ${path.join(homedir, '.heliades/data')}`);
+    const removeBlockChainResult = await execWrapper(`rm -rf ${path.join(homeDirectory, 'config')}`);
+    await execWrapper(`rm -rf ${path.join(homeDirectory, 'keyring-local')}`);
+    await execWrapper(`rm -rf ${path.join(homeDirectory, 'data')}`);
     const initResult = await execWrapper(`heliades init ${moniker} --chain-id ${chainId}`);
     const resultKeyAdd = await execWrapper(`heliades keys add user0 --from-private-key="${privateKey}" --keyring-backend="local"`);
 
@@ -38,22 +35,22 @@ const setupNode = async (keyStoreNode, walletPassword, moniker, chainId, genesis
         return false;
     }
 
-    let appTomlPath = path.join(homedir, '.heliades/config/app.toml');
+    let appTomlPath = path.join(homeDirectory, 'config/app.toml');
     let appToml = fs.readFileSync(appTomlPath).toString();
     fs.writeFileSync(appTomlPath, appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317"));
 
     if (genesisContent != undefined && genesisContent != '') { // sync to peer
-        const destGenesisPath = path.join(homedir, '.heliades/config/genesis.json');
+        const destGenesisPath = path.join(homeDirectory, 'config/genesis.json');
         fs.writeFileSync(destGenesisPath, genesisContent);
 
-        let configTomlPath = path.join(homedir, '.heliades/config/config.toml');
+        let configTomlPath = path.join(homeDirectory, 'config/config.toml');
         let configToml = fs.readFileSync(configTomlPath).toString();
 
         const peerNode = `${peerInfos.nodeId}@${peerInfos.nodeIP}:${peerInfos.nodeP2PPort}`;
         fs.writeFileSync(configTomlPath, configToml.replace(/persistent_peers \= \"\"/gm, `persistent_peers = "${peerNode}"`))
     } else {
         // TEST rollback
-        const genesisPath = path.join(homedir, '.heliades/config/genesis.json');
+        const genesisPath = path.join(homeDirectory, 'config/genesis.json');
         let genesisJson = JSON.parse(fs.readFileSync(genesisPath).toString());
 
         // genesisJson.app_state.staking.params.bond_denom = "ahelios";
