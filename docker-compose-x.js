@@ -104,11 +104,11 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
         },
         {
             type: "multiTransfer",
-            timeout: 10000,
+            timeout: 20000,
             to: wallets.slice(1).map(w => w[0]),
             value: "500"
         },
-        { type: "startHyperion", timeout: 30000, walletPassword: "test" }
+        // { type: "startHyperion", timeout: 30000, walletPassword: "test" }
     ]);
 
     const dockerCompose = {
