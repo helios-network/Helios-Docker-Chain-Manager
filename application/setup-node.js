@@ -69,6 +69,7 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
         genesisJson.app_state.staking.params.stake_weight_factor = "85"; // Enable epoch-based validator rotation
         genesisJson.app_state.staking.params.baseline_chance_factor = "5";
         genesisJson.app_state.staking.params.randomness_factor = "10";
+        genesisJson.app_state.staking.params.treasury_address = "helios1aj2gcctecp874q90jclsuk6c2k6kvdthwek60l";
 
         // New parameters for delegator stake reduction
         genesisJson.app_state.staking.params.delegator_stake_reduction = {
@@ -89,6 +90,10 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
 
         let address = await execWrapper(`heliades keys show user0 -a --keyring-backend="local"`)
         await execWrapper(`heliades add-genesis-account --chain-id ${chainId} ${address.trim()} 1000000000000000000000000ahelios --keyring-backend="local"`);
+       // REMOVE WHEN TESTNET
+        const treasuryAddress = "helios1aj2gcctecp874q90jclsuk6c2k6kvdthwek60l";
+        await execWrapper(`heliades add-genesis-account --chain-id ${chainId} ${treasuryAddress} 100ahelios --keyring-backend="local"`);
+        
         await execWrapper(`heliades gentx user0 1000000000000000000000ahelios --chain-id ${chainId} --keyring-backend="local" --gas-prices "1000000000ahelios"`);
         await execWrapper(`heliades collect-gentxs`);
         await execWrapper(`heliades validate-genesis`);
