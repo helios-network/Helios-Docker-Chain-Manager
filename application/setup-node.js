@@ -65,7 +65,7 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
         genesisJson.app_state.staking.params.stake_weight_factor = "85"; // Enable epoch-based validator rotation
         genesisJson.app_state.staking.params.baseline_chance_factor = "5";
         genesisJson.app_state.staking.params.randomness_factor = "10";
-        genesisJson.app_state.staking.params.treasury_address = "helios1aj2gcctecp874q90jclsuk6c2k6kvdthwek60l";
+        genesisJson.app_state.staking.params.treasury_address = "helios1j04zcmel9ecmfnnd9yue6y6vhfwyzqxgvhraxm";
 
         genesisJson.app_state.distribution.params.community_tax = "0.02";
 
