@@ -23,7 +23,7 @@ const postSetupNode = (app, environement) => {
             const keyStoreNode = req.body['keyStoreNode'];
             const passwordCrypted = req.body['password'];
 
-            const genesisURL = req.body['genesisURL'];
+            const genesisURL = req.body['genesisURL'] == "" ? undefined : req.body['genesisURL'];
             const moniker = req.body['moniker'];
             const chainId = req.body['chainId'];
 

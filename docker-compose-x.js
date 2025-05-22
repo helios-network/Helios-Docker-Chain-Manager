@@ -112,7 +112,7 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
     ]);
 
     const dockerCompose = {
-        version: '3.8',
+        // version: '3.8',
         services,
         networks: {
             heliosnet: {
