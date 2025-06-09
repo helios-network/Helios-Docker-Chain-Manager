@@ -22,9 +22,6 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
     if (genesisURL != undefined) {
         genesisContent = (await fileGetContent(genesisURL)).toString();
     }
-    if (genesisContent != undefined && genesisContent != '') {
-        fs.writeFileSync(path.join(homeDirectory, 'genesis.json'), genesisContent.toString());
-    }
     const removeBlockChainResult = await execWrapper(`rm -rf ${path.join(homeDirectory, 'config')}`);
     await execWrapper(`rm -rf ${path.join(homeDirectory, 'keyring-local')}`);
     await execWrapper(`rm -rf ${path.join(homeDirectory, 'data')}`);

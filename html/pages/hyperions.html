@@ -46,6 +46,14 @@
                 });
             }
 
+            async function openInterface(btn) {
+                btn.disabled = true;
+                let url = window.location.href;
+                url = url.replace('8080', '4040');
+                url = url.split('/').slice(0, -1).join('/');
+                window.open(url, '_blank');
+            }
+
             const main = async () => {
 
                 if (password == undefined) {
@@ -78,7 +86,7 @@
                                 content: [
                                     {
                                         "type": 'raw',
-                                        "value": 2,
+                                        "value": 3,
                                         content: [
                                             {
                                                 key: 'btnStart',
@@ -97,6 +105,15 @@
                                                 text: "Stop",
                                                 disabled: true,
                                                 onclick: function() { stopHyperion(this); }
+                                            },
+                                            {
+                                                key: 'btnOpenInterface',
+                                                type: "button",
+                                                class: "secondary",
+                                                icon: "open_in_new",
+                                                text: "Open Interface",
+                                                disabled: false,
+                                                onclick: function() { openInterface(this); }
                                             }
                                         ]
                                     }

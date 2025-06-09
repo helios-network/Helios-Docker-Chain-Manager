@@ -23,34 +23,18 @@ const runHyperionNode = async (app, environement, password) => {
             '--log-level=info',
             '--svc-wait-timeout=1m',
 
-            'orchestrator', // run orchestrator command
+            'server', // run server command
 
             `--helios-chain-id=42000`,
             `--helios-grpc=${heliosGrpc}`,
             `--tendermint-rpc=${tendermintRpc}`,
             `--helios-gas-prices=2000000000ahelios`,
             `--helios-gas=2000000`,
-            `--helios-keyring=local`,
-            `--helios-from=${address}`,
             `--helios-pk=${privateKey}`,
-
-            `--coingecko-api=https://api.coingecko.com/api/v3`,
-
-            `--eth-from=${address}`,
-            `--eth-pk=${privateKey}`,
             `--eth-gas-price-adjustment=1.3`,
             `--eth-max-gas-price=50gwei`,
-            
-            `--relay-valsets=true`,
-            `--relay-valset-offset-dur=5m`,
-            `--relay-batches=true`,
-            `--relay-batch-offset-dur=5m`,
-            `--relay-external-datas=true`,
             `--relay-pending-tx-wait-duration=20m`,
-            `--min-batch-fee-usd=0`,
-            `--testnet-auto-register=true`,
-            `--testnet-force-valset=true`,
-            `--rpcs=80002:https://sepolia.drpc.org`,
+            `--min-batch-fee-usd=0`
         ],
         { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-hyperion.log'), 'w')]}
     );

@@ -87,7 +87,7 @@
                     document.getElementById('validator-delegation-info-container').style.display = '';
                     displayValidatorInfo(validatorAndHisDelegation.validator);
                     displayDelegationInfo(validatorAndHisDelegation.delegation);
-                    displayCommissionInfo(validatorAndHisDelegation.commission);
+                    displayCommissionInfo(validatorAndHisDelegation.commission, validatorAndHisDelegation.validator);
                 }
             }
 
@@ -384,7 +384,7 @@
                 });
             }
 
-            const displayCommissionInfo = (commission) => {
+            const displayCommissionInfo = (commission, validator) => {
                 if (commission == undefined || commission.amount == undefined) {
                     return ;
                 }
@@ -394,6 +394,9 @@
                     { key: "commission", type: "text", text: `Loading ...` },
                     { type: "raw", nbr: 1, content: [{ type: "button", text: 'Claim', onclick: async () => {
                         await claimCommission();
+                    } }] },
+                    { type: "raw", nbr: 1, content: [{ type: "button", text: 'Delegate', onclick: async () => {
+                        window.open(`https://portal.helioschain.network/validators/${validator.validatorAddress}`, '_blank');
                     } }] }
                 ], commissionInfoDiv);
 

@@ -76,6 +76,7 @@
                 const feedbackElement = document.getElementById('password-feedback');
                 
                 passwordInput.classList.remove('is-invalid', 'is-valid');
+                feedbackElement.textContent = '';
                 
                 if (password.length < 4) {
                     passwordInput.classList.add('is-invalid');
@@ -141,6 +142,7 @@
                 const submitButton = document.getElementById('login-btn');
                 
                 e.target.classList.remove('is-invalid', 'is-valid');
+                feedbackElement.textContent = '';
                 
                 if (password.length === 0) {
                     submitButton.disabled = true;
