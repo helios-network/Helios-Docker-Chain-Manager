@@ -19,6 +19,25 @@
 
             async function startHyperion(btn) {
                 btn.disabled = true;
+
+                const walletPassword = await new Promise((resolve) => {
+                    try {
+                        pw_prompt({
+                            lm: "Please enter your wallet password:", 
+                            callback: function(password) {
+                                resolve(password);
+                            }
+                        });
+                    } catch (e) {
+                        resolve('');
+                    }
+                });
+
+                if (!walletPassword) {
+                    alert("Le mot de passe est requis");
+                    return;
+                }
+
                 let result = await fetch('/action', {
                         method: 'POST',
                         headers: {
@@ -27,7 +46,7 @@
                         },
                         body: JSON.stringify({
                             type: "startHyperion",
-                            walletPassword: "test"
+                            walletPassword: walletPassword
                         })
                     });
             }
@@ -50,6 +69,7 @@
                 btn.disabled = true;
                 let url = window.location.href;
                 url = url.replace('8080', '4040');
+                // remove path from url
                 url = url.split('/').slice(0, -1).join('/');
                 window.open(url, '_blank');
             }
