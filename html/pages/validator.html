@@ -146,6 +146,27 @@
                 window.location.reload();
             }
 
+            const unjailNode = async (validatorAddress) => {
+                const walletPassword = await new Promise((resolve) => {
+                    try {
+                        pw_prompt({
+                            lm: "Please enter your wallet password:", 
+                            callback: function(password) {
+                                resolve(password);
+                            }
+                        });
+                    } catch (e) {
+                        resolve('');
+                    }
+                })
+                const result = await apiValidatorUnjail(walletPassword);
+                if (result === undefined) {
+                    alert("Error unjailing node");
+                    return;
+                }
+                window.location.reload();
+            }
+
             const displayCreateValidator = () => {
                 const formHtml = `
                     <div class="section">
@@ -362,6 +383,15 @@
                     <p><strong>Max Change Rate:</strong> ${validator.commission?.commission_rates?.max_change_rate || 'N/A'}</p>
                     <p><strong>Commission Update Time:</strong> ${validator.commission?.update_time || 'N/A'}</p>
                 `;
+
+                if (validator.jailed) {
+                    const unjailButton = document.createElement('button');
+                    unjailButton.textContent = 'Unjail';
+                    unjailButton.addEventListener('click', async () => {
+                        await unjailNode(validator.validatorAddress);
+                    });
+                    validatorInfoDiv.appendChild(unjailButton);
+                }
             }
 
             const displayDelegationInfo = (delegation) => {

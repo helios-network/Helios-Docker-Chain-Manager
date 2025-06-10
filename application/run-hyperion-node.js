@@ -32,7 +32,7 @@ const runHyperionNode = async (app, environement, password) => {
             `--helios-gas=2000000`,
             `--helios-pk=${privateKey}`,
             `--eth-gas-price-adjustment=1.3`,
-            `--eth-max-gas-price=50gwei`,
+            `--eth-max-gas-price=500gwei`,
             `--relay-pending-tx-wait-duration=20m`,
             `--min-batch-fee-usd=0`
         ],

@@ -129,3 +129,23 @@ const apiValidatorCreate = async (walletPassword, validatorData) => {
     }
     return result;
 }
+
+const apiValidatorUnjail = async (walletPassword) => {
+    const response = await fetch('/action', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: "unjailNode",
+            walletPassword: walletPassword
+        })
+    });
+    const result = await response.json();
+
+    if (result === false) {
+        return undefined;
+    }
+    return result;
+}

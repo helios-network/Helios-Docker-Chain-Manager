@@ -9,7 +9,12 @@ const { delegate } = require("../application/delegate");
 const { transferToken } = require("../application/transferToken");
 const { createToken } = require("../application/createToken");
 const { runHyperionNode } = require("../application/run-hyperion-node");
+const { unjailNode } = require("../application/unjail-node");
 const path = require('path');
+
+const actionUnjailNode = async (app, environement, action) => {
+    const success = await unjailNode(app, environement.walletPassword);
+}
 
 const actionStartHyperion = async (app, environement, action) => {
     if ((await app.hyperion.status()) == '1') {
@@ -158,6 +163,9 @@ const doAction = async (app, environement, action) => {
             break ;
         case "stopHyperion":
             await actionStopHyperion(app, environement, action);
+            break ;
+        case "unjailNode":
+            await actionUnjailNode(app, environement, action);
             break ;
         case "delegate":
             await actionDelegate(app, environement, action);
