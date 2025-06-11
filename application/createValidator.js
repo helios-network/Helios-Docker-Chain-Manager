@@ -172,7 +172,7 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
 
         const pubkeyJson = (await(execWrapper(`heliades tendermint show-validator`))).trim();
         const pubkey = JSON.parse(pubkeyJson).key;
-        const value = ethers.parseUnits(validatorData.value.toString(), 18);
+        const value = ethers.parseUnits("1", 18); // by default 1 HLS
 
         console.log('Données formatées:', {
             description,

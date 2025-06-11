@@ -239,19 +239,6 @@
                                                required>
                                         <small class="form-text text-muted">Minimum self delegation amount</small>
                                     </div>
-
-                                    <div class="input-group">
-                                        <label for="value">Value * (1 = 1 HLS)</label>
-                                        <input type="number" 
-                                               id="value" 
-                                               name="value" 
-                                               class="form-control" 
-                                               placeholder="Initial staking amount"
-                                               min="1"
-                                               step="1"
-                                               required>
-                                        <small class="form-text text-muted">Initial staking amount</small>
-                                    </div>
                                 </div>
 
                                 <div class="form-group">
@@ -310,7 +297,7 @@
                                 maxChangeRate: document.getElementById('commission-max-change-rate').value
                             },
                             minSelfDelegation: document.getElementById('min-self-delegation').value,
-                            value: document.getElementById('value').value
+                            value: "1"
                         };
 
                         // Validation des données
