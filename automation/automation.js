@@ -13,7 +13,7 @@ const { unjailNode } = require("../application/unjail-node");
 const path = require('path');
 
 const actionUnjailNode = async (app, environement, action) => {
-    const success = await unjailNode(app, environement.walletPassword);
+    const success = await unjailNode(app, environement, environement.walletPassword);
 }
 
 const actionStartHyperion = async (app, environement, action) => {

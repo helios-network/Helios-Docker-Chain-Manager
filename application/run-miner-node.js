@@ -55,8 +55,24 @@ const runMinerNode = async (app, environement) => {
         app.node.logs.push(`[STACKTRACE] ${error.stack}`);
     });
 
-    childProcess.on('exit', (code, signal) => {
+    childProcess.on('exit', async (code, signal) => {
         app.node.logs.push(`[EXIT] ${code}`);
+        if (!app.node.stopOrdonned) {
+
+            if (app.node.startRetries == undefined || app.node.startRetries < 3) {
+                app.node.startRetries = app.node.startRetries == undefined ? 0 : app.node.startRetries + 1;
+                app.node.logs.push(`[RETRY] ${app.node.startRetries} / 3 (wait ${10000 * app.node.startRetries}ms)`);
+                await new Promise((resolve) => setTimeout(resolve, 10000 * app.node.startRetries)); // wait 10 seconds before restarting the node
+                app.node.logs.push(`[RETRY] ${app.node.startRetries} / 3 Starting...`);
+                app.node.start();
+            } else {
+                app.node.logs.push(`[RETRY] FAILED (restarted ${app.node.startRetries} times)`);
+                app.node.startRetries = 0;
+                app.node.stopOrdonned = false;
+            }
+        } else {
+            app.node.stopOrdonned = false;
+        }
     });
 
     app.node.status = async () => {
@@ -67,6 +83,7 @@ const runMinerNode = async (app, environement) => {
         try {
             const response = await fetch('http://localhost:26657/status');
             const status = await response.json();
+
             return {
                 node_info: { ... status.result.node_info },
                 sync_info: {
@@ -98,6 +115,7 @@ const runMinerNode = async (app, environement) => {
     }
 
     app.node.stop = async () => {
+        app.node.stopOrdonned = true;
         childProcess.kill('SIGTERM');
     }
 

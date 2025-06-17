@@ -110,6 +110,23 @@
                                 text: "Download genesis.json"
                             }
                         ]
+                    },
+                    {
+                        type: "content",
+                        icon: "file_download", // Icône pour le contenu de téléchargement de genesis.json
+                        title: "Download Genesis File",
+                        content: [
+                            {
+                                type: "button",
+                                id: "download-priv_validator_key",
+                                class: "button primary",
+                                onclick: () => {
+                                    window.location.href = '/download/priv_validator_key.json'; // Lien pour télécharger genesis.json
+                                },
+                                icon: "file_download",
+                                text: "Download priv_validator_key.json (validator key) [IMPORTANT]"
+                            }
+                        ]
                     }
                 ];
 
