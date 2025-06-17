@@ -1,4 +1,5 @@
-docker tag docker-helios-nodemanager:v0.0.54 heliosfoundation/docker-helios-nodemanager:v0.0.54
-docker push heliosfoundation/docker-helios-nodemanager:v0.0.54
-docker tag docker-helios-nodemanager:v0.0.54 heliosfoundation/docker-helios-nodemanager:latest
+version=v0.0.54
+docker tag docker-helios-nodemanager:$version heliosfoundation/docker-helios-nodemanager:$version
+docker push heliosfoundation/docker-helios-nodemanager:$version
+docker tag docker-helios-nodemanager:$version heliosfoundation/docker-helios-nodemanager:latest
 docker push heliosfoundation/docker-helios-nodemanager:latest
