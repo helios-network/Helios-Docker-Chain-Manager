@@ -41,6 +41,7 @@ const runMinerNode = async (app, environement) => {
         app.node.logs.push(... data.toString().replace(regex, '').split('\n'));
         app.node.logs = app.node.logs.slice(-1000);
 
+        app.node.lastLogTime = Date.now();
         if (environement.env['helios-logs'] === 'enabled') {
             console.log(data);
         }
@@ -69,6 +70,9 @@ const runMinerNode = async (app, environement) => {
                 app.node.logs.push(`[RETRY] FAILED (restarted ${app.node.startRetries} times)`);
                 app.node.startRetries = 0;
                 app.node.stopOrdonned = false;
+                setTimeout(() => {
+                    app.node.start();
+                }, 1000 * 60); // 1 minute
             }
         } else {
             app.node.stopOrdonned = false;
