@@ -82,6 +82,10 @@
                             <input id="moniker" onchange="updateNodeMoniker()" type="text" class="form-control" placeholder="name-of-your-node (moniker)" />
                             <label for="chainId">Chain Id</label>
                             <input id="chainId" type="text" class="form-control" placeholder="42000 (chainId)" />
+                            <select id="mode" class="form-control">
+                                <option value="full-node" selected>Full Node (default)</option>
+                                <option value="prune-node">Prune Node</option>
+                            </select>
                         </div>
                         <p class="info-text">Select an official node for the existing genesis option.</p>
                     </div>
@@ -387,6 +391,7 @@
                 const nodeP2PPortElement = document.getElementById('nodeP2PPort');
                 const nodeRPCPortElement = document.getElementById('nodeRPCPort');
                 const nodeGRPCPortElement = document.getElementById('nodeGRPCPort');
+                const modeElement = document.getElementById('mode');
 
                 const fireButton = document.querySelector('.navigation-buttons .primary-button');
 
@@ -506,6 +511,7 @@
                             nodeGRPCPort: fromGenesisType === 'existingGenesis' ? nodeGRPCPortElement.value : '',
                             nodeRPCPort: fromGenesisType === 'existingGenesis' ? nodeRPCPortElement.value : '',
                             nodeP2PPort: fromGenesisType === 'existingGenesis' ? nodeP2PPortElement.value : '',
+                            mode: modeElement.value,
                         })
                     });
                     const jsonResult = await result.json();

@@ -19,7 +19,7 @@ const action = async (app, environement, action) => {
     environement.walletPassword = action.walletPassword;
     environement.walletPrivateKey = action.walletPrivateKey;
     const keyStoreNode = await generateJsonKeyStore(action.walletPrivateKey, action.walletPassword);
-    const nodeSetup = await setupNode(app, keyStoreNode, action.walletPassword, action.moniker, action.chainId, undefined, undefined);
+    const nodeSetup = await setupNode(app, keyStoreNode, action.walletPassword, action.moniker, action.chainId, undefined, undefined, action.mode);
 
     if (nodeSetup) {
         await runMinerNode(app, environement);

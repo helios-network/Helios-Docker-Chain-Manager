@@ -36,7 +36,7 @@ const action = async (app, environement, action) => {
         nodeIP: peerIp
     };
 
-    const nodeSetup = await setupNode(app, keyStoreNode, action.walletPassword, action.moniker, action.chainId, genesisAndStatus.genesisURL, peerInfos);
+    const nodeSetup = await setupNode(app, keyStoreNode, action.walletPassword, action.moniker, action.chainId, genesisAndStatus.genesisURL, peerInfos, action.mode);
 
     if (nodeSetup) {
         await runMinerNode(app, environement);

@@ -6,7 +6,7 @@ const os = require('os');
 const { keyStoreRecover } = require('../utils/key-store');
 const { ethers } = require('ethers');
 
-const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos) => {
+const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos, mode = "full-node") => {
     
     const jsonKeyStoreNode = JSON.parse(keyStoreNode);
     const privateKey = await keyStoreRecover(keyStoreNode, walletPassword);
@@ -35,18 +35,35 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
 
     let appTomlPath = path.join(homeDirectory, 'config/app.toml');
     let appToml = fs.readFileSync(appTomlPath).toString();
-    fs.writeFileSync(appTomlPath, appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317"));
+    let configTomlPath = path.join(homeDirectory, 'config/config.toml');
+    let configToml = fs.readFileSync(configTomlPath).toString();
+
+    appToml = appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317");
+
+    if (mode == "prune-node") {
+        appToml = appToml.replace("pruning = \"default\"", "pruning = \"custom\"");
+        appToml = appToml.replace("pruning-keep-recent = \"0\"", "pruning-keep-recent = \"100\"");
+        appToml = appToml.replace("pruning-interval = \"0\"", "pruning-interval = \"10\"");
+    }
+
+    configToml = configToml.replace(/timeout_commit \= \".*?\"/gm, `timeout_commit = "15000ms"`);
 
     if (genesisContent != undefined && genesisContent != '') { // sync to peer
         const destGenesisPath = path.join(homeDirectory, 'config/genesis.json');
         fs.writeFileSync(destGenesisPath, genesisContent);
 
-        let configTomlPath = path.join(homeDirectory, 'config/config.toml');
-        let configToml = fs.readFileSync(configTomlPath).toString();
-
         const peerNode = `${peerInfos.nodeId}@${peerInfos.nodeIP}:${peerInfos.nodeP2PPort}`;
-        fs.writeFileSync(configTomlPath, configToml.replace(/persistent_peers \= \"\"/gm, `persistent_peers = "${peerNode}"`))
+
+        configToml = configToml.replace(/persistent_peers \= \"\"/gm, `persistent_peers = "${peerNode}"`);
+
+
+        fs.writeFileSync(configTomlPath, configToml);
+        fs.writeFileSync(appTomlPath, appToml);
     } else {
+
+        fs.writeFileSync(configTomlPath, configToml);
+        fs.writeFileSync(appTomlPath, appToml);
+        
         // TEST rollback
         const genesisPath = path.join(homeDirectory, 'config/genesis.json');
         let genesisJson = JSON.parse(fs.readFileSync(genesisPath).toString());
