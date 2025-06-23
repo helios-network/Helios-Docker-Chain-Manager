@@ -42,8 +42,8 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
 
     if (mode == "prune-node") {
         appToml = appToml.replace("pruning = \"default\"", "pruning = \"custom\"");
-        appToml = appToml.replace("pruning-keep-recent = \"0\"", "pruning-keep-recent = \"100\"");
-        appToml = appToml.replace("pruning-interval = \"0\"", "pruning-interval = \"10\"");
+        appToml = appToml.replace("pruning-keep-recent = \"0\"", "pruning-keep-recent = \"10000\"");
+        appToml = appToml.replace("pruning-interval = \"0\"", "pruning-interval = \"100\"");
     }
 
     configToml = configToml.replace(/timeout_commit \= \".*?\"/gm, `timeout_commit = "15000ms"`);
