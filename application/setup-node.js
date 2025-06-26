@@ -33,6 +33,9 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
         return false;
     }
 
+    // Configure telemetry and monitoring
+    console.log("🔧 Configuring telemetry and monitoring...");
+    
     let appTomlPath = path.join(homeDirectory, 'config/app.toml');
     let appToml = fs.readFileSync(appTomlPath).toString();
     let configTomlPath = path.join(homeDirectory, 'config/config.toml');
@@ -47,6 +50,47 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
     }
 
     configToml = configToml.replace(/timeout_commit \= \".*?\"/gm, `timeout_commit = "15000ms"`);
+    
+    // Enable API server - more robust replacements
+    appToml = appToml.replace(/tcp:\/\/localhost:1317/g, "tcp://0.0.0.0:1317");
+    appToml = appToml.replace(/tcp:\/\/127\.0\.0\.1:1317/g, "tcp://0.0.0.0:1317");
+    
+    // Find and enable API section
+    if (appToml.includes('[api]')) {
+        appToml = appToml.replace(/(\[api\][\s\S]*?)enable = false/g, '$1enable = true');
+        appToml = appToml.replace(/(\[api\][\s\S]*?)enabled-unsafe-cors = false/g, '$1enabled-unsafe-cors = true');
+    }
+    
+    // Enable telemetry - more robust
+    if (appToml.includes('[telemetry]')) {
+        appToml = appToml.replace(/(\[telemetry\][\s\S]*?)enabled = false/g, '$1enabled = true');
+        appToml = appToml.replace(/(\[telemetry\][\s\S]*?)prometheus-retention-time = 0/g, '$1prometheus-retention-time = 600');
+        appToml = appToml.replace(/(\[telemetry\][\s\S]*?)service-name = ""/g, `$1service-name = "helios-${moniker}"`);
+        appToml = appToml.replace(/(\[telemetry\][\s\S]*?)enable-hostname-label = false/g, '$1enable-hostname-label = true');
+        appToml = appToml.replace(/(\[telemetry\][\s\S]*?)enable-service-label = false/g, '$1enable-service-label = true');
+    }
+    
+    // Add global labels
+    appToml = appToml.replace(/^global-labels = \[\]$/m, `global-labels = [\n  ["chain_id", "${chainId}"],\n  ["moniker", "${moniker}"],\n  ["service", "node"]\n]`);
+    
+    // Enable gRPC
+    appToml = appToml.replace(/^\[grpc\]$/m, "[grpc]");
+    appToml = appToml.replace(/^address = "localhost:9090"$/m, "address = \"0.0.0.0:9091\"");
+    
+    // Enable JSON-RPC
+    appToml = appToml.replace(/^address = "127.0.0.1:8545"$/m, "address = \"0.0.0.0:8545\"");
+    appToml = appToml.replace(/^ws-address = "127.0.0.1:8546"$/m, "ws-address = \"0.0.0.0:8546\"");
+    
+    fs.writeFileSync(appTomlPath, appToml);
+    
+    // Enable Prometheus metrics in CometBFT - be more aggressive with replacements
+    configToml = configToml.replace(/prometheus = false/g, "prometheus = true");
+    configToml = configToml.replace(/prometheus=false/g, "prometheus=true");
+    
+    // Ensure prometheus listen address is set correctly
+    configToml = configToml.replace(/prometheus_listen_addr = "[^"]*"/g, 'prometheus_listen_addr = ":26660"');
+    
+    console.log("✅ Telemetry and Prometheus metrics enabled");
 
     if (genesisContent != undefined && genesisContent != '') { // sync to peer
         const destGenesisPath = path.join(homeDirectory, 'config/genesis.json');
@@ -110,6 +154,10 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
         await execWrapper(`heliades collect-gentxs`);
         await execWrapper(`heliades validate-genesis`);
     }
+    
+    // Write the final config.toml
+    fs.writeFileSync(configTomlPath, configToml);
+    
     return true;
 }
 

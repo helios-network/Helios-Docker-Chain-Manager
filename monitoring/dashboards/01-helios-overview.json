@@ -1,0 +1,161 @@
+{
+  "id": null,
+  "uid": "helios-overview",
+  "title": "01 - Helios Chain Overview",
+  "tags": ["helios", "overview"],
+  "editable": true,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "id": 1,
+      "title": "Blockchain Status",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 0},
+      "collapsed": false
+    },
+    {
+      "id": 2,
+      "title": "Block Height",
+      "type": "stat",
+      "targets": [{"expr": "cometbft_consensus_height", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "mappings": [],
+          "thresholds": {"steps": [{"color": "green", "value": null}]},
+          "unit": "short"
+        }
+      },
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "reduceOptions": {"calcs": ["lastNotNull"]}
+      },
+      "gridPos": {"h": 8, "w": 4, "x": 0, "y": 1}
+    },
+    {
+      "id": 3,
+      "title": "Active Validators",
+      "type": "stat",
+      "targets": [{"expr": "count(cometbft_consensus_height)", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 3},
+              {"color": "green", "value": 5}
+            ]
+          }
+        }
+      },
+      "options": {"colorMode": "value", "reduceOptions": {"calcs": ["lastNotNull"]}},
+      "gridPos": {"h": 8, "w": 4, "x": 4, "y": 1}
+    },
+    {
+      "id": 4,
+      "title": "Mempool Size",
+      "type": "stat",
+      "targets": [{"expr": "max(cometbft_mempool_size)", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 10},
+              {"color": "red", "value": 50}
+            ]
+          }
+        }
+      },
+      "options": {"colorMode": "value", "reduceOptions": {"calcs": ["lastNotNull"]}},
+      "gridPos": {"h": 8, "w": 4, "x": 8, "y": 1}
+    },
+    {
+      "id": 5,
+      "title": "P2P Peers",
+      "type": "stat",
+      "targets": [{"expr": "max(cometbft_p2p_peers)", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 1},
+              {"color": "green", "value": 3}
+            ]
+          }
+        }
+      },
+      "options": {"colorMode": "value", "reduceOptions": {"calcs": ["lastNotNull"]}},
+      "gridPos": {"h": 8, "w": 4, "x": 12, "y": 1}
+    },
+    {
+      "id": 6,
+      "title": "Network Health",
+      "type": "stat",
+      "targets": [{"expr": "up{job=~\"helios.*\"}", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "mappings": [
+            {"options": {"0": {"text": "DOWN"}}, "type": "value"},
+            {"options": {"1": {"text": "UP"}}, "type": "value"}
+          ],
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "green", "value": 1}
+            ]
+          }
+        }
+      },
+      "options": {"colorMode": "background", "reduceOptions": {"calcs": ["lastNotNull"]}},
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 1}
+    },
+    {
+      "id": 7,
+      "title": "Performance Metrics",
+      "type": "row",
+      "gridPos": {"h": 1, "w": 24, "x": 0, "y": 9},
+      "collapsed": false
+    },
+    {
+      "id": 8,
+      "title": "Block Height Progress",
+      "type": "timeseries",
+      "targets": [{"expr": "cometbft_consensus_height", "legendFormat": "{{instance}}", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"drawStyle": "line", "lineWidth": 2, "fillOpacity": 20},
+          "unit": "short"
+        }
+      },
+      "options": {"legend": {"displayMode": "table", "placement": "right"}},
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 10}
+    },
+    {
+      "id": 9,
+      "title": "Transaction Throughput",
+      "type": "timeseries",
+      "targets": [{"expr": "rate(cometbft_consensus_total_txs[5m])", "legendFormat": "{{instance}}", "refId": "A"}],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "custom": {"drawStyle": "line", "lineWidth": 2},
+          "unit": "tps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 10}
+    }
+  ],
+  "time": {"from": "now-1h", "to": "now"},
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "version": 1
+} 

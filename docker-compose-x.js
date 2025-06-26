@@ -112,6 +112,70 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
         // { type: "startHyperion", timeout: 30000, walletPassword: "test" }
     ]);
 
+    // Add monitoring services
+    const monitoringStartIp = baseIp + numNodes + 8; // Start after the nodes with some buffer
+    
+    services['prometheus'] = {
+        image: 'prom/prometheus:v2.46.0',
+        container_name: 'prometheus',
+        ports: ['9091:9090'],
+        volumes: [
+            './monitoring/prometheus.yml:/etc/prometheus/prometheus.yml',
+            'prometheus_data:/prometheus'
+        ],
+        command: [
+            '--config.file=/etc/prometheus/prometheus.yml',
+            '--storage.tsdb.path=/prometheus',
+            '--web.console.libraries=/etc/prometheus/console_libraries',
+            '--web.console.templates=/etc/prometheus/consoles',
+            '--storage.tsdb.retention.time=200h',
+            '--web.enable-lifecycle'
+        ],
+        networks: {
+            heliosnet: { ipv4_address: `192.168.1.${monitoringStartIp}` }
+        }
+    };
+
+    services['grafana'] = {
+        image: 'grafana/grafana:11.3.0',
+        container_name: 'grafana',
+        ports: ['3000:3000'],
+        environment: {
+            GF_SECURITY_ADMIN_USER: 'admin',
+            GF_SECURITY_ADMIN_PASSWORD: 'admin123',
+            GF_USERS_ALLOW_SIGN_UP: 'false',
+            GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: '/var/lib/grafana/dashboards/01-helios-overview.json'
+        },
+        volumes: [
+            'grafana_data:/var/lib/grafana',
+            './monitoring/grafana-provisioning:/etc/grafana/provisioning',
+            './monitoring/dashboards:/var/lib/grafana/dashboards'
+        ],
+        networks: {
+            heliosnet: { ipv4_address: `192.168.1.${monitoringStartIp + 1}` }
+        }
+    };
+
+    services['node-exporter'] = {
+        image: 'prom/node-exporter:v1.6.0',
+        container_name: 'node-exporter',
+        ports: ['9100:9100'],
+        command: [
+            '--path.procfs=/host/proc',
+            '--path.rootfs=/rootfs',
+            '--path.sysfs=/host/sys',
+            '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+        ],
+        volumes: [
+            '/proc:/host/proc:ro',
+            '/sys:/host/sys:ro',
+            '/:/rootfs:ro'
+        ],
+        networks: {
+            heliosnet: { ipv4_address: `192.168.1.${monitoringStartIp + 2}` }
+        }
+    };
+
     const dockerCompose = {
         // version: '3.8',
         services,
@@ -120,6 +184,10 @@ const generateDockerCompose = (numNodes, walletsFile, args) => {
                 driver: "bridge",
                 ipam: { config: [{ subnet: "192.168.1.0/24" }] }
             }
+        },
+        volumes: {
+            prometheus_data: {},
+            grafana_data: {}
         }
     };
 
