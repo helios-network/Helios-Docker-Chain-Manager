@@ -131,6 +131,7 @@
                         [
                             {
                                 type: "content",
+                                key: 'nodeStatus',
                                 "title": 'Node Status',
                                 "icon": "account_tree",
                                 "badge": {
@@ -139,7 +140,7 @@
                                 content: [
                                     {
                                         "type": 'raw',
-                                        "value": 2,
+                                        "value": 4,
                                         content: [
                                             {
                                                 key: 'btnStart',
@@ -160,12 +161,9 @@
                                                 onclick: function() { stopNode1(this); }
                                             },
                                             {
-                                                key: 'btnRestart',
-                                                type: "button",
-                                                class: "warning",
-                                                icon: "autorenew",
-                                                text: "Restart",
-                                                onclick: function() { restartNode1(this); }
+                                                key: 'address',
+                                                type: "address",
+                                                text: "",
                                             }
                                         ]
                                     }
@@ -183,7 +181,57 @@
                                         // Vous pouvez ajouter d'autres propriétés si nécessaire
                                     }
                                 ]
-                            }
+                            },
+                            // {
+                            //     type: "content",
+                            //     key: 'stats',
+                            //     "title": 'Stats',
+                            //     "icon": "bar_chart",
+                            //     content: [
+                            //         {
+                            //             "type": 'raw',
+                            //             "value": 4,
+                            //             content: [
+                            //                 {
+                            //                     key: 'btnStart',
+                            //                     type: "button",
+                            //                     class: "primary",
+                            //                     icon: "play_arrow",
+                            //                     text: "Start",
+                            //                     disabled: true,
+                            //                     onclick: function() { startNode1(this); }
+                            //                 },
+                            //                 {
+                            //                     key: 'btnStop',
+                            //                     type: "button",
+                            //                     class: "secondary",
+                            //                     icon: "stop",
+                            //                     text: "Stop",
+                            //                     disabled: true,
+                            //                     onclick: function() { stopNode1(this); }
+                            //                 },
+                            //                 {
+                            //                     key: 'address',
+                            //                     type: "address",
+                            //                     text: "",
+                            //                 },
+                            //                 {
+                            //                     key: 'height',
+                            //                     type: "text",
+                            //                     text: "",
+                            //                 }
+                            //                 // {
+                            //                 //     key: 'btnRestart',
+                            //                 //     type: "button",
+                            //                 //     class: "warning",
+                            //                 //     icon: "autorenew",
+                            //                 //     text: "Restart",
+                            //                 //     onclick: function() { restartNode1(this); }
+                            //                 // }
+                            //             ]
+                            //         }
+                            //     ]
+                            // },
                         ];
 
                     const displayed = buildDisplay(displayRepresentation, document.getElementById('testdisplay'));
@@ -203,6 +251,20 @@
                         displayed.logs.setLog(jsonResult.node.logs.join('\n'));
                         displayed.btnStart.element.disabled = jsonResult.node.status == '1';
                         displayed.btnStop.element.disabled = jsonResult.node.status == '0';
+                        const active = jsonResult.node.status == '1';
+
+                        if (active) {
+                            let syncing = false;
+                            if (jsonResult.node.infos.sync_info.catching_up == true) {
+                                syncing = true;
+                            }
+                            console.log(jsonResult.node);
+                            displayed.nodeStatus.setBadge('Active - Block ' + jsonResult.node.infos.metadata.height + (syncing ? ' (Syncing)' : ''));
+                            displayed.address.setText(jsonResult.node.infos.address);
+                        } else {
+                            displayed.nodeStatus.setBadge('Inactive');
+                            displayed.address.setText('');
+                        }
 
                     }, 1000 / 1);
                 } else {

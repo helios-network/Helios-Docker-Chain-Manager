@@ -300,7 +300,7 @@ const buildAddress = (addressElement) => {
     copyIcon.textContent = 'content_copy'; // Icône de copie
     copyIcon.style.cursor = 'pointer';
     copyIcon.addEventListener('click', () => {
-        navigator.clipboard.writeText(addressElement.address).then(() => {
+        navigator.clipboard.writeText(addressSpan.textContent).then(() => {
             // Effet brillant sur clic
             div.style.backgroundColor = '#e0f7fa'; // Couleur de fond brillante
             setTimeout(() => {
@@ -314,6 +314,7 @@ const buildAddress = (addressElement) => {
     if (addressElement.key != undefined) {
         keys[addressElement.key] = {
             element: div,
+            setText: (t) => { addressSpan.textContent = t; }, // fn;
         };
     }
 
@@ -424,16 +425,16 @@ const buildContent = (content) => {
     sectionTitle.append(buildIcon(content.icon));
     const titleSpanElement = buildSpan(content.title);
     sectionTitle.append(titleSpanElement);
-    content.setTitle = (t) => { titleSpanElement.innerText = t; }; // fn;
     sectionHeader.appendChild(sectionTitle);
 
+    let badgeTextElement;
     if (content.badge != undefined) {
         const optionalBadge = document.createElement('div');
         optionalBadge.classList.add('status-badge');
         if (content.badge.icon != undefined) {
             optionalBadge.append(buildIcon(content.badge.icon));
         }
-        const badgeTextElement = buildSpan(content.badge.value);
+        badgeTextElement = buildSpan(content.badge.value);
         optionalBadge.append(badgeTextElement);
         content.badge.setValue = (v) => { badgeTextElement.innerText = v; }; // fn;
         sectionHeader.appendChild(optionalBadge);
@@ -449,6 +450,8 @@ const buildContent = (content) => {
     if (content.key != undefined) {
         keys[content.key] = {
             element: div,
+            setTitle: (t) => { titleSpanElement.innerText = t; }, // fn;
+            setBadge: (v) => { badgeTextElement.innerText = v; }, // fn;
         };
     }
 

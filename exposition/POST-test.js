@@ -9,7 +9,7 @@ const test = (app, environement) => {
                 logs: app.node.logs
             };
 
-            if (app.node.status == '1') {
+            if (data.node.status == '1') {
                 data.node.infos = {
                     ... await app.node.getInfos()
                 };
