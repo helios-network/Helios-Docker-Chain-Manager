@@ -393,6 +393,17 @@ const buildList = (list) => {
     if (list.key != undefined) {
         keys[list.key] = {
             element: ul,
+            setItems: (items) => {
+                ul.innerHTML = '';
+                items.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    ul.appendChild(li);
+                });
+            },
+            getItems: () => {
+                return Array.from(ul.children).map(li => li.textContent);
+            }
         };
     }
 
@@ -540,7 +551,7 @@ window.pw_prompt = function(options) {
 
     var input = document.createElement("input");
     input.id = "pw_prompt_input";
-    input.type = "password";
+    input.type = lm == "Password:" ? "password" : "text";
     input.classList.add('form-control');
     input.addEventListener("keyup", function(e) {
         if (e.keyCode == 13) submit();

@@ -83,64 +83,6 @@ const runMinerNode = async (app, environement) => {
         return childProcess.exitCode == undefined ? '1' : '0';
     }
 
-    app.node.getInfos = async () => {
-        try {
-            const response = await fetch('http://localhost:26657/status');
-            const status = await response.json();
-
-            return {
-                ... status.result,
-                heliosAddress: await app.node.getHeliosAddress(),
-                heliosValAddress: await app.node.getHeliosValAddress(),
-                address: await app.node.getAddress(),
-                metadata: await app.node.getMetadata(),
-            };
-        } catch (e) {
-            console.log(e);
-            return {};
-        }
-    }
-
-    app.node.getMetadata = async () => {
-        if (fs.existsSync(path.join(homeDirectory, 'data/metadata.json'))) {
-            const data = fs.readFileSync(path.join(homeDirectory, 'data/metadata.json'));
-            return JSON.parse(data);
-        }
-        // empty metadata
-        return {
-            "chain_id":"42000",
-            "height": "0",
-            "hash": "",
-            "time": (new Date()).toISOString(),
-            "proposer":"",
-            "validators":[]
-        };
-    }
-
-    app.node.getHeliosAddress = async () => {
-        if (app.node.heliosAddress == undefined) {
-            const data = await execWrapper(`heliades keys show user0 -a --bech=acc --keyring-backend="local"`);
-            app.node.heliosAddress = data.trim();
-        }
-        return app.node.heliosAddress;
-    }
-
-    app.node.getHeliosValAddress = async () => {
-        if (app.node.heliosValAddress == undefined) {
-            const data = await execWrapper(`heliades keys show user0 -a --bech=val --keyring-backend="local"`);
-            app.node.heliosValAddress = data.trim();
-        }
-        return app.node.heliosValAddress;
-    }
-
-    app.node.getAddress = async () => {
-        if (app.node.address == undefined) {
-            const data = await execWrapper(`heliades keys show user0 -e --keyring-backend="local"`);
-            app.node.address = data.trim();
-        }
-        return app.node.address;
-    }
-
     app.node.stop = async () => {
         app.node.stopOrdonned = true;
         childProcess.kill('SIGTERM');

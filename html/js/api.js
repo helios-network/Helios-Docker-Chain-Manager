@@ -149,3 +149,23 @@ const apiValidatorUnjail = async (walletPassword) => {
     }
     return result;
 }
+
+const apiAddPeer = async (peerAddress) => {
+    const response = await fetch('/action', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: "addPeer",
+            peerAddress: peerAddress
+        })
+    });
+    const result = await response.json();
+
+    if (result === false) {
+        return undefined;
+    }
+    return result;
+}

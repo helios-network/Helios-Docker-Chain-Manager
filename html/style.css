@@ -679,6 +679,8 @@ button:disabled {
     margin-bottom: 0;
     display: flex;
     flex-direction: column;
+    max-width: 100%;
+    overflow: scroll;
 }
 
 .section-content {

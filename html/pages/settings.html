@@ -76,7 +76,7 @@
                                     id: "download-config",
                                     class: "button primary",
                                     onclick: () => {
-                                        window.location.href = '/download/config.toml'; // Lien pour télécharger config.toml
+                                        window.location.href = '/download/config.toml';
                                     },
                                     icon: "file_download",
                                     text: "Download config.toml"
@@ -86,45 +86,59 @@
                                     id: "download-app",
                                     class: "button primary",
                                     onclick: () => {
-                                        window.location.href = '/download/app.toml'; // Lien pour télécharger app.toml
+                                        window.location.href = '/download/app.toml';
                                     },
                                     icon: "file_download",
                                     text: "Download app.toml"
                                 }]
-                            }
-                        ]
-                    },
-                    {
-                        type: "content",
-                        icon: "file_download", // Icône pour le contenu de téléchargement de genesis.json
-                        title: "Download Genesis File",
-                        content: [
+                            },
                             {
-                                type: "button",
-                                id: "download-genesis",
-                                class: "button primary",
-                                onclick: () => {
-                                    window.location.href = '/download/genesis.json'; // Lien pour télécharger genesis.json
+                                type: "raw",
+                                nbr: 2,
+                                content: [{
+                                    type: "button",
+                                    id: "download-genesis",
+                                    class: "button primary",
+                                    onclick: () => {
+                                        window.location.href = '/download/genesis.json';
+                                    },
+                                    icon: "file_download",
+                                    text: "Download genesis.json"
                                 },
-                                icon: "file_download",
-                                text: "Download genesis.json"
-                            }
-                        ]
-                    },
-                    {
-                        type: "content",
-                        icon: "file_download", // Icône pour le contenu de téléchargement de genesis.json
-                        title: "Download Genesis File",
-                        content: [
+                                {
+                                    type: "button",
+                                    id: "download-priv_validator_key",
+                                    class: "button primary",
+                                    onclick: () => {
+                                        window.location.href = '/download/priv_validator_key.json';
+                                    },
+                                    icon: "file_download",
+                                    text: "Download priv_validator_key.json (validator key) [IMPORTANT]"
+                                }]
+                            },
                             {
-                                type: "button",
-                                id: "download-priv_validator_key",
-                                class: "button primary",
-                                onclick: () => {
-                                    window.location.href = '/download/priv_validator_key.json'; // Lien pour télécharger genesis.json
+                                type: "raw",
+                                nbr: 2,
+                                content: [{
+                                    type: "button",
+                                    id: "download-addrbook",
+                                    class: "button primary",
+                                    onclick: () => {
+                                        window.location.href = '/download/addrbook.json';
+                                    },
+                                    icon: "file_download",
+                                    text: "Download addrbook.json"
                                 },
-                                icon: "file_download",
-                                text: "Download priv_validator_key.json (validator key) [IMPORTANT]"
+                                {
+                                    type: "button",
+                                    id: "download-client-config",
+                                    class: "button primary",
+                                    onclick: () => {
+                                        window.location.href = '/download/client.toml';
+                                    },
+                                    icon: "file_download",
+                                    text: "Download client.toml"
+                                }]
                             }
                         ]
                     }

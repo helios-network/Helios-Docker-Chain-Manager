@@ -6,14 +6,9 @@ const test = (app, environement) => {
         if (app.node) {
             data.node = {
                 status: await app.node.status(),
-                logs: app.node.logs
+                logs: app.node.logs,
+                infos: await app.node.getInfos()
             };
-
-            if (data.node.status == '1') {
-                data.node.infos = {
-                    ... await app.node.getInfos()
-                };
-            }
         }
         
         res.send(data);

@@ -16,6 +16,10 @@ const actionUnjailNode = async (app, environement, action) => {
     const success = await unjailNode(app, environement, action.walletPassword);
 }
 
+const actionAddPeer = async (app, environement, action) => {
+    const success = await app.node.addPeer(action.peerAddress);
+}
+
 const actionStartHyperion = async (app, environement, action) => {
     if ((await app.hyperion.status()) == '1') {
         return ;
@@ -169,6 +173,9 @@ const doAction = async (app, environement, action) => {
             break ;
         case "delegate":
             await actionDelegate(app, environement, action);
+            break ;
+        case "addPeer":
+            await actionAddPeer(app, environement, action);
             break ;
         case "wait": // nothing
             break ;

@@ -43,7 +43,14 @@ const download = (app, environement) => {
     app.get('/download/priv_validator_key.json', async (req, res) => {
         await downloadFile(app, req, res, 'priv_validator_key.json');
     });
-    
+
+    app.get('/download/addrbook.json', async (req, res) => {
+        await downloadFile(app, req, res, 'addrbook.json');
+    });
+
+    app.get('/download/client.toml', async (req, res) => {
+        await downloadFile(app, req, res, 'client.toml');
+    });
 };
 
 module.exports = {

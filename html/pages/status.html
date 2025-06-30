@@ -107,6 +107,26 @@
                 });
             }
 
+            async function addNewPeer(btn) {
+                btn.disabled = true;
+
+                const functionToCall = async (address) => {
+                    const result = await apiAddPeer(address);
+                    if (result) {
+                        btn.disabled = false;
+                    } else {
+                        window.alert("Failed to add peer");
+                    }
+                }
+
+                window.pw_prompt({
+                    lm: "Enter the peer address:",
+                    callback: async (address) => {
+                        functionToCall(address);
+                    }
+                });
+            }
+
             const main = async () => {
 
                 if (password == undefined) {
@@ -182,56 +202,33 @@
                                     }
                                 ]
                             },
-                            // {
-                            //     type: "content",
-                            //     key: 'stats',
-                            //     "title": 'Stats',
-                            //     "icon": "bar_chart",
-                            //     content: [
-                            //         {
-                            //             "type": 'raw',
-                            //             "value": 4,
-                            //             content: [
-                            //                 {
-                            //                     key: 'btnStart',
-                            //                     type: "button",
-                            //                     class: "primary",
-                            //                     icon: "play_arrow",
-                            //                     text: "Start",
-                            //                     disabled: true,
-                            //                     onclick: function() { startNode1(this); }
-                            //                 },
-                            //                 {
-                            //                     key: 'btnStop',
-                            //                     type: "button",
-                            //                     class: "secondary",
-                            //                     icon: "stop",
-                            //                     text: "Stop",
-                            //                     disabled: true,
-                            //                     onclick: function() { stopNode1(this); }
-                            //                 },
-                            //                 {
-                            //                     key: 'address',
-                            //                     type: "address",
-                            //                     text: "",
-                            //                 },
-                            //                 {
-                            //                     key: 'height',
-                            //                     type: "text",
-                            //                     text: "",
-                            //                 }
-                            //                 // {
-                            //                 //     key: 'btnRestart',
-                            //                 //     type: "button",
-                            //                 //     class: "warning",
-                            //                 //     icon: "autorenew",
-                            //                 //     text: "Restart",
-                            //                 //     onclick: function() { restartNode1(this); }
-                            //                 // }
-                            //             ]
-                            //         }
-                            //     ]
-                            // },
+                            {
+                                key: 'peers-container',
+                                type: "content",
+                                title: "Peers",
+                                icon: "people",
+                                "badge": {
+                                    value: ''
+                                },
+                                content: [
+                                    {
+                                        key: 'peers',
+                                        type: "list",
+                                        listStyleType: 'none',
+                                        horizontal: false,
+                                        justifyContent: 'center',
+                                        items: []
+                                    },
+                                    {
+                                        key: 'add-new-peer',
+                                        type: "button",
+                                        class: "primary",
+                                        icon: "add",
+                                        text: "Add New Peer",
+                                        onclick: function() { addNewPeer(this); }
+                                    }
+                                ]
+                            }
                         ];
 
                     const displayed = buildDisplay(displayRepresentation, document.getElementById('testdisplay'));
@@ -251,19 +248,33 @@
                         displayed.logs.setLog(jsonResult.node.logs.join('\n'));
                         displayed.btnStart.element.disabled = jsonResult.node.status == '1';
                         displayed.btnStop.element.disabled = jsonResult.node.status == '0';
-                        const active = jsonResult.node.status == '1';
+                        const active = jsonResult.node.status == '1' ? 'Active' : 'Inactive';
 
-                        if (active) {
-                            let syncing = false;
-                            if (jsonResult.node.infos.sync_info.catching_up == true) {
-                                syncing = true;
+                        let syncing = false;
+                        if (jsonResult.node.infos?.sync_info?.catching_up == true) {
+                            syncing = true;
+                        }
+                        console.log(jsonResult.node);
+                        displayed.nodeStatus.setBadge(`${active} - Block ${jsonResult.node?.infos?.metadata?.height ?? ''}` + (syncing ? ' (Syncing)' : ''));
+                        displayed.address.setText(jsonResult.node?.infos?.address ?? '');
+
+                        if (jsonResult.node.infos?.peers) {
+                            const items = [
+                                "AddrBook Peers (" + jsonResult.node.infos.peers.length + ")",
+                                jsonResult.node.infos.peers.join(','),
+                                "Persistent Peers (" + jsonResult.node.infos.persistentPeers.length + ")",
+                                jsonResult.node.infos.persistentPeers.join(','),
+                            ];
+
+
+                            // only update if the items have changed
+                            if (items.join('\n') != displayed.peers.getItems().join('\n')) {
+                                displayed.peers.setItems(items);
+
+                                if (jsonResult.node.infos?.node_info?.id) {
+                                    displayed['peers-container'].setBadge(`My PeerId: ${jsonResult.node.infos?.node_info?.id ?? ''}`);
+                                }
                             }
-                            console.log(jsonResult.node);
-                            displayed.nodeStatus.setBadge('Active - Block ' + jsonResult.node.infos.metadata.height + (syncing ? ' (Syncing)' : ''));
-                            displayed.address.setText(jsonResult.node.infos.address);
-                        } else {
-                            displayed.nodeStatus.setBadge('Inactive');
-                            displayed.address.setText('');
                         }
 
                     }, 1000 / 1);

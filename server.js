@@ -5,6 +5,7 @@ const fs = require('fs');
 const { parsePairNodes } = require('./utils/pairnodes.js');
 const middlewares = require('./utils/middlewares.js');
 const { runAutomation } = require('./automation/automation.js');
+const { initAppNodeFunctions } = require('./application/initAppNodeFunctions.js');
 
 const environement = environementLoader.load();
 
@@ -92,6 +93,8 @@ const main = async () => {
   ////////////////////////////////////////////
   // AUTOMATIONS
   ////////////////////////////////////////////
+  await initAppNodeFunctions(app);
+  
   await runAutomation(app, environement);
 };
 
