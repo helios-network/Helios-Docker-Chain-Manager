@@ -22,6 +22,7 @@ const initAppNodeFunctions = async (app) => {
                 metadata: await app.node.getMetadata(),
                 peers: await app.node.getPeers(),
                 persistentPeers: await app.node.getPersistentPeers(),
+                mode: await app.node.getMode(),
             };
         } catch (e) {
             console.log(e);
@@ -95,6 +96,13 @@ const initAppNodeFunctions = async (app) => {
             }
         }
         return [];
+    }
+
+    app.node.getMode = async () => {
+        if (fs.existsSync(path.join(homeDirectory, 'config/mode.json'))) {
+            return JSON.parse(fs.readFileSync(path.join(homeDirectory, 'config/mode.json'))).mode;
+        }
+        return "archive";
     }
 
     app.node.setPersistentPeers = async (peers) => {

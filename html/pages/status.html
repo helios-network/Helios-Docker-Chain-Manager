@@ -255,7 +255,7 @@
                             syncing = true;
                         }
                         console.log(jsonResult.node);
-                        displayed.nodeStatus.setBadge(`${active} - Block ${jsonResult.node?.infos?.metadata?.height ?? ''}` + (syncing ? ' (Syncing)' : ''));
+                        displayed.nodeStatus.setBadge(`${active} - ${jsonResult.node?.infos?.mode ?? ''} - Block ${jsonResult.node?.infos?.metadata?.height ?? ''}` + (syncing ? ' (Syncing)' : ''));
                         displayed.address.setText(jsonResult.node?.infos?.address ?? '');
 
                         if (jsonResult.node.infos?.peers) {

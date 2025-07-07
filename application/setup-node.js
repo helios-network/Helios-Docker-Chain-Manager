@@ -6,7 +6,7 @@ const os = require('os');
 const { keyStoreRecover } = require('../utils/key-store');
 const { ethers } = require('ethers');
 
-const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos, mode = "full-node") => {
+const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos, mode = "archive") => {
     
     const jsonKeyStoreNode = JSON.parse(keyStoreNode);
     const privateKey = await keyStoreRecover(keyStoreNode, walletPassword);
@@ -22,6 +22,9 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
     if (genesisURL != undefined) {
         genesisContent = (await fileGetContent(genesisURL)).toString();
     }
+
+    fs.writeFileSync(path.join(homeDirectory, 'config/mode.json'), JSON.stringify({ mode: mode }, null, 2));
+
     const removeBlockChainResult = await execWrapper(`rm -rf ${path.join(homeDirectory, 'config')}`);
     await execWrapper(`rm -rf ${path.join(homeDirectory, 'keyring-local')}`);
     await execWrapper(`rm -rf ${path.join(homeDirectory, 'data')}`);
@@ -40,11 +43,11 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
 
     appToml = appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317");
 
-    if (mode == "prune-node") {
-        appToml = appToml.replace("pruning = \"default\"", "pruning = \"custom\"");
-        appToml = appToml.replace("pruning-keep-recent = \"0\"", "pruning-keep-recent = \"10000\"");
-        appToml = appToml.replace("pruning-interval = \"0\"", "pruning-interval = \"100\"");
-    }
+    // if (mode == "prune-node") {
+    //     appToml = appToml.replace("pruning = \"default\"", "pruning = \"custom\"");
+    //     appToml = appToml.replace("pruning-keep-recent = \"0\"", "pruning-keep-recent = \"10000\"");
+    //     appToml = appToml.replace("pruning-interval = \"0\"", "pruning-interval = \"100\"");
+    // }
 
     configToml = configToml.replace(/timeout_commit \= \".*?\"/gm, `timeout_commit = "15000ms"`);
 

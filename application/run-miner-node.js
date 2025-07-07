@@ -12,6 +12,48 @@ const runMinerNode = async (app, environement) => {
     const jsonRpcWsAddress = environement.env['json-rpc.ws-address'] ?? '0.0.0.0:8546';
     const p2plAddr = environement.env['p2p.laddr'] ?? 'tcp://0.0.0.0:26656';
 
+    let mode = "archive";
+
+    if (fs.existsSync(path.join(homeDirectory, 'config/mode.json'))) {
+        mode = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'config/mode.json'))).mode;
+    }
+
+    let pruningArgs = [];
+
+    switch (mode) {
+        case "medium":
+            pruningArgs = [
+                `--pruning=custom`,
+                `--pruning-keep-recent=100000`,
+                `--pruning-interval=1`,
+                `--min-retain-blocks=5000`,
+                `--skip-evidence-retention=true`,
+            ];
+            break;
+        case "light":
+            pruningArgs = [
+                `--pruning=custom`,
+                `--pruning-keep-recent=10000`,
+                `--pruning-interval=1`,
+                `--min-retain-blocks=1000`,
+                `--skip-evidence-retention=true`,
+            ];
+            break;
+        case "very-light":
+            pruningArgs = [
+                `--pruning=custom`,
+                `--pruning-keep-recent=10`,
+                `--pruning-interval=1`,
+                `--min-retain-blocks=10`,
+                `--skip-evidence-retention=true`,
+            ];
+            break;
+        default: // archive
+            pruningArgs = [
+                `--pruning=nothing`,
+            ];
+    }
+
     const childProcess = spawn
     (
         'heliades',
@@ -30,7 +72,13 @@ const runMinerNode = async (app, environement) => {
             '--json-rpc.api=eth,txpool,personal,net,debug,web3',
             `--json-rpc.address=${jsonRpcAddress}`,
             `--json-rpc.ws-address=${jsonRpcWsAddress}`,
-            `--p2p.laddr=${p2plAddr}`
+            `--p2p.laddr=${p2plAddr}`,
+
+            `--state-sync.snapshot-interval=0`, // disable state sync snapshot (piece of shit)
+            `--state-sync.snapshot-keep-recent=0`, // disable state sync snapshot (piece of shit)
+            
+            // pruning
+            ...pruningArgs,
         ],
         { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-node.log'), 'w')]}
     );
