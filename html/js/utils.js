@@ -286,7 +286,8 @@ const buildAddress = (addressElement) => {
     div.classList.add('address-container');
     div.style.borderRadius = '5px';
     div.style.border = '1px solid #ccc';
-    div.style.padding = '10px';
+    div.style.paddingRight = '10px';
+    div.style.paddingLeft = '10px';
     div.style.display = 'flex';
     div.style.alignItems = 'center';
     div.style.justifyContent = 'space-between';
@@ -472,7 +473,7 @@ const buildContent = (content) => {
 const buildRaw = (raw) => {
     const div = document.createElement('div');
 
-    let nbrOfRaw = 3;
+    let nbrOfRaw = 4;
     if (raw.nbr != undefined) {
         nbrOfRaw = raw.nbr;
     }
@@ -508,9 +509,11 @@ const buildButton = (button) => {
     icon.textContent = button.icon; // Utilisation de textContent pour éviter XSS
     btn.appendChild(icon);
 
-    const span = document.createElement('span');
-    span.textContent = button.text; // Utilisation de textContent pour éviter XSS
-    btn.appendChild(span);
+    if (button.text && button.text.trim() !== '') {
+        const span = document.createElement('span');
+        span.textContent = button.text; // Utilisation de textContent pour éviter XSS
+        btn.appendChild(span);
+    }
 
     let keys = {};
     if (button.key != undefined) {
@@ -557,6 +560,28 @@ window.pw_prompt = function(options) {
         if (e.keyCode == 13) submit();
     }, false);
     prompt.appendChild(input);
+
+    var button = document.createElement("button");
+    button.textContent = bm;
+    button.addEventListener("click", submit, false);
+    prompt.appendChild(button);
+
+    document.body.appendChild(prompt);
+};
+
+window.btn_prompt = function(options) {
+    var bm = options.bm || "Submit";
+    if(!options.callback) { 
+        alert("No callback function provided! Please provide one.") 
+    };
+
+    var prompt = document.createElement("div");
+    prompt.className = "btn_prompt";
+
+    var submit = function() {
+        options.callback();
+        document.body.removeChild(prompt);
+    };
 
     var button = document.createElement("button");
     button.textContent = bm;

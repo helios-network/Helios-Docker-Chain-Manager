@@ -8,6 +8,31 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    transition: background 0.3s ease;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Ajouter ces règles pour corriger le carré blanc */
+*::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
 /* LOGIN */
 
 .login-container {
@@ -384,10 +409,18 @@ button:disabled {
 }
 
 .button-group.grp4 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    width: 100%;
+    display: flex;
     gap: 1rem;
     margin-bottom: 2rem;
+}
+
+.button-group.grp4 button {
+    width: 100%;
+}
+
+.button-group.grp4 button.tertiary {
+    width: 32px;
 }
 
 .button-group button {
@@ -899,6 +932,18 @@ button:disabled {
     color: #94A3B8;
 }
 
+.button.tertiary {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94A3B8;
+    width: 32px;
+    align-items: center;
+}
+
+.button.tertiary i {
+    width: 100%;
+}
+
 .button.danger {
     background: linear-gradient(135deg, #e74c3c, #c0392b); /* Couleurs rouge pour le danger */
     color: #FFFFFF;
@@ -1202,3 +1247,21 @@ button:disabled {
     margin-bottom:10px;
     width: 100%;
 }
+
+.btn_prompt {
+    position:fixed;
+    left: 50%;
+    top: calc(50% - 100px);
+    margin-left:-100px;
+    padding:15px;
+    width:200px;
+    border:1px solid black;
+    z-index: 10000;
+    background-color: black;
+    border-radius: 7px;
+}
+
+.address-container {
+    height: 48px;
+}
+

@@ -184,7 +184,21 @@
                                                 key: 'address',
                                                 type: "address",
                                                 text: "",
-                                            }
+                                            },
+                                            {
+                                                key: 'btnMore',
+                                                type: "button",
+                                                class: "tertiary",
+                                                icon: "more_vert",
+                                                text: "",
+                                                onclick: function() {
+                                                    window.btn_prompt({
+                                                        callback: async () => {
+                                                            console.log('btn action')
+                                                        }
+                                                    });
+                                                }
+                                            },
                                         ]
                                     }
                                 ]
