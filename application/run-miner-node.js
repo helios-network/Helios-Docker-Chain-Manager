@@ -58,10 +58,10 @@ const runMinerNode = async (app, environement) => {
             ];
     }
 
-    // backup flags if enabled
+    // backup flags if enabled and node mode is very-light
     let backupArgs = [];
     
-    if (settings.backupEnable) {
+    if (settings.backupEnable && settings.nodeMode === "very-light") {
         backupArgs = [
             `--backup.enable=true`,
             `--backup.block-interval=${settings.backupBlockInterval ?? 100}`,
@@ -69,7 +69,9 @@ const runMinerNode = async (app, environement) => {
             `--backup.min-retain-backups=${settings.backupMinRetainBackups ?? 3}`,
         ];
 
-        console.log(backupArgs);
+        console.log('Backup enabled for very-light mode:', backupArgs);
+    } else if (settings.backupEnable && settings.nodeMode !== "very-light") {
+        console.log('Backup disabled: only available in very-light mode. Current mode:', settings.nodeMode);
     }
 
     const childProcess = spawn

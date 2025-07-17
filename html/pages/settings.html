@@ -134,6 +134,12 @@
                                     <span class="setting-text">Enable Backup System</span>
                                 </label>
                                 <p class="setting-description">Enable automatic backup of blockchain data at regular intervals</p>
+                                <div id="backup-mode-warning" class="backup-warning" style="display: none;">
+                                    <div class="warning-message">
+                                        <i class="material-icons">warning</i>
+                                        <span>Backup system is only available in "Very Light" mode. Please switch to Very Light mode to enable backups.</span>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div id="backup-options" class="setting-item" style="display: none;">
@@ -235,8 +241,8 @@
                             const nodeMode = data.settings.nodeMode || 'archive';
                             document.getElementById(`mode-${nodeMode}`).checked = true;
                             
-                            // Show/hide backup options based on enable state
-                            toggleBackupOptions();
+                            // Update backup state based on node mode
+                            updateBackupState();
                         }
                     }
                 } catch (error) {
@@ -248,6 +254,29 @@
                 const backupEnable = document.getElementById('backup-enable').checked;
                 const backupOptions = document.getElementById('backup-options');
                 backupOptions.style.display = backupEnable ? 'block' : 'none';
+            };
+
+            const updateBackupState = () => {
+                const selectedMode = document.querySelector('input[name="node-mode"]:checked');
+                const backupEnable = document.getElementById('backup-enable');
+                const backupOptions = document.getElementById('backup-options');
+                const backupModeWarning = document.getElementById('backup-mode-warning');
+                const saveBackupButton = document.getElementById('save-backup-settings');
+                
+                if (selectedMode && selectedMode.value !== 'very-light') {
+                    // Disable backup if not in very-light mode
+                    backupEnable.checked = false;
+                    backupEnable.disabled = true;
+                    backupOptions.style.display = 'none';
+                    backupModeWarning.style.display = 'block';
+                    saveBackupButton.disabled = true;
+                } else {
+                    // Enable backup if in very-light mode
+                    backupEnable.disabled = false;
+                    backupModeWarning.style.display = 'none';
+                    saveBackupButton.disabled = false;
+                    toggleBackupOptions();
+                }
             };
 
             const showNotification = (type, title, message, duration = 5000) => {
@@ -393,6 +422,8 @@
                         const data = await response.json();
                         if (data.success) {
                             showNotification('success', 'Success', `Node mode saved successfully! Mode: ${nodeMode}`);
+                            // Update backup state after mode change
+                            updateBackupState();
                         } else {
                             showNotification('error', 'Error', 'Error saving node mode: ' + data.error);
                         }
@@ -432,8 +463,13 @@
                 document.querySelectorAll('.main-content')[0].style.display = '';
                 await loadSettings();
                 
-                // Add event listener for backup enable checkbox
+                // Add event listeners
                 document.getElementById('backup-enable').addEventListener('change', toggleBackupOptions);
+                
+                // Add event listeners for node mode radio buttons
+                document.querySelectorAll('input[name="node-mode"]').forEach(radio => {
+                    radio.addEventListener('change', updateBackupState);
+                });
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

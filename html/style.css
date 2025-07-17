@@ -2722,6 +2722,43 @@ button:disabled {
     }
 }
 
+/* Backup Warning Styles */
+.backup-warning {
+    margin-top: 1rem;
+}
+
+.backup-warning .warning-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    color: #FFC107;
+    font-size: 0.9rem;
+}
+
+.backup-warning .warning-message .material-icons {
+    font-size: 1.2rem;
+    color: #FFC107;
+}
+
+.backup-warning .warning-message span {
+    flex: 1;
+    line-height: 1.4;
+}
+
+/* Disabled state for backup settings */
+.setting-checkbox:disabled + .setting-text {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.setting-checkbox:disabled {
+    cursor: not-allowed;
+}
+
 /* Assets Table Styles */
 .assets-table-container {
     margin-top: 1rem;
