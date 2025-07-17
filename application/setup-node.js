@@ -10,6 +10,9 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
     
     const jsonKeyStoreNode = JSON.parse(keyStoreNode);
     const privateKey = await keyStoreRecover(keyStoreNode, walletPassword);
+    if (privateKey == undefined) {
+        return false;
+    }
     
     const homeDirectory = await app.actions.getHomeDirectory.use();
 

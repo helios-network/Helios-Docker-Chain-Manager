@@ -40,6 +40,9 @@ const transferToken = async (app, password, tokenAddress, to, amount, retry = 0)
         const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
+        if (privateKey == undefined) {
+            return false;
+        }
         const wallet = new ethers.Wallet(privateKey, provider);
 
         const contract = new ethers.Contract(tokenAddress, transferTokenAbi, wallet);

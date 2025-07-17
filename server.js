@@ -93,7 +93,7 @@ const main = async () => {
   ////////////////////////////////////////////
   // AUTOMATIONS
   ////////////////////////////////////////////
-  await initAppNodeFunctions(app);
+  await initAppNodeFunctions(app, environement);
   
   await runAutomation(app, environement);
 };

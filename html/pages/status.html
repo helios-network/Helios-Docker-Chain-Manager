@@ -70,7 +70,61 @@
                             <div class="status-badge" id="peers-badge"></div>
                         </div>
                         <div class="section-content">
-                            <ul class="list" id="peers-list" style="padding-inline-start: 0; list-style-type: none; display: block; justify-content: start;"></ul>
+                            <!-- My Node Info -->
+                            <div class="peer-section">
+                                <h4 class="peer-section-title">
+                                    <span class="material-icons">account_circle</span>
+                                    My Node
+                                </h4>
+                                <div class="my-node-info" id="my-node-info">
+                                    <div class="peer-card my-node">
+                                        <div class="peer-copy">
+                                            <button class="button tertiary small" onclick="copyMyPeerId()" title="Copy Peer ID">
+                                                <span class="material-icons">content_copy</span>
+                                            </button>
+                                        </div>
+                                        <div class="peer-info">
+                                            <div class="peer-id" id="my-peer-id">Loading...</div>
+                                        </div>
+                                        <div class="peer-actions">
+                                            <button class="button tertiary small" onclick="copyMyPeerId()" title="Copy Peer ID">
+                                                <span class="material-icons">content_copy</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AddrBook Peers -->
+                            <div class="peer-section">
+                                <h4 class="peer-section-title">
+                                    <span class="material-icons">group</span>
+                                    AddrBook Peers
+                                    <span class="peer-count" id="addrbook-count">(0)</span>
+                                </h4>
+                                <div class="peers-grid" id="addrbook-peers">
+                                    <div class="no-peers">
+                                        <span class="material-icons">group_off</span>
+                                        <p>No AddrBook peers connected</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Persistent Peers -->
+                            <div class="peer-section">
+                                <h4 class="peer-section-title">
+                                    <span class="material-icons">link</span>
+                                    Persistent Peers
+                                    <span class="peer-count" id="persistent-count">(0)</span>
+                                </h4>
+                                <div class="peers-grid" id="persistent-peers">
+                                    <div class="no-peers">
+                                        <span class="material-icons">link_off</span>
+                                        <p>No persistent peers configured</p>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div class="button-group">
                                 <button id="add-new-peer" class="button primary" onclick="addNewPeer(this)">
                                     <i class="material-icons">add</i>
@@ -212,6 +266,81 @@
                 });
             }
 
+            function copyMyPeerId() {
+                const peerId = document.getElementById('my-peer-id').textContent;
+                if (peerId && peerId !== 'Loading...') {
+                    navigator.clipboard.writeText(peerId).then(() => {
+                        showCopyFeedback('my-peer-id');
+                    });
+                }
+            }
+
+            function copyPeerAddress(peerAddress) {
+                navigator.clipboard.writeText(peerAddress).then(() => {
+                    showCopyFeedback(peerAddress);
+                });
+            }
+
+            function showCopyFeedback(elementId) {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    const originalBackground = element.style.backgroundColor;
+                    element.style.backgroundColor = '#4CAF50';
+                    element.style.color = 'white';
+                    setTimeout(() => {
+                        element.style.backgroundColor = originalBackground;
+                        element.style.color = '';
+                    }, 500);
+                }
+            }
+
+            function createPeerCard(peer, type) {
+                const card = document.createElement('div');
+                card.className = 'peer-card';
+                card.setAttribute('data-peer', peer);
+                
+                // Extract peer ID and address from the peer string
+                const peerParts = peer.split('@');
+                const peerId = peerParts[0] || peer;
+                const peerAddress = peerParts[1] || '';
+                
+                // Create actions HTML - only show delete button for persistent peers
+                const actionsHtml = `
+                    ${type === 'persistent' ? `
+                        <button class="button danger small" onclick="removePeer('${peer}', '${type}')" title="Remove Peer">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    ` : ''}
+                `;
+                
+                card.innerHTML = `
+                    <div class="peer-copy">
+                        <button class="button tertiary small" onclick="copyPeerAddress('${peer}')" title="Copy Peer Address">
+                            <span class="material-icons">content_copy</span>
+                        </button>
+                    </div>
+                    <div class="peer-info">
+                        <div class="peer-address" title="${peerId}@${peerAddress}">${peerId}@${peerAddress}</div>
+                    </div>
+                     <div class="peer-actions">
+                        ${actionsHtml}
+                    </div>
+                `;
+                
+                return card;
+            }
+
+            function removePeer(peer, type) {
+                if (confirm(`Are you sure you want to remove this ${type} peer?\n\n${peer}`)) {
+                    // TODO: Implement peer removal API call
+                    console.log(`Removing ${type} peer:`, peer);
+                }
+            }
+
+            // Variables pour mémoriser l'état précédent
+            let lastAddrbookPeers = '';
+            let lastPersistentPeers = '';
+
             const main = async () => {
                 if (password == undefined) {
                     window.location = '/';
@@ -287,32 +416,86 @@
                             addressText.textContent = jsonResult.node?.infos?.address ?? '';
                         }
 
-                        if (jsonResult.node.infos?.peers) {
-                            const peersList = document.getElementById('peers-list');
-                            const peersBadge = document.getElementById('peers-badge');
-                            
-                            if (peersList) {
-                                const items = [
-                                    'AddrBook Peers (' + jsonResult.node.infos.peers.length + ')',
-                                    jsonResult.node.infos.peers.join(','),
-                                    'Persistent Peers (' + jsonResult.node.infos.persistentPeers.length + ')',
-                                    jsonResult.node.infos.persistentPeers.join(','),
-                                ];
-                                
-                                const currentItems = Array.from(peersList.children).map(li => li.textContent);
-                                if (items.join('\n') !== currentItems.join('\n')) {
-                                    peersList.innerHTML = '';
-                                    items.forEach(item => {
-                                        const li = document.createElement('li');
-                                        li.textContent = item;
-                                        peersList.appendChild(li);
-                                    });
-                                }
+                        // Update My Node Info
+                        const myPeerId = document.getElementById('my-peer-id');
+                        const peersBadge = document.getElementById('peers-badge');
+                        
+                        if (myPeerId && jsonResult.node.infos?.node_info?.id) {
+                            const url = window.location.href;
+                            const ValidIpAddressRegex = new RegExp("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
+
+                            let ip = ValidIpAddressRegex.exec(url);
+                            console.log(jsonResult.node.infos);
+                            if (ip == undefined) {
+                                ip = '0.0.0.0';
                             }
 
-                            if (peersBadge && jsonResult.node.infos?.node_info?.id) {
-                                peersBadge.textContent = 'My PeerId: ' + (jsonResult.node.infos?.node_info?.id ?? '');
-                                peersBadge.className = 'status-badge active';
+                            //listen_addr: "tcp://0.0.0.0:26656"
+                            const parsedPortFromListenAddr = jsonResult.node.infos.node_info.listen_addr.split(':')[2];
+                            myPeerId.textContent = `${jsonResult.node.infos.node_info.id}@${ip}:${parsedPortFromListenAddr}`;
+                        } else {
+                            myPeerId.textContent = 'Loading...';
+                        }
+                        
+                        if (peersBadge && jsonResult.node.infos?.node_info?.id) {
+                            peersBadge.textContent = 'Connected';
+                            peersBadge.className = 'status-badge active';
+                        }
+
+                        // Update AddrBook Peers
+                        if (jsonResult.node.infos?.peers) {
+                            const addrbookPeers = document.getElementById('addrbook-peers');
+                            const addrbookCount = document.getElementById('addrbook-count');
+                            if (addrbookCount) {
+                                addrbookCount.textContent = `(${jsonResult.node.infos.peers.length})`;
+                            }
+                            if (addrbookPeers) {
+                                const peersString = JSON.stringify(jsonResult.node.infos.peers);
+                                if (peersString !== lastAddrbookPeers) {
+                                    lastAddrbookPeers = peersString;
+                                    if (jsonResult.node.infos.peers.length > 0) {
+                                        addrbookPeers.innerHTML = '';
+                                        jsonResult.node.infos.peers.forEach(peer => {
+                                            const peerCard = createPeerCard(peer, 'addrbook');
+                                            addrbookPeers.appendChild(peerCard);
+                                        });
+                                    } else {
+                                        addrbookPeers.innerHTML = `
+                                            <div class="no-peers">
+                                                <span class="material-icons">group_off</span>
+                                                <p>No AddrBook peers connected</p>
+                                            </div>
+                                        `;
+                                    }
+                                }
+                            }
+                        }
+                        // Update Persistent Peers
+                        if (jsonResult.node.infos?.persistentPeers) {
+                            const persistentPeers = document.getElementById('persistent-peers');
+                            const persistentCount = document.getElementById('persistent-count');
+                            if (persistentCount) {
+                                persistentCount.textContent = `(${jsonResult.node.infos.persistentPeers.length})`;
+                            }
+                            if (persistentPeers) {
+                                const peersString = JSON.stringify(jsonResult.node.infos.persistentPeers);
+                                if (peersString !== lastPersistentPeers) {
+                                    lastPersistentPeers = peersString;
+                                    if (jsonResult.node.infos.persistentPeers.length > 0) {
+                                        persistentPeers.innerHTML = '';
+                                        jsonResult.node.infos.persistentPeers.forEach(peer => {
+                                            const peerCard = createPeerCard(peer, 'persistent');
+                                            persistentPeers.appendChild(peerCard);
+                                        });
+                                    } else {
+                                        persistentPeers.innerHTML = `
+                                            <div class="no-peers">
+                                                <span class="material-icons">link_off</span>
+                                                <p>No persistent peers configured</p>
+                                            </div>
+                                        `;
+                                    }
+                                }
                             }
                         }
                     }, 1000);

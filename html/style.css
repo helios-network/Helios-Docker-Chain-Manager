@@ -2458,3 +2458,159 @@ button:disabled {
     line-height: 1.5;
     max-width: 400px;
 }
+
+/* Peers Section Styles */
+.peer-section {
+    margin-bottom: 2rem;
+}
+
+.peer-section:last-child {
+    margin-bottom: 1rem;
+}
+
+.peer-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #CED4DA;
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.peer-section-title .material-icons {
+    font-size: 1.2rem;
+    color: #012dcb;
+}
+
+.peer-count {
+    color: #A3A7AB;
+    font-weight: 400;
+    font-size: 0.9rem;
+}
+
+.peer-card {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+}
+
+.peer-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.peer-card.my-node {
+    background: rgba(1, 45, 203, 0.1);
+    border-color: rgba(1, 45, 203, 0.2);
+}
+
+.peer-card.my-node:hover {
+    background: rgba(1, 45, 203, 0.15);
+}
+
+.peer-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.peer-id {
+    color: #E8E9EA;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    margin-bottom: 0.25rem;
+    word-break: break-all;
+}
+
+.peer-address {
+    color: #A3A7AB;
+    font-size: 0.8rem;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    word-break: break-all;
+}
+
+.peer-type {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.1);
+    color: #CED4DA;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.peer-copy {
+    display: flex;
+    gap: 0.25rem;
+    margin-right: 1rem;
+    flex-shrink: 0;
+}
+
+.peer-actions {
+    display: flex;
+    gap: 0.25rem;
+    margin-left: 1rem;
+    flex-shrink: 0;
+}
+
+.peers-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.no-peers {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    color: #A3A7AB;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+}
+
+.no-peers .material-icons {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.no-peers p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .peer-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .peer-actions {
+        margin-left: 0;
+        align-self: flex-end;
+    }
+    
+    .peer-section-title {
+        font-size: 0.9rem;
+    }
+    
+    .peer-id,
+    .peer-address {
+        font-size: 0.8rem;
+    }
+}

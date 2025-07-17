@@ -143,6 +143,9 @@ const delegate = async (app, password, retry = 0) => {
         const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
+        if (privateKey == undefined) {
+            return false;
+        }
         const wallet = new ethers.Wallet(privateKey, provider);
 
         const validatorAddress = wallet.address;

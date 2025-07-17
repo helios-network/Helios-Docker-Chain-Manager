@@ -144,6 +144,9 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
         const nodeMoniker = fs.readFileSync(path.join(homeDirectory, 'moniker')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
+        if (privateKey == undefined) {
+            return false;
+        }
         const wallet = new ethers.Wallet(privateKey, provider);
 
         console.log("Données reçues dans createValidator:", validatorData); // Debug log

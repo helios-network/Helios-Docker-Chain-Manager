@@ -10,6 +10,9 @@ const runHyperionNode = async (app, environement, password) => {
 
     const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
     const privateKey = await keyStoreRecover(keyStoreNode, password);
+    if (privateKey == undefined) {
+        return;
+    }
     const address = getAddress('0x'+JSON.parse(keyStoreNode).address);
 
     const heliosGrpc = 'tcp://127.0.0.1:9090';

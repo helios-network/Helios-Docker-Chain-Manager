@@ -34,6 +34,9 @@ const unjailNode = async (app, environement, password) => {
 
         const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
         const privateKey = await keyStoreRecover(keyStoreNode, password);
+        if (privateKey == undefined) {
+            return false;
+        }
 
         const wallet = new ethers.Wallet(privateKey, provider);
 

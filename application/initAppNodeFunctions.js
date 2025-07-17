@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const { execWrapper } = require('../utils/exec-wrapper');
+const crypto = require('crypto');
 
-const initAppNodeFunctions = async (app) => {
+const initAppNodeFunctions = async (app, environement) => {
 
     const homeDirectory = await app.actions.getHomeDirectory.use();
 
@@ -14,7 +15,7 @@ const initAppNodeFunctions = async (app) => {
         } catch (e) {}
 
         try {
-            return {
+            let infos = {
                 ... status.result,
                 heliosAddress: await app.node.getHeliosAddress(),
                 heliosValAddress: await app.node.getHeliosValAddress(),
@@ -23,7 +24,17 @@ const initAppNodeFunctions = async (app) => {
                 peers: await app.node.getPeers(),
                 persistentPeers: await app.node.getPersistentPeers(),
                 mode: await app.node.getMode(),
-            };
+            }
+
+            if (infos.node_info?.id == undefined) {
+                if (infos.node_info == undefined) {
+                    infos.node_info = {};
+                }
+                infos.node_info.id = await app.node.getNodeId();
+                infos.node_info.listen_addr = environement.env['p2p.laddr'] ?? 'tcp://0.0.0.0:26656';
+            }
+
+            return infos;
         } catch (e) {
             console.log(e);
             return {};
@@ -130,6 +141,37 @@ const initAppNodeFunctions = async (app) => {
             await app.node.setPersistentPeers([...peers, peerAddress]);
         }
         return true;
+    }
+
+    app.node.getNodeId = async () => {
+        try {
+            const nodeKeyPath = path.join(homeDirectory, 'config/node_key.json');
+            // Charger node_key.json
+            const nodeKey = JSON.parse(fs.readFileSync(nodeKeyPath, 'utf-8'));
+
+            // Extraire la clé privée base64
+            const privKeyBase64 = nodeKey.priv_key.value;
+            const privKeyBytes = Buffer.from(privKeyBase64, 'base64');
+
+            // Vérifier que c'est bien une clé Ed25519
+            if (nodeKey.priv_key.type !== 'tendermint/PrivKeyEd25519' || privKeyBytes.length !== 64) {
+                throw new Error('Clé non reconnue ou invalide');
+            }
+
+            // En Ed25519, la clé publique est dans les 32 derniers octets de la clé privée étendue
+            const pubKey = privKeyBytes.slice(32);
+
+            // Le node_id est l'adresse = SHA256(pubkey) -> premiers 20 bytes -> hex
+            const sha256 = crypto.createHash('sha256').update(pubKey).digest();
+            const nodeId = sha256.slice(0, 20).toString('hex');
+
+            console.log(nodeId);
+            
+            return nodeId;
+        } catch (e) {
+            console.log(e);
+            return undefined;
+        }
     }
 
 }

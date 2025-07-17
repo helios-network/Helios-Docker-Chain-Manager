@@ -32,6 +32,9 @@ const createToken = async (app, password, retry = 0) => {
         const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
+        if (privateKey == undefined) {
+            return false;
+        }
         const wallet = new ethers.Wallet(privateKey, provider);
 
         const contract = new ethers.Contract('0x0000000000000000000000000000000000000806', createTokenAbi, wallet);
