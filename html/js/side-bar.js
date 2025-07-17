@@ -50,6 +50,11 @@ const displaySideBar = () => {
             name: 'IBC Relayers',
             path: '/ibc-relayers',
             icon: '<i class="material-icons">multiple_stop</i>'
+        },
+        {
+            name: 'Backups',
+            path: '/backups',
+            icon: '<i class="material-icons">backup</i>'
         }
     ];
 

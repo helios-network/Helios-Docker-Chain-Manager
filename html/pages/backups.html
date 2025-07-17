@@ -1,0 +1,337 @@
+<html>
+    <head>
+        <title>Helios Node - Backups</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="sidebar"></div>
+
+        <!-- Notification Container -->
+        <div class="notification-container" id="notification-container"></div>
+
+        <div class="main-content" style="display: none">
+            <div class="container">
+                <div id="backups-content" class="grid-container-one">
+                    <!-- Section Backups List -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">backup</span>
+                                <h3>Backup Files</h3>
+                            </div>
+                            <button id="refresh-backups" class="button secondary" onclick="loadBackups()">
+                                <span class="material-icons">refresh</span>
+                                Refresh
+                            </button>
+                        </div>
+                        <div class="section-content">
+                            <div id="backups-table-container">
+                                <div id="loading-backups" class="loading-container">
+                                    <div class="spinner-border"></div>
+                                    <p>Loading backups...</p>
+                                </div>
+                                <div id="backups-table" style="display: none;">
+                                    <table class="backups-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Block ID</th>
+                                                <th>Date & Time</th>
+                                                <th>Filename</th>
+                                                <th>Size</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="backups-table-body">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="no-backups" style="display: none;">
+                                    <div class="empty-state">
+                                        <span class="material-icons">folder_open</span>
+                                        <h3>No backup files found</h3>
+                                        <p>Backup files will appear here once the backup system is enabled and has created some backups.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Apply Backup Modal -->
+        <div id="apply-backup-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons">warning</span>
+                        Apply Backup
+                    </h3>
+                    <button class="modal-close" onclick="hideApplyBackupModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="warning-message">
+                        <p><strong>Warning:</strong> This action will replace your current blockchain data with the selected backup.</p>
+                        <p>This operation will:</p>
+                        <ul>
+                            <li>Stop the current node</li>
+                            <li>Delete your current data directory</li>
+                            <li>Extract the backup data</li>
+                            <li>Reset validator state</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="backup-info">
+                        <h4>Selected Backup:</h4>
+                        <p><strong>Filename:</strong> <span id="modal-filename"></span></p>
+                        <p><strong>Block Height:</strong> <span id="modal-block-height"></span></p>
+                    </div>
+                    
+                    <div class="backup-option">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="backup-current-data" checked>
+                            <span class="checkmark"></span>
+                            Backup current data before applying backup
+                        </label>
+                        <p class="option-description">This will create a backup of your current data before replacing it with the backup.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" onclick="hideApplyBackupModal()">Cancel</button>
+                    <button class="button danger" onclick="applyBackup()">
+                        <span class="material-icons">restore</span>
+                        Apply Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let password = window.localStorage.getItem("access-code");
+
+            const showNotification = (type, title, message, duration = 5000) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const iconMap = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="material-icons">${iconMap[type] || 'info'}</span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                    <div class="notification-progress" style="width: 100%"></div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('hide');
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 400);
+                    }, duration);
+                    
+                    const progress = notification.querySelector('.notification-progress');
+                    progress.style.transition = `width ${duration}ms linear`;
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 10);
+                }
+            };
+
+            const formatFileSize = (bytes) => {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            };
+
+            const loadBackups = async () => {
+                try {
+                    const loadingElement = document.getElementById('loading-backups');
+                    const tableElement = document.getElementById('backups-table');
+                    const noBackupsElement = document.getElementById('no-backups');
+                    const tableBody = document.getElementById('backups-table-body');
+
+                    // Show loading
+                    loadingElement.style.display = 'flex';
+                    tableElement.style.display = 'none';
+                    noBackupsElement.style.display = 'none';
+
+                    const response = await fetch('/get-backups', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            loadingElement.style.display = 'none';
+                            
+                            if (data.backups && data.backups.length > 0) {
+                                // Display backups table
+                                tableBody.innerHTML = '';
+                                
+                                data.backups.forEach(backup => {
+                                    const row = document.createElement('tr');
+                                    row.innerHTML = `
+                                        <td class="block-id">${backup.blockId.toLocaleString()}</td>
+                                        <td class="date-time">${backup.formattedDateTime}</td>
+                                        <td class="filename">${backup.filename}</td>
+                                        <td class="file-size">${formatFileSize(backup.size)}</td>
+                                        <td class="actions">
+                                            <button class="button tertiary small" onclick="downloadBackup('${backup.filename}')" title="Download">
+                                                <span class="material-icons">download</span>
+                                            </button>
+                                            <button class="button danger small" onclick="showApplyBackupModal('${backup.filename}', ${backup.blockId})" title="Apply Backup">
+                                                <span class="material-icons">restore</span>
+                                            </button>
+                                        </td>
+                                    `;
+                                    tableBody.appendChild(row);
+                                });
+                                
+                                tableElement.style.display = 'block';
+                            } else {
+                                // Show no backups message
+                                noBackupsElement.style.display = 'block';
+                            }
+                        } else {
+                            showNotification('error', 'Error', 'Failed to load backups: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to load backups');
+                    }
+                } catch (error) {
+                    console.error('Error loading backups:', error);
+                    showNotification('error', 'Error', 'Failed to load backups');
+                }
+            };
+
+            const downloadBackup = (filename) => {
+                // Create a temporary link to download the file
+                const link = document.createElement('a');
+                link.href = `/download/backup/${encodeURIComponent(filename)}`;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            let selectedBackupFilename = null;
+
+            const showApplyBackupModal = (filename, blockHeight) => {
+                selectedBackupFilename = filename;
+                document.getElementById('modal-filename').textContent = filename;
+                document.getElementById('modal-block-height').textContent = blockHeight.toLocaleString();
+                document.getElementById('apply-backup-modal').style.display = 'flex';
+            };
+
+            const hideApplyBackupModal = () => {
+                document.getElementById('apply-backup-modal').style.display = 'none';
+                selectedBackupFilename = null;
+            };
+
+            const applyBackup = async () => {
+                if (!selectedBackupFilename) {
+                    showNotification('error', 'Error', 'No backup selected');
+                    return;
+                }
+
+                const backupCurrentData = document.getElementById('backup-current-data').checked;
+                
+                try {
+                    // Show loading state
+                    const applyButton = document.querySelector('#apply-backup-modal .button.danger');
+                    const originalText = applyButton.innerHTML;
+                    applyButton.innerHTML = '<span class="spinner-border"></span> Applying...';
+                    applyButton.disabled = true;
+
+                    const response = await fetch('/apply-backup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            filename: selectedBackupFilename,
+                            backupCurrentData: backupCurrentData
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Backup applied successfully!');
+                            hideApplyBackupModal();
+                            // Refresh the backups list to show the new backup if created
+                            await loadBackups();
+                        } else {
+                            showNotification('error', 'Error', 'Failed to apply backup: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to apply backup');
+                    }
+                } catch (error) {
+                    console.error('Error applying backup:', error);
+                    showNotification('error', 'Error', 'Failed to apply backup');
+                } finally {
+                    // Restore button state
+                    const applyButton = document.querySelector('#apply-backup-modal .button.danger');
+                    applyButton.innerHTML = '<span class="material-icons">restore</span> Apply Backup';
+                    applyButton.disabled = false;
+                }
+            };
+
+            const main = async () => {
+                if (password == undefined) {
+                    window.location = '/';
+                    return;
+                }
+                if (!(await isSetup())) {
+                    window.location = '/setup';
+                    return;
+                }
+                displaySideBar();
+                document.querySelectorAll('.main-content')[0].style.display = '';
+                await loadBackups();
+            };
+
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
+            });
+        </script>
+        <script src="js/side-bar.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
+    </body>
+</html> 
