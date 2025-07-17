@@ -51,7 +51,7 @@ const apiSetPassword = async (password) => {
     return false;
 }
 
-const apiGetValidatorAndHisDelegation = async () => {
+const apiGetValidatorAndHisAssetsAndCommission = async () => {
     const response = await fetch('/call-rpc', {
             method: 'POST',
             headers: {
@@ -59,7 +59,7 @@ const apiGetValidatorAndHisDelegation = async () => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                method: 'eth_getValidatorWithHisDelegationAndCommission',
+                method: 'eth_getValidatorWithHisAssetsAndCommission',
                 params: ['$address']
             })
         });
@@ -68,6 +68,38 @@ const apiGetValidatorAndHisDelegation = async () => {
     if (result === false) {
         return undefined;
     }
+    return result;
+}
+
+const apiGetDelegations = async (delegatorAddress) => {
+    const response = await fetch('/call-rpc', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            method: 'eth_getDelegations',
+            params: [delegatorAddress]
+        })
+    });
+    const result = await response.json();
+    return result;
+}
+
+const apiGetTokenDetails = async (contractAddress) => {
+    const response = await fetch('/call-rpc', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            method: 'eth_getTokenDetails',
+            params: [contractAddress]
+        })
+    });
+    const result = await response.json();
     return result;
 }
 

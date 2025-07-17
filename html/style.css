@@ -2721,3 +2721,195 @@ button:disabled {
         font-size: 0.85rem;
     }
 }
+
+/* Assets Table Styles */
+.assets-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.assets-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 0.9rem;
+}
+
+.assets-table th {
+    background: rgba(1, 45, 203, 0.1);
+    color: #E8E9EA;
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.assets-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #A3A7AB;
+    vertical-align: middle;
+}
+
+.assets-table tr:last-child td {
+    border-bottom: none;
+}
+
+.assets-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.assets-table .amount-cell {
+    font-weight: 600;
+    color: #E8E9EA;
+    font-family: 'Courier New', monospace;
+}
+
+.assets-table .symbol-cell {
+    font-weight: 500;
+    color: #FFF;
+}
+
+.assets-table .contract-cell {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    word-break: break-all;
+    max-width: 200px;
+}
+
+.assets-table .origin-cell {
+    font-size: 0.85rem;
+    color: #6C757D;
+}
+
+@media (max-width: 768px) {
+    .assets-table {
+        font-size: 0.8rem;
+    }
+    
+    .assets-table th,
+    .assets-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .assets-table .contract-cell {
+        max-width: 120px;
+        font-size: 0.75rem;
+    }
+}
+
+/* Delegations Table Styles */
+.delegations-table-container {
+    margin-top: 1rem;
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.delegations-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255, 255, 255, 0.02);
+    font-size: 0.9rem;
+}
+
+.delegations-table th {
+    background: rgba(1, 45, 203, 0.1);
+    color: #E8E9EA;
+    font-weight: 600;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.delegations-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #A3A7AB;
+    vertical-align: middle;
+}
+
+.delegations-table tr:last-child td {
+    border-bottom: none;
+}
+
+.delegations-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.delegations-table .amount-cell {
+    font-weight: 600;
+    color: #E8E9EA;
+    font-family: 'Courier New', monospace;
+}
+
+.delegations-table .symbol-cell {
+    font-weight: 500;
+    color: #FFF;
+}
+
+.delegations-table .contract-cell {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    word-break: break-all;
+    max-width: 200px;
+}
+
+.delegations-table .origin-cell {
+    font-size: 0.85rem;
+    color: #6C757D;
+}
+
+.delegations-table .actions-cell {
+    text-align: center;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.delegations-table .actions-cell .button {
+    margin: 0;
+    padding: 0.5rem;
+    min-width: auto;
+    height: auto;
+    flex-shrink: 0;
+}
+
+.delegations-table .actions-cell .button .material-icons {
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .delegations-table {
+        font-size: 0.8rem;
+    }
+    
+    .delegations-table th,
+    .delegations-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .delegations-table .contract-cell {
+        max-width: 120px;
+        font-size: 0.75rem;
+    }
+    
+    .delegations-table .actions-cell .button {
+        margin: 0;
+        padding: 0.4rem;
+    }
+    
+    .delegations-table .actions-cell .button .material-icons {
+        font-size: 0.9rem;
+    }
+}

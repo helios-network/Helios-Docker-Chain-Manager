@@ -40,6 +40,20 @@
                         </div>
                     </div>
                 </div>
+
+                <div id="validator-assets-info-container" class="validator-grid">
+                    <div class="validator-card">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">account_balance</i>
+                                <span>My Delegated Assets</span>
+                            </div>
+                        </div>
+                        <div id="assets-info">
+                            <!-- Les informations de délégation seront affichées ici -->
+                        </div>
+                    </div>
+                </div>
     
                 <div id="validator-delegation-info-container" class="validator-grid">
                     <div class="validator-card">
@@ -49,7 +63,7 @@
                                 <span>My Delegations</span>
                             </div>
                         </div>
-                        <div id="delegation-info">
+                        <div id="delegations-info">
                             <!-- Les informations de délégation seront affichées ici -->
                         </div>
                     </div>
@@ -96,9 +110,9 @@
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
 
-                const validatorAndHisDelegation = await apiGetValidatorAndHisDelegation();
+                const validatorAndHisAssetsAndCommission = await apiGetValidatorAndHisAssetsAndCommission();
 
-                if (validatorAndHisDelegation == undefined) {
+                if (validatorAndHisAssetsAndCommission == undefined) {
                     console.log('displayCreateValidator')
                     document.getElementById('validator-form-container').style.display = '';
                     document.getElementById('validator-info-container').style.display = 'none';
@@ -110,9 +124,17 @@
                     document.getElementById('validator-info-container').style.display = '';
                     document.getElementById('validator-commission-info-container').style.display = '';
                     document.getElementById('validator-delegation-info-container').style.display = '';
-                    displayValidatorInfo(validatorAndHisDelegation.validator);
-                    displayDelegationInfo(validatorAndHisDelegation.delegation);
-                    displayCommissionInfo(validatorAndHisDelegation.commission, validatorAndHisDelegation.validator);
+                    displayValidatorInfo(validatorAndHisAssetsAndCommission.validator);
+                    // displayDelegationInfo(validatorAndHisDelegation.delegation);
+                    displayCommissionInfo(validatorAndHisAssetsAndCommission.commission, validatorAndHisAssetsAndCommission.validator);
+                    await displayAssetsInfo(validatorAndHisAssetsAndCommission.assets);
+
+
+                    const delegations = await apiGetDelegations(validatorAndHisAssetsAndCommission.validator.validatorAddress);
+
+                    if (delegations.length > 0) {
+                        await displayDelegationInfo(delegations);
+                    }
                 }
             }
 
@@ -366,7 +388,7 @@
                         </div>
                         <div class="stat-item">
                             <div class="stat-label">Shares</div>
-                            <div class="stat-value">${formatLargeNumber(validator.shares)}</div>
+                            <div class="stat-value">${Web3.utils.fromWei(validator.shares.split('.')[0], 'ether')}</div>
                         </div>
                         <div class="stat-item">
                             <div class="stat-label">Rate</div>
@@ -404,57 +426,235 @@
                 }
             }
 
-            const displayDelegationInfo = (delegation) => {
-                if (delegation == undefined || delegation.rewards == undefined) {
+            const displayDelegationInfo = async (delegations) => {
+                if (delegations == undefined || delegations.length == 0) {
                     return ;
                 }
-                const delegationInfoDiv = document.getElementById('delegation-info');
-                
-                const rewardsAmount = Web3.utils.fromWei(delegation.rewards.amount, 'ether');
-                
-                let html = `
-                    <div class="rewards-section">
-                        <div class="rewards-title">
-                            <i class="material-icons">redeem</i>
-                            Available Rewards
-                        </div>
-                        <div class="rewards-amount">${rewardsAmount} ${delegation.rewards.denom}</div>
-                        <div class="action-buttons">
-                            <button id="claim-rewards-btn" class="button primary">
+
+                const delegationsInfoDiv = document.getElementById('delegations-info');
+                let html = ``;
+
+                const promises = delegations.map(async (delegation) => {
+                    const rewardsAmount = Web3.utils.fromWei(delegation.rewards.amount, 'ether');
+                    const rewardsDenom = delegation.rewards.denom;
+                    const validatorAddress = delegation.validatorAddress;
+
+                    console.log(delegation.validatorAddress);
+
+                    let htmlOfDelegation = ``;
+                    // create one div for each validator address
+                    htmlOfDelegation += `
+                        <div class="rewards-section">
+                            <div class="rewards-title">
+                                <i class="material-icons">account_balance</i>
+                                ${delegation.validatorAddress}
+                            </div>
+                    `;
+
+                    htmlOfDelegation += `
+                        <div class="rewards-section">
+                            <div class="rewards-title">
                                 <i class="material-icons">redeem</i>
-                                <span>Claim Rewards</span>
-                            </button>
-                    </div>
-                    </div>
-                `;
-                
-                if (delegation.assets && delegation.assets.length > 0) {
+                                Available Rewards
+                            </div>
+                            <div class="rewards-amount">${rewardsAmount} ${rewardsDenom}</div>
+                            <div class="action-buttons">
+                                <button id="claim-rewards-btn" class="button primary">
+                                    <i class="material-icons">redeem</i>
+                                    <span>Claim Rewards</span>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                                         if (delegation.assets && delegation.assets.length > 0) {
+                         htmlOfDelegation += `
+                             <div style="margin-top: 1.5rem;">
+                                 <div class="commission-title">
+                                     <i class="material-icons">account_balance</i>
+                                     Delegated Assets
+                                 </div>
+                                 <div class="delegations-table-container">
+                                     <table class="delegations-table">
+                                         <thead>
+                                             <tr>
+                                                 <th>Amount</th>
+                                                 <th>Symbol</th>
+                                                 <th>Contract Address</th>
+                                                 <th>Origin Blockchain ID</th>
+                                                 <th>Actions</th>
+                                             </tr>
+                                         </thead>
+                                         <tbody>
+                         `;
+                         
+                         for (const asset of delegation.assets) {
+                             const amountSplitted = asset.amount.split('.');
+                             const amount = Web3.utils.fromWei(amountSplitted[0], 'ether');
+                             const tokenDetails = await getTokenDetails(asset.denom);
+
+                             const symbol = tokenDetails?.metadata?.symbol || asset.denom;
+                             let originBlockchainId = '42000';
+
+                             if (tokenDetails?.metadata?.chainsMetadatas != undefined) {
+                                 const chainsMetadatas = tokenDetails?.metadata?.chainsMetadatas;
+                                 originBlockchainId = chainsMetadatas.find(chain => chain.isOriginated)?.chainId || 'N/A';
+                             }
+
+                             let contractAddress = asset.denom;
+                             if (tokenDetails?.metadata?.contract_address != undefined) {
+                                contractAddress = tokenDetails?.metadata?.contract_address;
+                             }
+
+                             htmlOfDelegation += `
+                                 <tr>
+                                     <td class="amount-cell">${amount}</td>
+                                     <td class="symbol-cell">${symbol}</td>
+                                     <td class="contract-cell">${contractAddress}</td>
+                                     <td class="origin-cell">${originBlockchainId}</td>
+                                     <td class="actions-cell">
+                                         <!--- <button class="button tertiary small" onclick="undelegate('${delegation.validatorAddress}', '${asset.denom}')" title="Undelegate">
+                                             <span class="material-icons">remove_circle</span>
+                                         </button>
+                                         <button class="button tertiary small" onclick="delegate('${delegation.validatorAddress}', '${asset.denom}')" title="Delegate">
+                                             <span class="material-icons">add_circle</span>
+                                         </button> -->
+                                     </td>
+                                 </tr>
+                             `;
+                         };
+                         
+                         htmlOfDelegation += '</tbody></table></div>';
+                     }
+
+                    htmlOfDelegation += `
+                        </div>
+                    `;
+                    return htmlOfDelegation;
+                });
+
+                const rows = await Promise.all(promises);
+                html += rows.join('');
+
+                delegationsInfoDiv.innerHTML = html;
+
+                const claimBtn = document.getElementById('claim-rewards-btn');
+                if (claimBtn) claimBtn.onclick = async () => { await claim(); };
+            }
+
+            const displayAssetsInfo = async (assets) => {
+                if (assets == undefined || assets.length == 0) {
+                    return ;
+                }
+                const assetsInfoDiv = document.getElementById('assets-info');
+
+                let html = ``;
+
+                if (assets.length > 0) {
                     html += `
                         <div style="margin-top: 1.5rem;">
                             <div class="commission-title">
                                 <i class="material-icons">account_balance</i>
                                 Delegated Assets
                             </div>
-                            <ul class="delegation-list">
+                            <div class="assets-table-container">
+                                <table class="assets-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Amount</th>
+                                            <th style="color: #FFF;">Symbol</th>
+                                            <th>Contract Address</th>
+                                            <th>Origin Blockchain ID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
                     `;
-                    delegation.assets.forEach(asset => {
-                        const amount = Web3.utils.fromWei(asset.amount, 'ether');
-                        html += `
-                            <li class="delegation-item">
-                                <div>
-                                    <div class="delegation-amount">${amount}</div>
-                                    <div class="delegation-denom">${asset.denom}</div>
-                                </div>
-                            </li>
+                    
+                    const promises = assets.map(async (asset) => {
+                        const amount = Web3.utils.fromWei(asset.baseAmount, 'ether');
+                        const contractAddress = asset.contractAddress;
+                        const tokenDetails = await getTokenDetails(contractAddress);
+
+                        const symbol = tokenDetails?.metadata?.symbol || 'N/A';
+                        let originBlockchainId = '42000';
+
+                        if (tokenDetails?.metadata?.chainsMetadatas != undefined) {
+                            const chainsMetadatas = tokenDetails?.metadata?.chainsMetadatas;
+                            originBlockchainId = chainsMetadatas.find(chain => chain.isOriginated)?.chainId || 'N/A';
+                        }
+
+                        return `
+                            <tr>
+                                <td class="amount-cell">${amount}</td>
+                                <td class="symbol-cell">${symbol}</td>
+                                <td class="contract-cell">${contractAddress}</td>
+                                <td class="origin-cell">${originBlockchainId}</td>
+                            </tr>
                         `;
                     });
-                    html += '</ul></div>';
+                    
+                    const rows = await Promise.all(promises);
+                    html += rows.join('') + '</tbody></table></div>';
                 }
-                
-                delegationInfoDiv.innerHTML = html;
 
-                const claimBtn = document.getElementById('claim-rewards-btn');
-                if (claimBtn) claimBtn.onclick = async () => { await claim(); };
+                assetsInfoDiv.innerHTML = html;
+                console.log(assets);
+            }
+
+            const getTokenDetails = async (contractAddress) => {
+                try {
+                    if (window.localStorage.getItem(contractAddress) != undefined) {
+                        return JSON.parse(window.localStorage.getItem(contractAddress));
+                    }
+                    if (!contractAddress.startsWith('0x')) {
+                        return undefined;
+                    }
+                    const tokenDetails = await apiGetTokenDetails(contractAddress);
+
+                    if (tokenDetails != undefined && tokenDetails !== false) {
+                        window.localStorage.setItem(contractAddress, JSON.stringify(tokenDetails));
+                        if (tokenDetails.metadata?.base != undefined) {
+                            window.localStorage.setItem(tokenDetails.metadata.base, JSON.stringify(tokenDetails));
+                        }
+                    }
+                    return tokenDetails;
+                } catch (e) {
+                    console.log(e);
+                    return undefined;
+                }
+            }
+
+            const undelegate = async (validatorAddress, denom) => {
+                if (confirm(`Are you sure you want to undelegate from validator ${validatorAddress}?\n\nDenom: ${denom}`)) {
+                    try {
+                        // TODO: Implement undelegate API call
+                        console.log('Undelegating:', { validatorAddress, denom });
+                        alert('Undelegate functionality will be implemented soon');
+                    } catch (error) {
+                        console.error('Error undelegating:', error);
+                        alert('Error undelegating: ' + error.message);
+                    }
+                }
+            }
+
+            const delegate = async (validatorAddress, denom) => {
+                try {
+                    const newValidatorAddress = prompt('Enter the new validator address to redelegate to:');
+                    if (newValidatorAddress && newValidatorAddress.trim()) {
+                        if (confirm(`Are you sure you want to delegate to ${newValidatorAddress}?\n\nDenom: ${denom}`)) {
+                            // TODO: Implement delegate API call
+                            console.log('Delegating:', { 
+                                fromValidator: validatorAddress, 
+                                toValidator: newValidatorAddress, 
+                                denom 
+                            });
+                            alert('Redelegate functionality will be implemented soon');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error redelegating:', error);
+                    alert('Error redelegating: ' + error.message);
+                }
             }
 
             const displayCommissionInfo = (commission, validator) => {
