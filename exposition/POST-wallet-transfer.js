@@ -15,9 +15,7 @@ const walletTransfer = (app, environement) => {
                 throw new Error('Données du wallet manquantes');
             }
 
-            const hash = await transferWallet(app, password, walletData);
-            
-            res.send(hash);
+            res.send(await transferWallet(app, password, walletData));
         } catch (e) {
             console.log('Erreur dans walletTransfer:', e);
             res.send(false);

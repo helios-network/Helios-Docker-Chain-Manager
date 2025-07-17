@@ -14,6 +14,11 @@ const transferWallet = async (app, password, walletData) => {
         const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
+        if (privateKey == undefined) {
+            return {
+                error: "Invalid password"
+            };
+        }
         const wallet = new ethers.Wallet(privateKey, provider);
 
         const amount = walletData.amount;
@@ -24,9 +29,13 @@ const transferWallet = async (app, password, walletData) => {
             value: ethers.parseEther(amount)
         });
 
-        return tx.hash;
+        return {
+            hash: tx.hash
+        };
     } catch (e) {
-        return undefined;
+        return {
+            error: e.message
+        };
     }
 }
 

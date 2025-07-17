@@ -158,12 +158,12 @@
                 };
                 
                 const result = await apiWalletTransfer(walletPassword, walletData);
-                if (result === undefined) {
-                    showMessage("Error during transfer", "error");
+                if (result.error) {
+                    showMessage(result.error, "error");
                     return;
                 }
                 
-                showMessage(`Transfer successful! Transaction hash: ${result}`, "success");
+                showMessage(`Transfer successful! Transaction hash: ${result.hash}`, "success");
                 
                 // Clear form
                 document.getElementById('amount-to').value = '';

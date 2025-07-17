@@ -198,10 +198,5 @@ const apiWalletTransfer = async (walletPassword, walletData) => {
             walletData: walletData
         })
     });
-    const result = await response.text();
-
-    if (result === false) {
-        return undefined;
-    }
-    return result;
+    return await response.json();
 }
