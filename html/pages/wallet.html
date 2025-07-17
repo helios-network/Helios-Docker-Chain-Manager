@@ -11,15 +11,101 @@
         <div class="main-content" style="display: none">
             <div class="container">
                 <div id="wallet-container" class="grid-container-one">
-
+                    <!-- Wallet Card -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">wallet</i>
+                                <span>Wallet</span>
+                            </div>
+                            <div class="status-badge">
+                                <i class="material-icons">account_balance_wallet</i>
+                                <span id="wallet-balance">Balance: 0.00 ETH</span>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <!-- Address Container -->
+                            <div class="address-container" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                <span id="wallet-address">0x1234567890abcdef1234567890abcdef12345678</span>
+                                <i class="material-icons" style="cursor: pointer;" onclick="copyWalletAddress()">content_copy</i>
+                            </div>
+                            
+                            <!-- Balance Text -->
+                            <div class="text-container" style="text-align: left;">
+                                <span id="balance-text">Balance: 0.00 ETH</span>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <ul class="list" style="padding-inline-start: 0; list-style-type: none; display: flex; overflow-x: auto; justify-content: center;">
+                                <li>
+                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
+                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="swapAction()">
+                                            <i class="material-icons" style="color: #00;">swap_horiz</i>
+                                        </div>
+                                        <span style="margin-top: 5px; text-align: center;">Swap</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
+                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="sendAction()">
+                                            <i class="material-icons" style="color: #000;">send</i>
+                                        </div>
+                                        <span style="margin-top: 5px; text-align: center;">Send</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
+                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="bridgeAction()">
+                                            <i class="material-icons" style="color: #000;">link</i>
+                                        </div>
+                                        <span style="margin-top: 5px; text-align: center;">Bridge</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
+                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; onclick="receiveAction()">
+                                            <i class="material-icons" style="color: #00;">arrow_forward</i>
+                                        </div>
+                                        <span style="margin-top: 5px; text-align: center;">Receive</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
 
-            const main = async () => {
+            function copyWalletAddress() {
+                const addressText = document.getElementById('wallet-address').textContent;
+                navigator.clipboard.writeText(addressText).then(() => {
+                    const addressContainer = document.querySelector('.address-container');
+                    addressContainer.style.backgroundColor = '#e0f7fa';
+                    setTimeout(() => {
+                        addressContainer.style.backgroundColor = '';
+                    }, 300);
+                });
+            }
 
+            function swapAction() {
+                console.log('Swap action clicked');
+            }
+
+            function sendAction() {
+                console.log('Send action clicked');
+            }
+
+            function bridgeAction() {
+                console.log('Bridge action clicked');
+            }
+
+            function receiveAction() {
+                console.log('Receive action clicked');
+            }
+
+            const main = async () => {
                 if (password == undefined) {
                     window.location = '/';
                     return ;
@@ -31,64 +117,11 @@
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
 
-                // Exemple de displayRepresentation pour la page "wallet"
-                const displayRepresentation = [
-                    {
-                        type: "content",
-                        icon: "wallet", // Icône pour le contenu
-                        title: "Wallet",
-                        badge: { icon: "account_balance_wallet", value: "Balance: 0.00 ETH" }, // Badge pour la balance
-                        content: [
-                            {
-                                type: "address",
-                                address: "0x1234567890abcdef1234567890abcdef12345678", // Adresse à afficher
-                            },
-                            {
-                                type: "text",
-                                text: "Balance: 0.00 ETH", // Affichage de la balance
-                                align: "left" // Alignement à gauche
-                            },
-                            {
-                                type: "list",
-                                listStyleType: 'none',
-                                horizontal: true,
-                                justifyContent: 'center',
-                                items: [
-                                    {
-                                        type: "iconButton",
-                                        icon: "swap_horiz", // Icône pour le bouton swap
-                                        text: "Swap"
-                                    },
-                                    {
-                                        type: "iconButton",
-                                        icon: "send", // Icône pour le bouton send
-                                        text: "Send"
-                                    },
-                                    {
-                                        type: "iconButton",
-                                        icon: "link", // Icône pour le bouton bridge
-                                        text: "Bridge"
-                                    },
-                                    {
-                                        type: "iconButton",
-                                        icon: "arrow_forward", // Icône pour le bouton receive
-                                        text: "Receive"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ];
-
-                // Utilisation de buildDisplay pour créer le contenu
-                const targetElement = document.getElementById('wallet-container'); // Assurez-vous d'avoir un conteneur avec cet ID
-                buildDisplay(displayRepresentation, targetElement);
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
             });
-
         </script>
         <script src="js/side-bar.js"></script>
         <script src="js/utils.js"></script>

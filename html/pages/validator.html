@@ -10,50 +10,52 @@
         <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
-
-            <div id="validator-form-container"></div>
-            
-            <div id="validator-info-container" class="container">
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <i class="material-icons">how_to_reg</i>
-                            <span>Validator Information</span>
+            <div class="container">
+                <div id="validator-form-container"></div>
+                
+                <div id="validator-info-container">
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">how_to_reg</i>
+                                <span>Validator Information</span>
+                            </div>
+                        </div>
+                        <div class="section-content" id="validator-info">
+                            <!-- Les informations du validator seront affichées ici -->
                         </div>
                     </div>
-                    <div class="section-content" id="validator-info">
-                        <!-- Les informations du validator seront affichées ici -->
+                </div>
+    
+                <div id="validator-commission-info-container">
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">how_to_reg</i>
+                                <span>My Commissions</span>
+                            </div>
+                        </div>
+                        <div class="section-content" id="commissions-info">
+                            <!-- Les informations de delagation seront affichées ici -->
+                        </div>
+                    </div>
+                </div>
+    
+                <div id="validator-delegation-info-container">
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">how_to_reg</i>
+                                <span>My Delegations</span>
+                            </div>
+                        </div>
+                        <div class="section-content" id="delegation-info">
+                            <!-- Les informations de delagation seront affichées ici -->
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div id="validator-commission-info-container" class="container">
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <i class="material-icons">how_to_reg</i>
-                            <span>My Commissions</span>
-                        </div>
-                    </div>
-                    <div class="section-content" id="commissions-info">
-                        <!-- Les informations de delagation seront affichées ici -->
-                    </div>
-                </div>
-            </div>
-
-            <div id="validator-delegation-info-container" class="container">
-                <div class="section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <i class="material-icons">how_to_reg</i>
-                            <span>My Delegations</span>
-                        </div>
-                    </div>
-                    <div class="section-content" id="delegation-info">
-                        <!-- Les informations de delagation seront affichées ici -->
-                    </div>
-                </div>
-            </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
@@ -382,23 +384,30 @@
             }
 
             const displayDelegationInfo = (delegation) => {
-
                 if (delegation == undefined || delegation.rewards == undefined) {
                     return ;
                 }
                 const delegationInfoDiv = document.getElementById('delegation-info');
+                let html = '';
+                html += `<div class="form-group">
+                    <div class="text-container" style="margin-bottom: 1em;">
+                        <span><strong>Rewards:</strong> ${Web3.utils.fromWei(delegation.rewards.amount, 'ether')} ${delegation.rewards.denom}</span>
+                    </div>
+                    <div class="button-group">
+                        <button id="claim-rewards-btn" class="button primary"><i class="material-icons">redeem</i> <span>Claim</span></button>
+                    </div>
+                </div>`;
+                if (delegation.assets && delegation.assets.length > 0) {
+                    html += '<ul class="list" style="padding-inline-start: 0; list-style-type: none;">';
+                    delegation.assets.forEach(asset => {
+                        html += `<li class="text-container">${Web3.utils.fromWei(asset.amount, 'ether')} ${asset.denom}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                delegationInfoDiv.innerHTML = html;
 
-                const displayedDelegation = buildDisplay([
-                    { key: "raw", type: "raw", nbr: 1, content: [] },
-                    { key: "rewards", type: "text", text: `Rewards: ${Web3.utils.fromWei(delegation.rewards.amount, 'ether')} ${delegation.rewards.denom}` },
-                    { type: "raw", nbr: 1, content: [{ type: "button", text: 'Claim', onclick: async () => {
-                        await claim();
-                    } }] }
-                ], delegationInfoDiv);
-
-                delegation.assets.forEach(asset => {
-                    buildDisplay([{ key: "commission", type: "text", text: `${Web3.utils.fromWei(asset.amount, 'ether')} ${asset.denom}` }], displayedDelegation.raw.element);
-                });
+                const claimBtn = document.getElementById('claim-rewards-btn');
+                if (claimBtn) claimBtn.onclick = async () => { await claim(); };
             }
 
             const displayCommissionInfo = (commission, validator) => {
@@ -407,18 +416,27 @@
                 }
                 const commissionInfoDiv = document.getElementById('commissions-info');
 
-                const displayedCommission = buildDisplay([
-                    { key: "commission", type: "text", text: `Loading ...` },
-                    { type: "raw", nbr: 1, content: [{ type: "button", text: 'Claim', onclick: async () => {
-                        await claimCommission();
-                    } }] },
-                    { type: "raw", nbr: 1, content: [{ type: "button", text: 'Delegate', onclick: async () => {
-                        window.open(`https://portal.helioschain.network/validators/${validator.validatorAddress}`, '_blank');
-                    } }] }
-                ], commissionInfoDiv);
+                let html = '';
+                html += `<div class="form-group">
+                    <div class="text-container" style="margin-bottom: 1em;">
+                        <span id="commission-amount"><strong>Commission:</strong> Loading ...</span>
+                    </div>
+                    <div class="button-group">
+                        <button id="claim-commission-btn" class="button primary"><i class="material-icons">redeem</i> <span>Claim</span></button>
+                        <button id="delegate-btn" class="button secondary"><i class="material-icons">send</i> <span>Delegate</span></button>
+                    </div>
+                </div>`;
+                commissionInfoDiv.innerHTML = html;
 
                 const amount = Web3.utils.fromWei(commission.amount, 'ether');
-                displayedCommission.commission.element.innerText = `${amount} ${commission.denom}`;
+                document.getElementById('commission-amount').innerHTML = `<strong>Commission:</strong> ${amount} ${commission.denom}`;
+
+                const claimCommissionBtn = document.getElementById('claim-commission-btn');
+                if (claimCommissionBtn) claimCommissionBtn.onclick = async () => { await claimCommission(); };
+                const delegateBtn = document.getElementById('delegate-btn');
+                if (delegateBtn) delegateBtn.onclick = async () => {
+                    window.open(`https://portal.helioschain.network/validators/${validator.validatorAddress}`, '_blank');
+                };
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

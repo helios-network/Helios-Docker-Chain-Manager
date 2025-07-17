@@ -12,13 +12,68 @@
         <div class="main-content" style="display: none">
             <div class="container">
                 <div id="reinitialize-content" class="grid-container-one">
-                    <!-- Le contenu sera généré ici -->
+                    <!-- Section Reinitialize the node -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">settings</span>
+                                <h3>Reinitialize the node</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <button id="ethStats-button-stop" class="button danger" onclick="reinitialize()">
+                                <span class="material-icons">restart_alt</span>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section Download Configuration Files -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">file_download</span>
+                                <h3>Download Configuration Files</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="button-group">
+                                <button id="download-config" class="button primary" onclick="window.location.href='/download/config.toml'">
+                                    <span class="material-icons">file_download</span>
+                                    Download config.toml
+                                </button>
+                                <button id="download-app" class="button primary" onclick="window.location.href='/download/app.toml'">
+                                    <span class="material-icons">file_download</span>
+                                    Download app.toml
+                                </button>
+                            </div>
+                            <div class="button-group">
+                                <button id="download-genesis" class="button primary" onclick="window.location.href='/download/genesis.json'">
+                                    <span class="material-icons">file_download</span>
+                                    Download genesis.json
+                                </button>
+                                <button id="download-priv_validator_key" class="button primary" onclick="window.location.href='/download/priv_validator_key.json'">
+                                    <span class="material-icons">file_download</span>
+                                    Download priv_validator_key.json (validator key) [IMPORTANT]
+                                </button>
+                            </div>
+                            <div class="button-group">
+                                <button id="download-addrbook" class="button primary" onclick="window.location.href='/download/addrbook.json'">
+                                    <span class="material-icons">file_download</span>
+                                    Download addrbook.json
+                                </button>
+                                <button id="download-client-config" class="button primary" onclick="window.location.href='/download/client.toml'">
+                                    <span class="material-icons">file_download</span>
+                                    Download client.toml
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
-
 
             const reinitialize = async () => {
                 const result = await fetch('/reinitialize-node', {
@@ -35,7 +90,6 @@
             }
 
             const main = async () => {
-
                 if (password == undefined) {
                     window.location = '/';
                     return ;
@@ -45,115 +99,12 @@
                     return ;
                 }
                 displaySideBar();
-                const displayRepresentation = [
-                    {
-                        type: "content",
-                        icon: "settings", // Icône pour le contenu
-                        title: "Reinitialize the node",
-                        content: [
-                            {
-                                type: "button",
-                                id: "ethStats-button-stop",
-                                class: "button danger",
-                                onclick: async () => {
-                                    await reinitialize(this);
-                                },
-                                icon: "restart_alt",
-                                text: "Reset"
-                            }
-                        ]
-                    },
-                    {
-                        type: "content",
-                        icon: "file_download", // Icône pour le contenu de téléchargement
-                        title: "Download Configuration Files",
-                        content: [
-                            {
-                                type: "raw",
-                                nbr: 2,
-                                content: [{
-                                    type: "button",
-                                    id: "download-config",
-                                    class: "button primary",
-                                    onclick: () => {
-                                        window.location.href = '/download/config.toml';
-                                    },
-                                    icon: "file_download",
-                                    text: "Download config.toml"
-                                },
-                                {
-                                    type: "button",
-                                    id: "download-app",
-                                    class: "button primary",
-                                    onclick: () => {
-                                        window.location.href = '/download/app.toml';
-                                    },
-                                    icon: "file_download",
-                                    text: "Download app.toml"
-                                }]
-                            },
-                            {
-                                type: "raw",
-                                nbr: 2,
-                                content: [{
-                                    type: "button",
-                                    id: "download-genesis",
-                                    class: "button primary",
-                                    onclick: () => {
-                                        window.location.href = '/download/genesis.json';
-                                    },
-                                    icon: "file_download",
-                                    text: "Download genesis.json"
-                                },
-                                {
-                                    type: "button",
-                                    id: "download-priv_validator_key",
-                                    class: "button primary",
-                                    onclick: () => {
-                                        window.location.href = '/download/priv_validator_key.json';
-                                    },
-                                    icon: "file_download",
-                                    text: "Download priv_validator_key.json (validator key) [IMPORTANT]"
-                                }]
-                            },
-                            {
-                                type: "raw",
-                                nbr: 2,
-                                content: [{
-                                    type: "button",
-                                    id: "download-addrbook",
-                                    class: "button primary",
-                                    onclick: () => {
-                                        window.location.href = '/download/addrbook.json';
-                                    },
-                                    icon: "file_download",
-                                    text: "Download addrbook.json"
-                                },
-                                {
-                                    type: "button",
-                                    id: "download-client-config",
-                                    class: "button primary",
-                                    onclick: () => {
-                                        window.location.href = '/download/client.toml';
-                                    },
-                                    icon: "file_download",
-                                    text: "Download client.toml"
-                                }]
-                            }
-                        ]
-                    }
-                ];
-
-                // Utilisation de buildDisplay pour créer le contenu
-                const targetElement = document.getElementById('reinitialize-content'); // Assurez-vous d'avoir un conteneur avec cet ID
-                buildDisplay(displayRepresentation, targetElement);
                 document.querySelectorAll('.main-content')[0].style.display = '';
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
             });
-
         </script>
         <script src="js/side-bar.js"></script>
         <script src="js/utils.js"></script>

@@ -11,7 +11,75 @@
 
         <div class="main-content" style="display: none">
             <div class="container">
-                <div id="testdisplay" class="grid-container-one"></div>
+                <div id="testdisplay" class="grid-container-one">
+                    <!-- Node Status Card -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">account_tree</i>
+                                <span>Node Status</span>
+                            </div>
+                            <div class="status-badge" id="node-status-badge">Inactive</div>
+                        </div>
+                        <div class="section-content">
+                            <div class="button-group grp4">
+                                <button id="btnStart" class="button primary" onclick="startNode1(this)" disabled>
+                                    <i class="material-icons">play_arrow</i>
+                                    <span>Start</span>
+                                </button>
+                                <button id="btnStop" class="button secondary" onclick="stopNode1(this)" disabled>
+                                    <i class="material-icons">stop</i>
+                                    <span>Stop</span>
+                                </button>
+                                <div class="address-container id="node-address" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                    <span id="address-text"></span>
+                                    <i class="material-icons" style="cursor: pointer;" onclick="copyAddress()">content_copy</i>
+                                </div>
+                                <button id="btnMore" class="button tertiary" onclick="showMoreOptions()">
+                                    <i class="material-icons">more_vert</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Node Logs Card -->
+                    <div class="section logs-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">terminal</i>
+                                <span>Node Logs</span>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="control-logs">
+                                <button class="button secondary" id="pause-logs">Pause</button>
+                                <div class="logs-container" id="node1-logs">
+                                    <pre></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Peers Card -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">people</i>
+                                <span>Peers</span>
+                            </div>
+                            <div class="status-badge" id="peers-badge"></div>
+                        </div>
+                        <div class="section-content">
+                            <ul class="list" id="peers-list" style="padding-inline-start: 0; list-style-type: none; display: block; justify-content: start;"></ul>
+                            <div class="button-group">
+                                <button id="add-new-peer" class="button primary" onclick="addNewPeer(this)">
+                                    <i class="material-icons">add</i>
+                                    <span>Add New Peer</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <script>
@@ -19,8 +87,6 @@
 
             async function startNode1(btn) {
                 btn.disabled = true;
-
-                // const cryptedPassword = btoa(rot13(document.getElementById('node1-keystore-password').value));
 
                 let result = await fetch('/run-miner-node', {
                         method: 'POST',
@@ -34,7 +100,7 @@
             }
 
             async function restartNode1(button) {
-                button.disabled = true; // Désactive temporairement le bouton pour éviter les double-cliques
+                button.disabled = true;
                 button.querySelector("span").innerText = "Restarting...";
                 
                 fetch("/restart-node", {
@@ -59,7 +125,7 @@
                         button.querySelector("span").innerText = "Restart";
                     })
                     .finally(() => {
-                        button.disabled = false; // Réactive le bouton après l'action
+                        button.disabled = false;
                     });
             }
 
@@ -127,8 +193,26 @@
                 });
             }
 
-            const main = async () => {
+            function showMoreOptions() {
+                window.btn_prompt({
+                    callback: async () => {
+                        console.log('btn action')
+                    }
+                });
+            }
 
+            function copyAddress() {
+                const addressText = document.getElementById('address-text').textContent;
+                navigator.clipboard.writeText(addressText).then(() => {
+                    const addressContainer = document.getElementById('node-address');
+                    addressContainer.style.backgroundColor = '#e0f7fa';
+                    setTimeout(() => {
+                        addressContainer.style.backgroundColor = '';
+                    }, 300);
+                });
+            }
+
+            const main = async () => {
                 if (password == undefined) {
                     window.location = '/';
                     return ;
@@ -146,109 +230,20 @@
                 const setup = await isSetup();
 
                 if (setup) {
-
-                    const displayRepresentation =
-                        [
-                            {
-                                type: "content",
-                                key: 'nodeStatus',
-                                "title": 'Node Status',
-                                "icon": "account_tree",
-                                "badge": {
-                                    value: 'Inactive'
-                                },
-                                content: [
-                                    {
-                                        "type": 'raw',
-                                        "value": 4,
-                                        content: [
-                                            {
-                                                key: 'btnStart',
-                                                type: "button",
-                                                class: "primary",
-                                                icon: "play_arrow",
-                                                text: "Start",
-                                                disabled: true,
-                                                onclick: function() { startNode1(this); }
-                                            },
-                                            {
-                                                key: 'btnStop',
-                                                type: "button",
-                                                class: "secondary",
-                                                icon: "stop",
-                                                text: "Stop",
-                                                disabled: true,
-                                                onclick: function() { stopNode1(this); }
-                                            },
-                                            {
-                                                key: 'address',
-                                                type: "address",
-                                                text: "",
-                                            },
-                                            {
-                                                key: 'btnMore',
-                                                type: "button",
-                                                class: "tertiary",
-                                                icon: "more_vert",
-                                                text: "",
-                                                onclick: function() {
-                                                    window.btn_prompt({
-                                                        callback: async () => {
-                                                            console.log('btn action')
-                                                        }
-                                                    });
-                                                }
-                                            },
-                                        ]
-                                    }
-                                ]
-                            },
-                            {
-                                type: "content",
-                                title: "Node Logs",
-                                icon: "terminal",
-                                content: [
-                                    {
-                                        key: 'logs',
-                                        type: "logs-container",
-                                        id: "node1-logs",
-                                        // Vous pouvez ajouter d'autres propriétés si nécessaire
-                                    }
-                                ]
-                            },
-                            {
-                                key: 'peers-container',
-                                type: "content",
-                                title: "Peers",
-                                icon: "people",
-                                "badge": {
-                                    value: ''
-                                },
-                                content: [
-                                    {
-                                        key: 'peers',
-                                        type: "list",
-                                        listStyleType: 'none',
-                                        horizontal: false,
-                                        justifyContent: 'center',
-                                        items: []
-                                    },
-                                    {
-                                        key: 'add-new-peer',
-                                        type: "button",
-                                        class: "primary",
-                                        icon: "add",
-                                        text: "Add New Peer",
-                                        onclick: function() { addNewPeer(this); }
-                                    }
-                                ]
-                            }
-                        ];
-
-                    const displayed = buildDisplay(displayRepresentation, document.getElementById('testdisplay'));
-
-                    console.log('ready', displayed);
+                    let isPaused = false;
+                    const pauseButton = document.getElementById('pause-logs');
+                    const logsContainer = document.getElementById('node1-logs');
                     
+                    pauseButton.onclick = () => {
+                        isPaused = !isPaused;
+                        pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+                        if (isPaused) {
+                            logsContainer.style.border = '1px solid orange';
+                        } else {
+                            logsContainer.style.border = '';
+                        }
+                    };
+
                     setInterval(async () => {
                         let result = await fetch('/test', {
                             method: 'POST',
@@ -259,39 +254,68 @@
                         });
                         let jsonResult = await result.json();
 
-                        displayed.logs.setLog(jsonResult.node.logs.join('\n'));
-                        displayed.btnStart.element.disabled = jsonResult.node.status == '1';
-                        displayed.btnStop.element.disabled = jsonResult.node.status == '0';
-                        const active = jsonResult.node.status == '1' ? 'Active' : 'Inactive';
-
-                        let syncing = false;
-                        if (jsonResult.node.infos?.sync_info?.catching_up == true) {
-                            syncing = true;
-                        }
-                        console.log(jsonResult.node);
-                        displayed.nodeStatus.setBadge(`${active} - ${jsonResult.node?.infos?.mode ?? ''} - Block ${jsonResult.node?.infos?.metadata?.height ?? ''}` + (syncing ? ' (Syncing)' : ''));
-                        displayed.address.setText(jsonResult.node?.infos?.address ?? '');
-
-                        if (jsonResult.node.infos?.peers) {
-                            const items = [
-                                "AddrBook Peers (" + jsonResult.node.infos.peers.length + ")",
-                                jsonResult.node.infos.peers.join(','),
-                                "Persistent Peers (" + jsonResult.node.infos.persistentPeers.length + ")",
-                                jsonResult.node.infos.persistentPeers.join(','),
-                            ];
-
-
-                            // only update if the items have changed
-                            if (items.join('\n') != displayed.peers.getItems().join('\n')) {
-                                displayed.peers.setItems(items);
-
-                                if (jsonResult.node.infos?.node_info?.id) {
-                                    displayed['peers-container'].setBadge(`My PeerId: ${jsonResult.node.infos?.node_info?.id ?? ''}`);
+                        const pre = logsContainer.querySelector('pre');
+                        if (pre && !isPaused) {
+                            const newContent = jsonResult.node.logs.join('\n');
+                            if (pre.innerHTML !== newContent) {
+                                pre.innerHTML = newContent;
+                                if (!document.activeElement.isEqualNode(pre) && !document.activeElement.isEqualNode(logsContainer)) {
+                                    logsContainer.scrollTop = logsContainer.scrollHeight;
                                 }
                             }
                         }
 
-                    }, 1000 / 1);
+                        const btnStart = document.getElementById('btnStart');
+                        const btnStop = document.getElementById('btnStop');
+                        if (btnStart) btnStart.disabled = jsonResult.node.status == '1';
+                        if (btnStop) btnStop.disabled = jsonResult.node.status == '0';
+
+                        const active = jsonResult.node.status == '1' ? 'Active' : 'Inactive';
+                        const statusBadge = document.getElementById('node-status-badge');
+                        if (statusBadge) {
+                            let syncing = false;
+                            if (jsonResult.node.infos?.sync_info?.catching_up == true) {
+                                syncing = true;
+                            }
+                            const statusText = `${active} - ${jsonResult.node?.infos?.mode ?? ''} - Block ${jsonResult.node?.infos?.metadata?.height ?? ''}` + (syncing ? ' (Syncing)' : '');
+                            statusBadge.textContent = statusText;
+                            statusBadge.className = `status-badge ${active.toLowerCase()}`;
+                        }
+
+                        const addressText = document.getElementById('address-text');
+                        if (addressText) {
+                            addressText.textContent = jsonResult.node?.infos?.address ?? '';
+                        }
+
+                        if (jsonResult.node.infos?.peers) {
+                            const peersList = document.getElementById('peers-list');
+                            const peersBadge = document.getElementById('peers-badge');
+                            
+                            if (peersList) {
+                                const items = [
+                                    'AddrBook Peers (' + jsonResult.node.infos.peers.length + ')',
+                                    jsonResult.node.infos.peers.join(','),
+                                    'Persistent Peers (' + jsonResult.node.infos.persistentPeers.length + ')',
+                                    jsonResult.node.infos.persistentPeers.join(','),
+                                ];
+                                
+                                const currentItems = Array.from(peersList.children).map(li => li.textContent);
+                                if (items.join('\n') !== currentItems.join('\n')) {
+                                    peersList.innerHTML = '';
+                                    items.forEach(item => {
+                                        const li = document.createElement('li');
+                                        li.textContent = item;
+                                        peersList.appendChild(li);
+                                    });
+                                }
+                            }
+
+                            if (peersBadge && jsonResult.node.infos?.node_info?.id) {
+                                peersBadge.textContent = 'My PeerId: ' + (jsonResult.node.infos?.node_info?.id ?? '');
+                                peersBadge.className = 'status-badge active';
+                            }
+                        }
+                    }, 1000);
                 } else {
                     document.getElementById('PageSetup').style.display = 'block';
                 }

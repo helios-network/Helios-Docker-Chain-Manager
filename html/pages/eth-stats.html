@@ -12,6 +12,50 @@
         <div class="main-content" style="display: none">
             <div class="container">
                 <div id="eth-stats" class="grid-container-one">
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">analytics</i>
+                                EthStats Configuration
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <form id="ethstats-form">
+                                <div class="form-group">
+                                    <label for="server-url">Server URL</label>
+                                    <input 
+                                        type="text" 
+                                        id="server-url" 
+                                        name="server-url" 
+                                        placeholder="Enter EthStats server URL"
+                                        class="form-control"
+                                    >
+                                </div>
+                                <div class="form-group">
+                                    <label for="node-name">Node Name</label>
+                                    <input 
+                                        type="text" 
+                                        id="node-name" 
+                                        name="node-name" 
+                                        placeholder="Enter node name"
+                                        class="form-control"
+                                        minlength="4"
+                                    >
+                                    <small class="form-text">Minimum 4 characters required</small>
+                                </div>
+                                <div class="button-group">
+                                    <button type="button" id="btnStart" class="button primary" onclick="startEthStats()">
+                                        <i class="material-icons">play_arrow</i>
+                                        Start
+                                    </button>
+                                    <button type="button" id="btnStop" class="button secondary" onclick="stopEthStats()">
+                                        <i class="material-icons">stop</i>
+                                        Stop
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -19,85 +63,15 @@
             let password = window.localStorage.getItem("access-code");
 
             const main = async () => {
-
                 if (password == undefined) {
                     window.location = '/';
-                    return ;
+                    return;
                 }
                 if (!(await isSetup())) {
                     window.location = '/setup';
-                    return ;
+                    return;
                 }
                 displaySideBar();
-
-                const minLengthValidator = (len) => {
-                    return (control) => {
-                        if (control.value.length < len) {
-                            return { 'lenError': `Min length is ${len}.` };
-                        }
-                        return null;
-                    }
-                };
-
-                const displayRepresentation = [
-                    {
-                        type: "content",
-                        icon: "analytics",
-                        title: "EthStats Configuration",
-                        content: [
-                            {
-                                type: "form-group",
-                                key: "formGroup",
-                                label: "EthStats Configuration",
-                                controls: [
-                                    {
-                                        key: "server-url",
-                                        label: "Server URL",
-                                        type: "text",
-                                        placeholder: "Enter EthStats server URL",
-                                        onChange: (control) => {
-                                            console.log(control.value, control.valid);
-                                        }
-                                    },
-                                    {
-                                        key: "node-name",
-                                        label: "Node Name",
-                                        type: "text",
-                                        placeholder: "Enter node name",
-                                        validators: [minLengthValidator(4)],
-                                        onChange: (control) => {
-                                            console.log(control.value, control.valid);
-                                        }
-                                    }
-                                ]
-                            },
-                            {
-                                type: "raw",
-                                nbr: 2,
-                                content: [
-                                    {
-                                        key: 'btnStart',
-                                        type: "button",
-                                        icon: "play_arrow",
-                                        text: "Start",
-                                        onclick: () => startEthStats(this)
-                                    },
-                                    {
-                                        key: 'btnStop',
-                                        type: "button",
-                                        icon: "stop",
-                                        text: "Stop",
-                                        onclick: () => stopEthStats(this)
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ];
-
-                const displayResult = buildDisplay(displayRepresentation, document.getElementById('eth-stats'));
-
-                console.log('ready', displayResult);
 
                 document.querySelectorAll('.main-content')[0].style.display = '';
             }
@@ -105,10 +79,8 @@
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
             });
-
         </script>
         <script src="js/side-bar.js"></script>
-        <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     </body>
