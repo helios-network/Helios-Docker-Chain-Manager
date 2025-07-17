@@ -102,7 +102,7 @@ const main = async () => {
 // SERVER
 ////////////////////////////////////////////
 
-const PORT = 8081;
+const PORT = process.env.PORT || environement?.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`[Helios Node - API] - Start Server Port ${PORT}`);
   main();
