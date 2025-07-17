@@ -20,53 +20,35 @@
                             </div>
                             <div class="status-badge">
                                 <i class="material-icons">account_balance_wallet</i>
-                                <span id="wallet-balance">Balance: 0.00 ETH</span>
+                                <span id="wallet-balance">Balance: 0.00 HLS</span>
                             </div>
                         </div>
                         <div class="section-content">
+                            <!-- Message Container -->
+                            <div id="message-container" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px; font-weight: 500;"></div>
+                            
                             <!-- Address Container -->
                             <div class="address-container" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
                                 <span id="wallet-address">0x1234567890abcdef1234567890abcdef12345678</span>
                                 <i class="material-icons" style="cursor: pointer;" onclick="copyWalletAddress()">content_copy</i>
-                            </div>
+                            </div><br />
                             
-                            <!-- Balance Text -->
-                            <div class="text-container" style="text-align: left;">
-                                <span id="balance-text">Balance: 0.00 ETH</span>
+                            <label for="address-to">Address to send to:</label>
+                            <div class="addressto-to" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center;">
+                                <input type="text" id="wallet-address-to" placeholder="Enter destination address" style="border: none; color: #fff;outline: none; background: transparent; width: 100%; padding: 10px 0; font-size: 1em;" />
                             </div>
-                            
-                            <!-- Action Buttons -->
+
+                            <label for="amount-to">Amount to send:</label>
+                            <div class="amountto-to" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
+                                <input type="number" id="amount-to" placeholder="Enter amount" style="border: none; outline: none; background: transparent; width: 100%; padding: 10px 0; font-size: 1em; color: #fff;" />
+                            </div>
                             <ul class="list" style="padding-inline-start: 0; list-style-type: none; display: flex; overflow-x: auto; justify-content: center;">
-                                <li>
-                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
-                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="swapAction()">
-                                            <i class="material-icons" style="color: #00;">swap_horiz</i>
-                                        </div>
-                                        <span style="margin-top: 5px; text-align: center;">Swap</span>
-                                    </div>
-                                </li>
                                 <li>
                                     <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
                                         <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="sendAction()">
                                             <i class="material-icons" style="color: #000;">send</i>
                                         </div>
                                         <span style="margin-top: 5px; text-align: center;">Send</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
-                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="bridgeAction()">
-                                            <i class="material-icons" style="color: #000;">link</i>
-                                        </div>
-                                        <span style="margin-top: 5px; text-align: center;">Bridge</span>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
-                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer; onclick="receiveAction()">
-                                            <i class="material-icons" style="color: #00;">arrow_forward</i>
-                                        </div>
-                                        <span style="margin-top: 5px; text-align: center;">Receive</span>
                                     </div>
                                 </li>
                             </ul>
@@ -77,6 +59,22 @@
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
+
+            function showMessage(message, type) {
+                const messageContainer = document.getElementById('message-container');
+                messageContainer.textContent = message;
+                messageContainer.style.display = 'block';
+                
+                if (type === 'error') {
+                    messageContainer.style.backgroundColor = '#ffebee';
+                    messageContainer.style.color = '#c62828';
+                    messageContainer.style.border = '1px solid #ffcdd2';
+                } else if (type === 'success') {
+                    messageContainer.style.backgroundColor = '#e8f5e8';
+                    messageContainer.style.color = '#2e7d32';
+                    messageContainer.style.border = '1px solid #c8e6c9';
+                }
+            }
 
             function copyWalletAddress() {
                 const addressText = document.getElementById('wallet-address').textContent;
@@ -93,8 +91,58 @@
                 console.log('Swap action clicked');
             }
 
-            function sendAction() {
-                console.log('Send action clicked');
+            async function sendAction() {
+                const amount = document.getElementById('amount-to').value;
+                const addressTo = document.getElementById('wallet-address-to').value;
+                
+                if (!amount || amount <= 0) {
+                    showMessage("Please enter a valid amount", "error");
+                    return;
+                }
+                
+                if (!addressTo || addressTo.trim() === '') {
+                    showMessage("Please enter a valid destination address", "error");
+                    return;
+                }
+                
+                const walletPassword = await new Promise((resolve) => {
+                    try {
+                        pw_prompt({
+                            lm: "Please enter your wallet password:", 
+                            callback: function(password) {
+                                resolve(password);
+                            }
+                        });
+                    } catch (e) {
+                        resolve('');
+                    }
+                });
+                
+                if (!walletPassword) {
+                    showMessage("Password is required", "error");
+                    return;
+                }
+                
+                const walletData = {
+                    to: addressTo,
+                    amount: amount
+                };
+                
+                const result = await apiWalletTransfer(walletPassword, walletData);
+                if (result === undefined) {
+                    showMessage("Error during transfer", "error");
+                    return;
+                }
+                
+                showMessage(`Transfer successful! Transaction hash: ${result}`, "success");
+                
+                document.getElementById('amount-to').value = '';
+                document.getElementById('wallet-address-to').value = '';
+                
+                const wallet = await apiGetWalletInfo();
+                if (wallet) {
+                    document.getElementById('wallet-balance').textContent = `Balance: ${wallet.balance} HLS`;
+                }
             }
 
             function bridgeAction() {
@@ -117,6 +165,11 @@
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
 
+                const wallet = await apiGetWalletInfo();
+                if (wallet) {
+                    document.getElementById('wallet-address').textContent = wallet.address;
+                    document.getElementById('wallet-balance').textContent = `Balance: ${wallet.balance} HLS`;
+                }
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

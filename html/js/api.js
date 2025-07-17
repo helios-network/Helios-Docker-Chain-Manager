@@ -1,4 +1,3 @@
-
 const isSetup = async () => {
     const response = await fetch('/is-setup', {
             method: 'POST',
@@ -163,6 +162,43 @@ const apiAddPeer = async (peerAddress) => {
         })
     });
     const result = await response.json();
+
+    if (result === false) {
+        return undefined;
+    }
+    return result;
+}
+
+const apiGetWalletInfo = async () => {
+    const response = await fetch('/fetch-wallet', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({})
+    });
+    const result = await response.json();
+
+    if (result === false) {
+        return undefined;
+    }
+    return result;
+}
+
+const apiWalletTransfer = async (walletPassword, walletData) => {
+    const response = await fetch('/wallet-transfer', {
+        method: 'POST',
+        headers: {
+            'Access-Code': password,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            password: btoa(rot13(walletPassword)),
+            walletData: walletData
+        })
+    });
+    const result = await response.text();
 
     if (result === false) {
         return undefined;
