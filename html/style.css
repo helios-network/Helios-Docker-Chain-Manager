@@ -1265,3 +1265,219 @@ button:disabled {
     height: 48px;
 }
 
+/* Settings styles */
+.setting-item {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    margin-bottom: 0.5rem;
+}
+
+.setting-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #012dcb;
+    cursor: pointer;
+}
+
+.setting-text {
+    font-weight: 500;
+    color: #E8E9EA;
+    font-size: 0.95rem;
+}
+
+.setting-description {
+    color: #A3A7AB;
+    font-size: 0.85rem;
+    margin: 0;
+    margin-left: 2.25rem;
+    line-height: 1.4;
+}
+
+#save-settings {
+    margin-top: 1rem;
+    width: auto;
+    padding: 0.75rem 1.5rem;
+}
+
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.notification {
+    background: #1C2833;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification.hide {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.notification::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(135deg, #2042be, #012dcb);
+}
+
+.notification.success::before {
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
+}
+
+.notification.error::before {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+}
+
+.notification.warning::before {
+    background: linear-gradient(135deg, #F39C12, #E67E22);
+}
+
+.notification.info::before {
+    background: linear-gradient(135deg, #3498DB, #2980B9);
+}
+
+.notification-icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.notification.success .notification-icon {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ECC71;
+}
+
+.notification.error .notification-icon {
+    background: rgba(231, 76, 60, 0.2);
+    color: #E74C3C;
+}
+
+.notification.warning .notification-icon {
+    background: rgba(243, 156, 18, 0.2);
+    color: #F39C12;
+}
+
+.notification.info .notification-icon {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498DB;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #E8E9EA;
+    margin-bottom: 2px;
+    line-height: 1.3;
+}
+
+.notification-message {
+    font-size: 0.875rem;
+    color: #A3A7AB;
+    line-height: 1.4;
+    margin: 0;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: #6C757D;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #E8E9EA;
+}
+
+.notification-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #2042be, #012dcb);
+    transition: width linear;
+}
+
+.notification.success .notification-progress {
+    background: linear-gradient(135deg, #2ECC71, #27AE60);
+}
+
+.notification.error .notification-progress {
+    background: linear-gradient(135deg, #E74C3C, #C0392B);
+}
+
+.notification.warning .notification-progress {
+    background: linear-gradient(135deg, #F39C12, #E67E22);
+}
+
+.notification.info .notification-progress {
+    background: linear-gradient(135deg, #3498DB, #2980B9);
+}
+
+@media (max-width: 768px) {
+    .notification-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .notification {
+        margin-bottom: 8px;
+        padding: 14px 16px;
+    }
+}
+

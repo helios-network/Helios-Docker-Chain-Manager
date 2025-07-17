@@ -18,6 +18,15 @@ const runMinerNode = async (app, environement) => {
         mode = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'mode.json'))).mode;
     }
 
+    let settings = {
+        dumpCommitDebugExecutionTrace: true
+    };
+    
+    if (fs.existsSync(path.join(homeDirectory, 'settings.json'))) {
+        const savedSettings = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'settings.json'), 'utf8'));
+        settings = { ...settings, ...savedSettings };
+    }
+
     let pruningArgs = [];
 
     switch (mode) {
@@ -77,7 +86,7 @@ const runMinerNode = async (app, environement) => {
             `--state-sync.snapshot-interval=0`, // disable state sync snapshot (piece of shit)
             `--state-sync.snapshot-keep-recent=0`, // disable state sync snapshot (piece of shit)
 
-            `--dump-commit-debug-execution-trace=true`,
+            ...(settings.dumpCommitDebugExecutionTrace ? [`--dump-commit-debug-execution-trace=true`] : []),
             
             // pruning
             ...pruningArgs,

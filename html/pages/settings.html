@@ -9,6 +9,9 @@
     <body>
         <div class="sidebar"></div>
 
+        <!-- Notification Container -->
+        <div class="notification-container" id="notification-container"></div>
+
         <div class="main-content" style="display: none">
             <div class="container">
                 <div id="reinitialize-content" class="grid-container-one">
@@ -24,6 +27,29 @@
                             <button id="ethStats-button-stop" class="button danger" onclick="reinitialize()">
                                 <span class="material-icons">restart_alt</span>
                                 Reset
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Section Node Settings -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">tune</span>
+                                <h3>Node Settings</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    <input type="checkbox" id="dump-commit-debug-execution-trace" class="setting-checkbox">
+                                    <span class="setting-text">Enable Debug Execution Trace</span>
+                                </label>
+                                <p class="setting-description">Enable detailed execution trace logging for debugging purposes</p>
+                            </div>
+                            <button id="save-settings" class="button primary" onclick="saveSettings()">
+                                <span class="material-icons">save</span>
+                                Save Settings
                             </button>
                         </div>
                     </div>
@@ -75,6 +101,108 @@
         <script>
             let password = window.localStorage.getItem("access-code");
 
+            const loadSettings = async () => {
+                try {
+                    const response = await fetch('/get-settings', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            document.getElementById('dump-commit-debug-execution-trace').checked = data.settings.dumpCommitDebugExecutionTrace;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading settings:', error);
+                }
+            };
+
+            const showNotification = (type, title, message, duration = 5000) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const iconMap = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="material-icons">${iconMap[type] || 'info'}</span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                    <div class="notification-progress" style="width: 100%"></div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('hide');
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 400);
+                    }, duration);
+                    
+                    const progress = notification.querySelector('.notification-progress');
+                    progress.style.transition = `width ${duration}ms linear`;
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 10);
+                }
+            };
+
+            const saveSettings = async () => {
+                try {
+                    const dumpCommitDebugExecutionTrace = document.getElementById('dump-commit-debug-execution-trace').checked;
+                    
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            dumpCommitDebugExecutionTrace: dumpCommitDebugExecutionTrace
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Settings saved successfully!');
+                        } else {
+                            showNotification('error', 'Error', 'Error saving settings: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error saving settings');
+                    }
+                } catch (error) {
+                    console.error('Error saving settings:', error);
+                    showNotification('error', 'Error', 'Error saving settings');
+                }
+            };
+
             const reinitialize = async () => {
                 const result = await fetch('/reinitialize-node', {
                         method: 'POST',
@@ -100,6 +228,7 @@
                 }
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
+                await loadSettings();
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
