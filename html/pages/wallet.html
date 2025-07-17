@@ -10,48 +10,70 @@
         <div class="sidebar"></div>
         <div class="main-content" style="display: none">
             <div class="container">
-                <div id="wallet-container" class="grid-container-one">
-                    <!-- Wallet Card -->
-                    <div class="section">
+                <div id="wallet-container" class="wallet-grid">
+                    <div class="wallet-card">
                         <div class="section-header">
                             <div class="section-title">
-                                <i class="material-icons">wallet</i>
+                                <i class="material-icons">account_balance_wallet</i>
                                 <span>Wallet</span>
                             </div>
-                            <div class="status-badge">
-                                <i class="material-icons">account_balance_wallet</i>
-                                <span id="wallet-balance">Balance: 0.00 HLS</span>
+                        </div>
+                        
+                        <!-- Message Container -->
+                        <div id="message-container" class="message-container"></div>
+                        
+                        <!-- Balance Section -->
+                        <div class="balance-section">
+                            <div class="balance-title">
+                                <i class="material-icons">account_balance</i>
+                                Current Balance
+                            </div>
+                            <div class="balance-amount" id="wallet-balance">0.00 HLS</div>
+                        </div>
+
+                        <!-- Address Section -->
+                        <div class="address-section">
+                            <div class="address-title">
+                                <i class="material-icons">account_circle</i>
+                                Wallet Address
+                            </div>
+                            <div class="address-display">
+                                <span class="address-text" id="wallet-address">0x1234567890abcdef1234567890abcdef12345678</span>
+                                <button class="copy-button" onclick="copyWalletAddress()">
+                                    <i class="material-icons">content_copy</i>
+                                </button>
                             </div>
                         </div>
-                        <div class="section-content">
-                            <!-- Message Container -->
-                            <div id="message-container" style="display: none; margin-bottom: 15px; padding: 10px; border-radius: 5px; font-weight: 500;"></div>
+
+                        <!-- Transfer Section -->
+                        <div class="transfer-section">
+                            <div class="transfer-title">
+                                <i class="material-icons">send</i>
+                                Send Transaction
+                            </div>
                             
-                            <!-- Address Container -->
-                            <div class="address-container" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                <span id="wallet-address">0x1234567890abcdef1234567890abcdef12345678</span>
-                                <i class="material-icons" style="cursor: pointer;" onclick="copyWalletAddress()">content_copy</i>
-                            </div><br />
-                            
-                            <label for="address-to">Address to send to:</label>
-                            <div class="addressto-to" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center;">
-                                <input type="text" id="wallet-address-to" placeholder="Enter destination address" style="border: none; color: #fff;outline: none; background: transparent; width: 100%; padding: 10px 0; font-size: 1em;" />
+                            <div class="form-group">
+                                <label for="wallet-address-to">Destination Address</label>
+                                <input type="text" 
+                                       id="wallet-address-to" 
+                                       placeholder="Enter destination address (0x...)" />
                             </div>
 
-                            <label for="amount-to">Amount to send:</label>
-                            <div class="amountto-to" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                <input type="number" id="amount-to" placeholder="Enter amount" style="border: none; outline: none; background: transparent; width: 100%; padding: 10px 0; font-size: 1em; color: #fff;" />
+                            <div class="form-group">
+                                <label for="amount-to">Amount (HLS)</label>
+                                <input type="number" 
+                                       id="amount-to" 
+                                       placeholder="Enter amount to send" 
+                                       min="0" 
+                                       step="0.000001" />
                             </div>
-                            <ul class="list" style="padding-inline-start: 0; list-style-type: none; display: flex; overflow-x: auto; justify-content: center;">
-                                <li>
-                                    <div style="width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; margin: 10px;">
-                                        <div style="width: 40px; height:40px; border: 1px solid #000; background-color: #fff; border-radius: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;" onclick="sendAction()">
-                                            <i class="material-icons" style="color: #000;">send</i>
-                                        </div>
-                                        <span style="margin-top: 5px; text-align: center;">Send</span>
-                                    </div>
-                                </li>
-                            </ul>
+
+                            <div class="action-buttons">
+                                <button class="send-button" onclick="sendAction()">
+                                    <i class="material-icons">send</i>
+                                    <span>Send Transaction</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -63,32 +85,33 @@
             function showMessage(message, type) {
                 const messageContainer = document.getElementById('message-container');
                 messageContainer.textContent = message;
+                messageContainer.className = `message-container ${type}`;
                 messageContainer.style.display = 'block';
                 
-                if (type === 'error') {
-                    messageContainer.style.backgroundColor = '#ffebee';
-                    messageContainer.style.color = '#c62828';
-                    messageContainer.style.border = '1px solid #ffcdd2';
-                } else if (type === 'success') {
-                    messageContainer.style.backgroundColor = '#e8f5e8';
-                    messageContainer.style.color = '#2e7d32';
-                    messageContainer.style.border = '1px solid #c8e6c9';
-                }
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    messageContainer.style.display = 'none';
+                }, 5000);
             }
 
             function copyWalletAddress() {
                 const addressText = document.getElementById('wallet-address').textContent;
                 navigator.clipboard.writeText(addressText).then(() => {
-                    const addressContainer = document.querySelector('.address-container');
-                    addressContainer.style.backgroundColor = '#e0f7fa';
+                    const copyButton = document.querySelector('.copy-button');
+                    const originalContent = copyButton.innerHTML;
+                    
+                    copyButton.innerHTML = '<i class="material-icons">check</i>';
+                    copyButton.style.background = 'rgba(46, 204, 113, 0.2)';
+                    copyButton.style.borderColor = 'rgba(46, 204, 113, 0.3)';
+                    copyButton.style.color = '#2ECC71';
+                    
                     setTimeout(() => {
-                        addressContainer.style.backgroundColor = '';
-                    }, 300);
+                        copyButton.innerHTML = originalContent;
+                        copyButton.style.background = '';
+                        copyButton.style.borderColor = '';
+                        copyButton.style.color = '';
+                    }, 2000);
                 });
-            }
-
-            function swapAction() {
-                console.log('Swap action clicked');
             }
 
             async function sendAction() {
@@ -102,6 +125,12 @@
                 
                 if (!addressTo || addressTo.trim() === '') {
                     showMessage("Please enter a valid destination address", "error");
+                    return;
+                }
+                
+                // Basic address validation
+                if (!addressTo.startsWith('0x') || addressTo.length !== 42) {
+                    showMessage("Please enter a valid Ethereum-style address (0x...)", "error");
                     return;
                 }
                 
@@ -136,21 +165,15 @@
                 
                 showMessage(`Transfer successful! Transaction hash: ${result}`, "success");
                 
+                // Clear form
                 document.getElementById('amount-to').value = '';
                 document.getElementById('wallet-address-to').value = '';
                 
+                // Refresh wallet info
                 const wallet = await apiGetWalletInfo();
                 if (wallet) {
-                    document.getElementById('wallet-balance').textContent = `Balance: ${wallet.balance} HLS`;
+                    document.getElementById('wallet-balance').textContent = `${wallet.balance} HLS`;
                 }
-            }
-
-            function bridgeAction() {
-                console.log('Bridge action clicked');
-            }
-
-            function receiveAction() {
-                console.log('Receive action clicked');
             }
 
             const main = async () => {
@@ -168,7 +191,7 @@
                 const wallet = await apiGetWalletInfo();
                 if (wallet) {
                     document.getElementById('wallet-address').textContent = wallet.address;
-                    document.getElementById('wallet-balance').textContent = `Balance: ${wallet.balance} HLS`;
+                    document.getElementById('wallet-balance').textContent = `${wallet.balance} HLS`;
                 }
             }
 
