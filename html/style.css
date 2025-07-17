@@ -2614,3 +2614,110 @@ button:disabled {
         font-size: 0.8rem;
     }
 }
+
+/* Node Mode Styles */
+.mode-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.mode-option {
+    display: block;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+    position: relative;
+}
+
+.mode-option:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    transform: translateY(-2px);
+}
+
+.mode-radio {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.mode-option input[type="radio"]:checked + .mode-content {
+    border-color: #012dcb;
+    background: rgba(1, 45, 203, 0.1);
+}
+
+.mode-option input[type="radio"]:checked ~ .mode-content {
+    border-color: #012dcb;
+    background: rgba(1, 45, 203, 0.1);
+}
+
+.mode-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mode-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.mode-header .material-icons {
+    font-size: 1.5rem;
+    color: #012dcb;
+}
+
+.mode-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #E8E9EA;
+}
+
+.mode-description {
+    color: #A3A7AB;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.mode-description code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: #012dcb;
+}
+
+/* Selected state styling */
+.mode-option input[type="radio"]:checked + .mode-content .mode-header .material-icons {
+    color: #012dcb;
+}
+
+.mode-option input[type="radio"]:checked + .mode-content .mode-title {
+    color: #012dcb;
+}
+
+@media (max-width: 768px) {
+    .mode-option {
+        padding: 1rem;
+    }
+    
+    .mode-header {
+        gap: 0.5rem;
+    }
+    
+    .mode-title {
+        font-size: 1rem;
+    }
+    
+    .mode-description {
+        font-size: 0.85rem;
+    }
+}

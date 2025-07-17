@@ -20,7 +20,14 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
     fs.writeFileSync(path.join(homeDirectory, 'keystore'), keyStoreNode);
     fs.writeFileSync(path.join(homeDirectory, 'moniker'), moniker);
     fs.writeFileSync(path.join(homeDirectory, 'chainId'), `${chainId}`);
-    fs.writeFileSync(path.join(homeDirectory, 'mode.json'), JSON.stringify({ mode: mode }, null, 2));
+
+    if (fs.existsSync(path.join(homeDirectory, 'settings.json'))) {
+        const settings = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'settings.json'), 'utf8'));
+        settings.nodeMode = mode;
+        fs.writeFileSync(path.join(homeDirectory, 'settings.json'), JSON.stringify(settings, null, 2));
+    } else {
+        fs.writeFileSync(path.join(homeDirectory, 'settings.json'), JSON.stringify({ nodeMode: mode }, null, 2));
+    }
 
     let genesisContent = undefined;
     if (genesisURL != undefined) {

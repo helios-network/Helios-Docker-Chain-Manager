@@ -54,6 +54,71 @@
                         </div>
                     </div>
 
+                    <!-- Section Node Mode -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">storage</span>
+                                <h3>Node Mode</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="setting-item">
+                                <p class="setting-description">Select the storage mode for your node. Only one mode can be active at a time.</p>
+                                
+                                <div class="mode-options">
+                                    <label class="mode-option">
+                                        <input type="radio" name="node-mode" id="mode-archive" value="archive" class="mode-radio">
+                                        <div class="mode-content">
+                                            <div class="mode-header">
+                                                <span class="material-icons">archive</span>
+                                                <span class="mode-title">Archive</span>
+                                            </div>
+                                            <p class="mode-description">Full blockchain storage with no pruning. Keeps all historical data. Uses <code>--pruning=nothing</code></p>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="mode-option">
+                                        <input type="radio" name="node-mode" id="mode-medium" value="medium" class="mode-radio">
+                                        <div class="mode-content">
+                                            <div class="mode-header">
+                                                <span class="material-icons">storage</span>
+                                                <span class="mode-title">Medium</span>
+                                            </div>
+                                            <p class="mode-description">Balanced storage with moderate pruning. Keeps recent 100,000 blocks and minimum 5,000 blocks. Uses custom pruning settings.</p>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="mode-option">
+                                        <input type="radio" name="node-mode" id="mode-light" value="light" class="mode-radio">
+                                        <div class="mode-content">
+                                            <div class="mode-header">
+                                                <span class="material-icons">lightbulb</span>
+                                                <span class="mode-title">Light</span>
+                                            </div>
+                                            <p class="mode-description">Lightweight storage with aggressive pruning. Keeps recent 10,000 blocks and minimum 1,000 blocks. Uses custom pruning settings.</p>
+                                        </div>
+                                    </label>
+                                    
+                                    <label class="mode-option">
+                                        <input type="radio" name="node-mode" id="mode-very-light" value="very-light" class="mode-radio">
+                                        <div class="mode-content">
+                                            <div class="mode-header">
+                                                <span class="material-icons">light_mode</span>
+                                                <span class="mode-title">Very Light</span>
+                                            </div>
+                                            <p class="mode-description">Minimal storage with maximum pruning. Keeps only recent 10 blocks and minimum 10 blocks. Uses custom pruning settings.</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <button id="save-node-mode" class="button primary" onclick="saveNodeMode()">
+                                <span class="material-icons">save</span>
+                                Save Node Mode
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Section Backup Settings -->
                     <div class="section">
                         <div class="section-header">
@@ -165,6 +230,10 @@
                             document.getElementById('backup-block-interval').value = data.settings.backupBlockInterval || 100;
                             document.getElementById('backup-dir').value = data.settings.backupDir || './backups';
                             document.getElementById('backup-min-retain').value = data.settings.backupMinRetainBackups || 3;
+                            
+                            // Load node mode
+                            const nodeMode = data.settings.nodeMode || 'archive';
+                            document.getElementById(`mode-${nodeMode}`).checked = true;
                             
                             // Show/hide backup options based on enable state
                             toggleBackupOptions();
@@ -296,6 +365,43 @@
                 } catch (error) {
                     console.error('Error saving backup settings:', error);
                     showNotification('error', 'Error', 'Error saving backup settings');
+                }
+            };
+
+            const saveNodeMode = async () => {
+                try {
+                    const selectedMode = document.querySelector('input[name="node-mode"]:checked');
+                    if (!selectedMode) {
+                        showNotification('warning', 'Warning', 'Please select a node mode');
+                        return;
+                    }
+                    
+                    const nodeMode = selectedMode.value;
+                    
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            nodeMode: nodeMode
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', `Node mode saved successfully! Mode: ${nodeMode}`);
+                        } else {
+                            showNotification('error', 'Error', 'Error saving node mode: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error saving node mode');
+                    }
+                } catch (error) {
+                    console.error('Error saving node mode:', error);
+                    showNotification('error', 'Error', 'Error saving node mode');
                 }
             };
 

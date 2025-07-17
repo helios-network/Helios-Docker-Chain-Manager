@@ -12,14 +12,9 @@ const runMinerNode = async (app, environement) => {
     const jsonRpcWsAddress = environement.env['json-rpc.ws-address'] ?? '0.0.0.0:8546';
     const p2plAddr = environement.env['p2p.laddr'] ?? 'tcp://0.0.0.0:26656';
 
-    let mode = "archive";
-
-    if (fs.existsSync(path.join(homeDirectory, 'mode.json'))) {
-        mode = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'mode.json'))).mode;
-    }
-
     let settings = {
-        dumpCommitDebugExecutionTrace: true
+        dumpCommitDebugExecutionTrace: true,
+        nodeMode: "archive"
     };
     
     if (fs.existsSync(path.join(homeDirectory, 'settings.json'))) {
@@ -29,7 +24,7 @@ const runMinerNode = async (app, environement) => {
 
     let pruningArgs = [];
 
-    switch (mode) {
+    switch (settings.nodeMode) {
         case "medium":
             pruningArgs = [
                 `--pruning=custom`,

@@ -119,8 +119,8 @@ const initAppNodeFunctions = async (app, environement) => {
     }
 
     app.node.getMode = async () => {
-        if (fs.existsSync(path.join(homeDirectory, 'mode.json'))) {
-            return JSON.parse(fs.readFileSync(path.join(homeDirectory, 'mode.json'))).mode;
+        if (fs.existsSync(path.join(homeDirectory, 'settings.json'))) {
+            return JSON.parse(fs.readFileSync(path.join(homeDirectory, 'settings.json'))).nodeMode;
         }
         return "archive";
     }
