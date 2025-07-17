@@ -63,6 +63,20 @@ const runMinerNode = async (app, environement) => {
             ];
     }
 
+    // backup flags if enabled
+    let backupArgs = [];
+    
+    if (settings.backupEnable) {
+        backupArgs = [
+            `--backup.enable=true`,
+            `--backup.block-interval=${settings.backupBlockInterval ?? 100}`,
+            `--backup.dir=${settings.backupDir ?? "./backups"}`,
+            `--backup.min-retain-backups=${settings.backupMinRetainBackups ?? 3}`,
+        ];
+
+        console.log(backupArgs);
+    }
+
     const childProcess = spawn
     (
         'heliades',
@@ -90,6 +104,8 @@ const runMinerNode = async (app, environement) => {
             
             // pruning
             ...pruningArgs,
+
+            ...backupArgs,
         ],
         { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-node.log'), 'w')]}
     );

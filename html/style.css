@@ -1966,3 +1966,63 @@ button:disabled {
         align-self: flex-end;
     }
 }
+
+/* Backup Settings Styles */
+.setting-group {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.setting-group:last-child {
+    margin-bottom: 0;
+}
+
+.setting-group .setting-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #CED4DA;
+    font-weight: 500;
+    font-size: 0.875rem;
+    letter-spacing: 0.3px;
+}
+
+.setting-input {
+    background-color: #141E27;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+}
+
+.setting-input::placeholder {
+    color: #6C757D;
+    font-weight: 300;
+    letter-spacing: 0.2px;
+    opacity: 0.6;
+}
+
+.setting-input:focus {
+    background-color: #1A272F;
+    border-color: #012dcb;
+    box-shadow: 0 0 0 3px rgba(252, 161, 62, 0.15);
+    outline: none;
+}
+
+.setting-input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.setting-input[type="number"]::-webkit-outer-spin-button,
+.setting-input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

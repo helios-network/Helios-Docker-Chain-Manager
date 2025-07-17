@@ -54,6 +54,50 @@
                         </div>
                     </div>
 
+                    <!-- Section Backup Settings -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">backup</span>
+                                <h3>Backup Settings</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="setting-item">
+                                <label class="setting-label">
+                                    <input type="checkbox" id="backup-enable" class="setting-checkbox">
+                                    <span class="setting-text">Enable Backup System</span>
+                                </label>
+                                <p class="setting-description">Enable automatic backup of blockchain data at regular intervals</p>
+                            </div>
+                            
+                            <div id="backup-options" class="setting-item" style="display: none;">
+                                <div class="setting-group">
+                                    <label for="backup-block-interval" class="setting-label">Backup Block Interval:</label>
+                                    <input type="number" id="backup-block-interval" class="setting-input" min="1" value="100">
+                                    <p class="setting-description">Number of blocks between each backup (default: 100)</p>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="backup-dir" class="setting-label">Backup Directory:</label>
+                                    <input type="text" id="backup-dir" class="setting-input" placeholder="Leave empty for default directory">
+                                    <p class="setting-description">Custom directory path for storing backups (optional)</p>
+                                </div>
+                                
+                                <div class="setting-group">
+                                    <label for="backup-min-retain" class="setting-label">Maximum Backups to Retain:</label>
+                                    <input type="number" id="backup-min-retain" class="setting-input" min="1" value="3">
+                                    <p class="setting-description">Maximum number of backups to keep (default: 3)</p>
+                                </div>
+                            </div>
+                            
+                            <button id="save-backup-settings" class="button primary" onclick="saveBackupSettings()">
+                                <span class="material-icons">save</span>
+                                Save Backup Settings
+                            </button>
+                        </div>
+                    </div>
+
                     <!-- Section Download Configuration Files -->
                     <div class="section">
                         <div class="section-header">
@@ -115,11 +159,26 @@
                         const data = await response.json();
                         if (data.success) {
                             document.getElementById('dump-commit-debug-execution-trace').checked = data.settings.dumpCommitDebugExecutionTrace;
+                            
+                            // Load backup settings
+                            document.getElementById('backup-enable').checked = data.settings.backupEnable || false;
+                            document.getElementById('backup-block-interval').value = data.settings.backupBlockInterval || 100;
+                            document.getElementById('backup-dir').value = data.settings.backupDir || './backups';
+                            document.getElementById('backup-min-retain').value = data.settings.backupMinRetainBackups || 3;
+                            
+                            // Show/hide backup options based on enable state
+                            toggleBackupOptions();
                         }
                     }
                 } catch (error) {
                     console.error('Error loading settings:', error);
                 }
+            };
+
+            const toggleBackupOptions = () => {
+                const backupEnable = document.getElementById('backup-enable').checked;
+                const backupOptions = document.getElementById('backup-options');
+                backupOptions.style.display = backupEnable ? 'block' : 'none';
             };
 
             const showNotification = (type, title, message, duration = 5000) => {
@@ -203,6 +262,43 @@
                 }
             };
 
+            const saveBackupSettings = async () => {
+                try {
+                    const backupEnable = document.getElementById('backup-enable').checked;
+                    const backupBlockInterval = parseInt(document.getElementById('backup-block-interval').value) || 100;
+                    const backupDir = document.getElementById('backup-dir').value.trim();
+                    const backupMinRetainBackups = parseInt(document.getElementById('backup-min-retain').value) || 3;
+                    
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            backupEnable: backupEnable,
+                            backupBlockInterval: backupBlockInterval,
+                            backupDir: backupDir,
+                            backupMinRetainBackups: backupMinRetainBackups
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Backup settings saved successfully!');
+                        } else {
+                            showNotification('error', 'Error', 'Error saving backup settings: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error saving backup settings');
+                    }
+                } catch (error) {
+                    console.error('Error saving backup settings:', error);
+                    showNotification('error', 'Error', 'Error saving backup settings');
+                }
+            };
+
             const reinitialize = async () => {
                 const result = await fetch('/reinitialize-node', {
                         method: 'POST',
@@ -229,6 +325,9 @@
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
                 await loadSettings();
+                
+                // Add event listener for backup enable checkbox
+                document.getElementById('backup-enable').addEventListener('change', toggleBackupOptions);
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

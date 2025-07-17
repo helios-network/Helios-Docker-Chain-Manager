@@ -11,10 +11,10 @@ const POSTSettings = (app, environement) => {
             if (fs.existsSync(settingsPath)) {
                 settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
             }
-            
-            if (req.body.dumpCommitDebugExecutionTrace !== undefined) {
-                settings.dumpCommitDebugExecutionTrace = req.body.dumpCommitDebugExecutionTrace;
-            }
+
+            Object.keys(req.body).forEach(key => {
+                settings[key] = req.body[key];
+            });
             
             fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
             
