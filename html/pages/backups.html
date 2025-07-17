@@ -22,10 +22,16 @@
                                 <span class="material-icons">backup</span>
                                 <h3>Backup Files</h3>
                             </div>
-                            <button id="refresh-backups" class="button secondary" onclick="loadBackups()">
-                                <span class="material-icons">refresh</span>
-                                Refresh
-                            </button>
+                            <div class="header-actions">
+                                <button id="create-backup" class="button primary" onclick="showCreateBackupModal()">
+                                    <span class="material-icons">add</span>
+                                    Create Backup
+                                </button>
+                                <button id="refresh-backups" class="button secondary" onclick="loadBackups()">
+                                    <span class="material-icons">refresh</span>
+                                    Refresh
+                                </button>
+                            </div>
                         </div>
                         <div class="section-content">
                             <div id="backups-table-container">
@@ -106,6 +112,90 @@
                     <button class="button danger" onclick="applyBackup()">
                         <span class="material-icons">restore</span>
                         Apply Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Backup Modal -->
+        <div id="create-backup-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons">backup</span>
+                        Create Backup
+                    </h3>
+                    <button class="modal-close" onclick="hideCreateBackupModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="backup-preview-content">
+                        <div class="info-message">
+                            <p>This will create a backup of your current blockchain data.</p>
+                            <p>The backup will include:</p>
+                            <ul>
+                                <li>application.db</li>
+                                <li>state.db</li>
+                                <li>blockstore.db</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="backup-preview">
+                            <h4>Backup Preview:</h4>
+                            <div id="backup-preview-info">
+                                <!-- Content will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="backup-error-content" style="display: none;">
+                        <div class="error-message">
+                            <span class="material-icons">error</span>
+                            <h4>No backup possible</h4>
+                            <p>The blockchain has not been initialized yet. Please start the node first to create a backup.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" onclick="hideCreateBackupModal()">Cancel</button>
+                    <button id="confirm-create-backup" class="button primary" onclick="confirmCreateBackup()" style="display: none;">
+                        <span class="material-icons">backup</span>
+                        Create Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delete Backup Modal -->
+        <div id="delete-backup-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons">delete</span>
+                        Delete Backup
+                    </h3>
+                    <button class="modal-close" onclick="hideDeleteBackupModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="warning-message">
+                        <p><strong>Warning:</strong> This action will permanently delete the selected backup file.</p>
+                        <p>This operation cannot be undone.</p>
+                    </div>
+                    
+                    <div class="backup-info">
+                        <h4>Backup to Delete:</h4>
+                        <p><strong>Filename:</strong> <span id="delete-modal-filename"></span></p>
+                        <p><strong>Block Height:</strong> <span id="delete-modal-block-height"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" onclick="hideDeleteBackupModal()">Cancel</button>
+                    <button class="button danger" onclick="confirmDeleteBackup()">
+                        <span class="material-icons">delete</span>
+                        Delete Backup
                     </button>
                 </div>
             </div>
@@ -215,6 +305,9 @@
                                             <button class="button danger small" onclick="showApplyBackupModal('${backup.filename}', ${backup.blockId})" title="Apply Backup">
                                                 <span class="material-icons">restore</span>
                                             </button>
+                                            <button class="button danger small" onclick="showDeleteBackupModal('${backup.filename}', ${backup.blockId})" title="Delete Backup">
+                                                <span class="material-icons">delete</span>
+                                            </button>
                                         </td>
                                     `;
                                     tableBody.appendChild(row);
@@ -309,6 +402,177 @@
                     const applyButton = document.querySelector('#apply-backup-modal .button.danger');
                     applyButton.innerHTML = '<span class="material-icons">restore</span> Apply Backup';
                     applyButton.disabled = false;
+                }
+            };
+
+            const showCreateBackupModal = async () => {
+                try {
+                    // Show loading state in modal
+                    const previewInfo = document.getElementById('backup-preview-info');
+                    previewInfo.innerHTML = '<div class="loading-spinner"><span class="spinner-border"></span> Loading...</div>';
+                    
+                    document.getElementById('create-backup-modal').style.display = 'flex';
+                    document.getElementById('backup-preview-content').style.display = 'block';
+                    document.getElementById('backup-error-content').style.display = 'none';
+                    document.getElementById('confirm-create-backup').style.display = 'none';
+
+                    const response = await fetch('/get-backup-preview', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            if (data.canCreateBackup) {
+                                // Show preview
+                                const now = new Date();
+                                const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-').replace('T', '_');
+                                const previewFilename = `snapshot_${data.blockHeight}_${timestamp}.tar.gz`;
+                                
+                                previewInfo.innerHTML = `
+                                    <div class="preview-item">
+                                        <strong>Current Block Height:</strong> ${data.blockHeight.toLocaleString()}
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Backup Filename:</strong> ${previewFilename}
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Files to backup:</strong> ${data.files.join(', ')}
+                                    </div>
+                                    <div class="preview-item">
+                                        <strong>Backup Directory:</strong> ${data.backupDir}
+                                    </div>
+                                `;
+                                
+                                document.getElementById('confirm-create-backup').style.display = 'inline-flex';
+                            } else {
+                                // Show error
+                                document.getElementById('backup-preview-content').style.display = 'none';
+                                document.getElementById('backup-error-content').style.display = 'block';
+                            }
+                        } else {
+                            showNotification('error', 'Error', 'Failed to get backup preview: ' + data.error);
+                            hideCreateBackupModal();
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to get backup preview');
+                        hideCreateBackupModal();
+                    }
+                } catch (error) {
+                    console.error('Error getting backup preview:', error);
+                    showNotification('error', 'Error', 'Failed to get backup preview');
+                    hideCreateBackupModal();
+                }
+            };
+
+            const hideCreateBackupModal = () => {
+                document.getElementById('create-backup-modal').style.display = 'none';
+            };
+
+            const confirmCreateBackup = async () => {
+                try {
+                    // Show loading state
+                    const confirmButton = document.getElementById('confirm-create-backup');
+                    const originalText = confirmButton.innerHTML;
+                    confirmButton.innerHTML = '<span class="spinner-border"></span> Creating...';
+                    confirmButton.disabled = true;
+
+                    const response = await fetch('/create-backup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', `Backup created successfully! (Block ${data.backup.blockHeight})`);
+                            hideCreateBackupModal();
+                            // Refresh the backups list to show the new backup
+                            await loadBackups();
+                        } else {
+                            showNotification('error', 'Error', 'Failed to create backup: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to create backup');
+                    }
+                } catch (error) {
+                    console.error('Error creating backup:', error);
+                    showNotification('error', 'Error', 'Failed to create backup');
+                } finally {
+                    // Restore button state
+                    const confirmButton = document.getElementById('confirm-create-backup');
+                    confirmButton.innerHTML = '<span class="material-icons">backup</span> Create Backup';
+                    confirmButton.disabled = false;
+                }
+            };
+
+            let selectedDeleteBackupFilename = null;
+
+            const showDeleteBackupModal = (filename, blockHeight) => {
+                selectedDeleteBackupFilename = filename;
+                document.getElementById('delete-modal-filename').textContent = filename;
+                document.getElementById('delete-modal-block-height').textContent = blockHeight.toLocaleString();
+                document.getElementById('delete-backup-modal').style.display = 'flex';
+            };
+
+            const hideDeleteBackupModal = () => {
+                document.getElementById('delete-backup-modal').style.display = 'none';
+                selectedDeleteBackupFilename = null;
+            };
+
+            const confirmDeleteBackup = async () => {
+                if (!selectedDeleteBackupFilename) {
+                    showNotification('error', 'Error', 'No backup selected for deletion');
+                    return;
+                }
+
+                try {
+                    // Show loading state
+                    const deleteButton = document.querySelector('#delete-backup-modal .button.danger');
+                    const originalText = deleteButton.innerHTML;
+                    deleteButton.innerHTML = '<span class="spinner-border"></span> Deleting...';
+                    deleteButton.disabled = true;
+
+                    const response = await fetch('/delete-backup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            filename: selectedDeleteBackupFilename
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Backup deleted successfully!');
+                            hideDeleteBackupModal();
+                            // Refresh the backups list
+                            await loadBackups();
+                        } else {
+                            showNotification('error', 'Error', 'Failed to delete backup: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to delete backup');
+                    }
+                } catch (error) {
+                    console.error('Error deleting backup:', error);
+                    showNotification('error', 'Error', 'Failed to delete backup');
+                } finally {
+                    // Restore button state
+                    const deleteButton = document.querySelector('#delete-backup-modal .button.danger');
+                    deleteButton.innerHTML = '<span class="material-icons">delete</span> Delete Backup';
+                    deleteButton.disabled = false;
                 }
             };
 

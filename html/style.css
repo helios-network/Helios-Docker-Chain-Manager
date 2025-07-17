@@ -2089,7 +2089,11 @@ button:disabled {
 
 .backups-table .actions {
     text-align: center;
-    width: 80px;
+    width: 120px;
+    display: flex;
+    gap: 0.25rem;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .loading-container {
@@ -2136,8 +2140,12 @@ button:disabled {
 .button.small {
     padding: 0.5rem;
     font-size: 0.8rem;
-    height: auto;
+    height: 36px;
+    width: 36px;
     min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .button.small .material-icons {
@@ -2338,4 +2346,115 @@ button:disabled {
     .modal-footer .button {
         width: 100%;
     }
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+@media (max-width: 768px) {
+    .header-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .header-actions .button {
+        width: 100%;
+    }
+}
+
+/* Backup Preview Styles */
+.info-message {
+    background: rgba(1, 45, 203, 0.1);
+    border: 1px solid rgba(1, 45, 203, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.info-message p {
+    margin: 0 0 0.5rem 0;
+    color: #E8E9EA;
+    font-size: 0.9rem;
+}
+
+.info-message ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+    color: #A3A7AB;
+    font-size: 0.85rem;
+}
+
+.info-message li {
+    margin-bottom: 0.25rem;
+}
+
+.backup-preview {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.backup-preview h4 {
+    margin: 0 0 0.75rem 0;
+    color: #CED4DA;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.preview-item {
+    margin-bottom: 0.75rem;
+    color: #A3A7AB;
+    font-size: 0.9rem;
+}
+
+.preview-item:last-child {
+    margin-bottom: 0;
+}
+
+.preview-item strong {
+    color: #E8E9EA;
+}
+
+.loading-spinner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: #A3A7AB;
+    font-size: 0.9rem;
+}
+
+.error-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2rem;
+    color: #A3A7AB;
+}
+
+.error-message .material-icons {
+    font-size: 3rem;
+    color: #E74C3C;
+    margin-bottom: 1rem;
+    opacity: 0.7;
+}
+
+.error-message h4 {
+    color: #E74C3C;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.error-message p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    max-width: 400px;
 }
