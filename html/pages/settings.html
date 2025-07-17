@@ -169,6 +169,45 @@
                         </div>
                     </div>
 
+                    <!-- Section Key Backup -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">vpn_key</span>
+                                <h3>Key Backup</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="setting-item">
+                                <p class="setting-description">Create a backup of your node keys and validator keys. This includes node_key.json, priv_validator_key.json, and all files in the keyring-local directory.</p>
+                                
+                                <div class="key-backup-actions">
+                                    <button id="create-key-backup" class="button primary" onclick="createKeyBackup()">
+                                        <span class="material-icons">backup</span>
+                                        Create Key Backup
+                                    </button>
+                                    
+                                    <button id="download-key-backup" class="button secondary" onclick="downloadKeyBackup()" style="display: none;">
+                                        <span class="material-icons">file_download</span>
+                                        Download Key Backup
+                                    </button>
+                                    
+                                    <button id="upload-key-backup" class="button secondary" onclick="uploadKeyBackup()" disabled>
+                                        <span class="material-icons">file_upload</span>
+                                        Upload Key Backup (Coming Soon)
+                                    </button>
+                                    
+                                    <button id="apply-key-backup" class="button tertiary" onclick="applyKeyBackup()" style="display: none;">
+                                        <span class="material-icons">restore</span>
+                                        Apply Key Backup
+                                    </button>
+                                </div>
+                                
+                                <input type="file" id="key-backup-file-input" accept=".tar.gz,.tgz" style="display: none;" onchange="handleKeyBackupUpload(event)">
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Section Download Configuration Files -->
                     <div class="section">
                         <div class="section-header">
@@ -436,6 +475,168 @@
                 }
             };
 
+            // Key Backup Functions
+            const createKeyBackup = async () => {
+                try {
+                    const button = document.getElementById('create-key-backup');
+                    button.disabled = true;
+                    button.innerHTML = '<span class="material-icons">hourglass_empty</span> Creating Backup...';
+
+                    const response = await fetch('/create-key-backup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Key backup created successfully!');
+                            // Show download and apply buttons
+                            document.getElementById('download-key-backup').style.display = 'inline-flex';
+                            document.getElementById('apply-key-backup').style.display = 'inline-flex';
+                        } else {
+                            showNotification('error', 'Error', 'Error creating key backup: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error creating key backup');
+                    }
+                } catch (error) {
+                    console.error('Error creating key backup:', error);
+                    showNotification('error', 'Error', 'Error creating key backup');
+                } finally {
+                    const button = document.getElementById('create-key-backup');
+                    button.disabled = false;
+                    button.innerHTML = '<span class="material-icons">backup</span> Create Key Backup';
+                }
+            };
+
+            const downloadKeyBackup = async () => {
+                try {
+                    window.location.href = '/download-key-backup';
+                } catch (error) {
+                    console.error('Error downloading key backup:', error);
+                    showNotification('error', 'Error', 'Error downloading key backup');
+                }
+            };
+
+            const uploadKeyBackup = () => {
+                showNotification('info', 'Info', 'File upload functionality is coming soon. For now, you can create and download key backups.');
+            };
+
+            const handleKeyBackupUpload = async (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.name.endsWith('.tar.gz') && !file.name.endsWith('.tgz')) {
+                    showNotification('error', 'Error', 'Please select a valid .tar.gz or .tgz file');
+                    return;
+                }
+
+                try {
+                    const formData = new FormData();
+                    formData.append('keyBackup', file);
+
+                    const response = await fetch('/upload-key-backup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password
+                        },
+                        body: formData
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Key backup uploaded successfully!');
+                            
+                            // Ask user if they want to apply the backup
+                            if (confirm('Key backup uploaded successfully! Do you want to apply this backup now?')) {
+                                await applyKeyBackup();
+                            }
+                            
+                            // Show apply button
+                            document.getElementById('apply-key-backup').style.display = 'inline-flex';
+                        } else {
+                            showNotification('error', 'Error', 'Error uploading key backup: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error uploading key backup');
+                    }
+                } catch (error) {
+                    console.error('Error uploading key backup:', error);
+                    showNotification('error', 'Error', 'Error uploading key backup');
+                } finally {
+                    // Reset file input
+                    event.target.value = '';
+                }
+            };
+
+            const applyKeyBackup = async () => {
+                if (!confirm('Are you sure you want to apply the key backup? This will replace your current keys with the backup keys.')) {
+                    return;
+                }
+
+                try {
+                    const button = document.getElementById('apply-key-backup');
+                    button.disabled = true;
+                    button.innerHTML = '<span class="material-icons">hourglass_empty</span> Applying Backup...';
+
+                    const response = await fetch('/apply-key-backup', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Key backup applied successfully! You may need to restart your node.');
+                        } else {
+                            showNotification('error', 'Error', 'Error applying key backup: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error applying key backup');
+                    }
+                } catch (error) {
+                    console.error('Error applying key backup:', error);
+                    showNotification('error', 'Error', 'Error applying key backup');
+                } finally {
+                    const button = document.getElementById('apply-key-backup');
+                    button.disabled = false;
+                    button.innerHTML = '<span class="material-icons">restore</span> Apply Key Backup';
+                }
+            };
+
+            const checkKeyBackupStatus = async () => {
+                try {
+                    const response = await fetch('/check-key-backup', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.exists) {
+                            // Show download and apply buttons if backup exists
+                            document.getElementById('download-key-backup').style.display = 'inline-flex';
+                            document.getElementById('apply-key-backup').style.display = 'inline-flex';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking key backup status:', error);
+                }
+            };
+
             const reinitialize = async () => {
                 const result = await fetch('/reinitialize-node', {
                         method: 'POST',
@@ -470,6 +671,9 @@
                 document.querySelectorAll('input[name="node-mode"]').forEach(radio => {
                     radio.addEventListener('change', updateBackupState);
                 });
+                
+                // Check key backup status
+                await checkKeyBackupStatus();
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

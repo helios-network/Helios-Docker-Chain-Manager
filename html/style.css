@@ -2759,6 +2759,30 @@ button:disabled {
     cursor: not-allowed;
 }
 
+/* Key Backup Styles */
+.key-backup-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.key-backup-actions .button {
+    flex: 1;
+    min-width: 150px;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .key-backup-actions {
+        flex-direction: column;
+    }
+    
+    .key-backup-actions .button {
+        min-width: auto;
+    }
+}
+
 /* Assets Table Styles */
 .assets-table-container {
     margin-top: 1rem;
