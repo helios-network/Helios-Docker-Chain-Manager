@@ -49,6 +49,9 @@ const initAppNodeFunctions = async (app) => {
     app.node.getHeliosAddress = async () => {
         if (app.node.heliosAddress == undefined) {
             const data = await execWrapper(`heliades keys show user0 -a --bech=acc --keyring-backend="local"`);
+            if (data.trim().includes("Error")) {
+                return undefined;
+            }
             app.node.heliosAddress = data.trim();
         }
         return app.node.heliosAddress;
@@ -57,6 +60,9 @@ const initAppNodeFunctions = async (app) => {
     app.node.getHeliosValAddress = async () => {
         if (app.node.heliosValAddress == undefined) {
             const data = await execWrapper(`heliades keys show user0 -a --bech=val --keyring-backend="local"`);
+            if (data.trim().includes("Error")) {
+                return undefined;
+            }
             app.node.heliosValAddress = data.trim();
         }
         return app.node.heliosValAddress;
@@ -65,6 +71,9 @@ const initAppNodeFunctions = async (app) => {
     app.node.getAddress = async () => {
         if (app.node.address == undefined) {
             const data = await execWrapper(`heliades keys show user0 -e --keyring-backend="local"`);
+            if (data.trim().includes("Error")) {
+                return "0x0000000000000000000000000000000000000000";
+            }
             app.node.address = data.trim();
         }
         return app.node.address;
@@ -99,8 +108,8 @@ const initAppNodeFunctions = async (app) => {
     }
 
     app.node.getMode = async () => {
-        if (fs.existsSync(path.join(homeDirectory, 'config/mode.json'))) {
-            return JSON.parse(fs.readFileSync(path.join(homeDirectory, 'config/mode.json'))).mode;
+        if (fs.existsSync(path.join(homeDirectory, 'mode.json'))) {
+            return JSON.parse(fs.readFileSync(path.join(homeDirectory, 'mode.json'))).mode;
         }
         return "archive";
     }

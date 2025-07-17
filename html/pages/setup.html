@@ -33,7 +33,7 @@
                         <div class="input-group-container">
                             <div class="input-row">
                                 <input id="nodePrivateKeyInput" type="text" class="form-control" placeholder="Private Key" />
-                                <input id="nodePasswordInput" type="text" class="form-control" placeholder="New Password" />
+                                <input id="nodePasswordInput" type="password" class="form-control" placeholder="New Password" />
                             </div>
                             <button onclick="generateKeyStore(1)" class="action-button">Generate KeyStore</button>
                         </div>
@@ -102,6 +102,7 @@
         <script>
             let password = window.localStorage.getItem("access-code");
             let fromGenesisType = 'existingGenesis';
+            let traceDB = false;
 
             function showError(inputElement, message) {
                 inputElement.classList.add('error');

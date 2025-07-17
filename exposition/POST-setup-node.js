@@ -32,7 +32,7 @@ const postSetupNode = (app, environement) => {
             const nodeGRPCPort = req.body['nodeGRPCPort'];
             const nodeRPCPort = req.body['nodeRPCPort'];
             const nodeP2PPort = req.body['nodeP2PPort'];
-            const mode = req.body['mode'] == undefined ? "full-node" : req.body['mode'];
+            const mode = req.body['mode'] == undefined ? "archive" : req.body['mode'];
 
             let genesisContent = undefined;
             if (nodeIP != undefined && nodeIP != '') {

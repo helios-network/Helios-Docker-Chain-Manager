@@ -14,8 +14,8 @@ const runMinerNode = async (app, environement) => {
 
     let mode = "archive";
 
-    if (fs.existsSync(path.join(homeDirectory, 'config/mode.json'))) {
-        mode = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'config/mode.json'))).mode;
+    if (fs.existsSync(path.join(homeDirectory, 'mode.json'))) {
+        mode = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'mode.json'))).mode;
     }
 
     let pruningArgs = [];
@@ -25,7 +25,7 @@ const runMinerNode = async (app, environement) => {
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=100000`,
-                `--pruning-interval=1`,
+                `--pruning-interval=10`,
                 `--min-retain-blocks=5000`,
                 `--skip-evidence-retention=true`,
             ];
@@ -34,7 +34,7 @@ const runMinerNode = async (app, environement) => {
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=10000`,
-                `--pruning-interval=1`,
+                `--pruning-interval=10`,
                 `--min-retain-blocks=1000`,
                 `--skip-evidence-retention=true`,
             ];
@@ -43,7 +43,7 @@ const runMinerNode = async (app, environement) => {
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=10`,
-                `--pruning-interval=1`,
+                `--pruning-interval=10`,
                 `--min-retain-blocks=10`,
                 `--skip-evidence-retention=true`,
             ];
@@ -76,6 +76,8 @@ const runMinerNode = async (app, environement) => {
 
             `--state-sync.snapshot-interval=0`, // disable state sync snapshot (piece of shit)
             `--state-sync.snapshot-keep-recent=0`, // disable state sync snapshot (piece of shit)
+
+            `--dump-commit-debug-execution-trace=true`,
             
             // pruning
             ...pruningArgs,

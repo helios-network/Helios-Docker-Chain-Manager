@@ -28,13 +28,12 @@ const runHyperionNode = async (app, environement, password) => {
             `--helios-chain-id=42000`,
             `--helios-grpc=${heliosGrpc}`,
             `--tendermint-rpc=${tendermintRpc}`,
-            `--helios-gas-prices=2000000000ahelios`,
-            `--helios-gas=2000000`,
+            `--helios-gas-prices=3000000000ahelios`,
+            `--helios-gas=3000000`,
             `--helios-pk=${privateKey}`,
             `--eth-gas-price-adjustment=1.3`,
             `--eth-max-gas-price=500gwei`,
-            `--relay-pending-tx-wait-duration=20m`,
-            `--min-batch-fee-usd=0`
+            `--relay-pending-tx-wait-duration=20m`
         ],
         { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-hyperion.log'), 'w')]}
     );
