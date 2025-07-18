@@ -18,6 +18,7 @@
                                 <i class="material-icons">analytics</i>
                                 EthStats Configuration
                             </div>
+                            <div class="status-badge" id="ethstats-status-badge">Inactive</div>
                         </div>
                         <div class="section-content">
                             <form id="ethstats-form">
@@ -48,7 +49,7 @@
                                         <i class="material-icons">play_arrow</i>
                                         Start
                                     </button>
-                                    <button type="button" id="btnStop" class="button secondary" onclick="stopEthStats()">
+                                    <button type="button" id="btnStop" class="button secondary" onclick="stopEthStats()" disabled>
                                         <i class="material-icons">stop</i>
                                         Stop
                                     </button>
@@ -56,11 +57,140 @@
                             </form>
                         </div>
                     </div>
+
+                    <!-- EthStats Logs Card -->
+                    <div class="section logs-section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <i class="material-icons">terminal</i>
+                                <span>EthStats Logs</span>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <div class="control-logs">
+                                <button class="button secondary" id="pause-ethstats-logs">Pause</button>
+                                <div class="logs-container" id="ethstats-logs">
+                                    <pre></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
+            
+            // Variables pour mémoriser l'état précédent
+            let lastEthStatsServerUrl = '';
+            let lastEthStatsNodeName = '';
+            let lastEthStatsLogs = '';
+
+            const startEthStats = async () => {
+                const serverUrl = document.getElementById('server-url').value;
+                const nodeName = document.getElementById('node-name').value;
+                
+                if (!serverUrl.trim()) {
+                    alert('Please enter a server URL');
+                    return;
+                }
+                
+                if (!nodeName.trim() || nodeName.trim().length < 4) {
+                    alert('Please enter a node name with at least 4 characters');
+                    return;
+                }
+                
+                const btnStart = document.getElementById('btnStart');
+                btnStart.disabled = true;
+                btnStart.innerHTML = '<i class="material-icons">hourglass_empty</i> Starting...';
+                
+                try {
+                    await apiPost('/run-ethstats', { ethStatsServerUrl: serverUrl, ethStatsNodeName: nodeName });
+                } catch (error) {
+                    console.error('Error starting EthStats:', error);
+                } finally {
+                    btnStart.disabled = false;
+                    btnStart.innerHTML = '<i class="material-icons">play_arrow</i> Start';
+                }
+            }
+            
+            const stopEthStats = async () => {
+                const btnStop = document.getElementById('btnStop');
+                btnStop.disabled = true;
+                btnStop.innerHTML = '<i class="material-icons">hourglass_empty</i> Stopping...';
+                
+                try {
+                    await apiPost('/ethstats-kill', {}, "boolean");
+                } catch (error) {
+                    console.error('Error stopping EthStats:', error);
+                } finally {
+                    btnStop.disabled = false;
+                    btnStop.innerHTML = '<i class="material-icons">stop</i> Stop';
+                }
+            }
+
+            const updateEthStatsDisplay = async () => {
+                try {
+                    let result = await fetch('/test', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password
+                        },
+                        body: JSON.stringify({})
+                    });
+                    let jsonResult = await result.json();
+
+                    const serverUrl = document.getElementById('server-url');
+                    const nodeName = document.getElementById('node-name');
+                    const btnStart = document.getElementById('btnStart');
+                    const btnStop = document.getElementById('btnStop');
+                    const statusBadge = document.getElementById('ethstats-status-badge');
+
+                    // Update form values only if they changed
+                    if (jsonResult.ethStats.serverUrl !== lastEthStatsServerUrl) {
+                        serverUrl.value = jsonResult.ethStats.serverUrl || '';
+                        lastEthStatsServerUrl = jsonResult.ethStats.serverUrl || '';
+                    }
+                    
+                    if (jsonResult.ethStats.nodeName !== lastEthStatsNodeName) {
+                        nodeName.value = jsonResult.ethStats.nodeName || '';
+                        lastEthStatsNodeName = jsonResult.ethStats.nodeName || '';
+                    }
+
+                    // Update button states
+                    if (jsonResult.ethStats.status == '1') {
+                        btnStart.disabled = true;
+                        btnStop.disabled = false;
+                        if (statusBadge) {
+                            statusBadge.textContent = 'Active';
+                            statusBadge.className = 'status-badge active';
+                        }
+                    } else {
+                        btnStart.disabled = false;
+                        btnStop.disabled = true;
+                        if (statusBadge) {
+                            statusBadge.textContent = 'Inactive';
+                            statusBadge.className = 'status-badge inactive';
+                        }
+                    }
+
+                    // Update logs
+                    const logsContainer = document.getElementById('ethstats-logs');
+                    const pre = logsContainer.querySelector('pre');
+                    if (pre && jsonResult.ethStats.logs) {
+                        const newLogsContent = jsonResult.ethStats.logs.join('\n');
+                        if (newLogsContent !== lastEthStatsLogs) {
+                            pre.innerHTML = newLogsContent;
+                            lastEthStatsLogs = newLogsContent;
+                            if (!document.activeElement.isEqualNode(pre) && !document.activeElement.isEqualNode(logsContainer)) {
+                                logsContainer.scrollTop = logsContainer.scrollHeight;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating EthStats display:', error);
+                }
+            }
 
             const main = async () => {
                 if (password == undefined) {
@@ -74,6 +204,31 @@
                 displaySideBar();
 
                 document.querySelectorAll('.main-content')[0].style.display = '';
+
+                // Setup logs pause functionality
+                let isPaused = false;
+                const pauseButton = document.getElementById('pause-ethstats-logs');
+                const logsContainer = document.getElementById('ethstats-logs');
+                
+                pauseButton.onclick = () => {
+                    isPaused = !isPaused;
+                    pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
+                    if (isPaused) {
+                        logsContainer.style.border = '1px solid orange';
+                    } else {
+                        logsContainer.style.border = '';
+                    }
+                };
+
+                // Initial display
+                await updateEthStatsDisplay();
+
+                // Update every 30 seconds
+                setInterval(async () => {
+                    if (!isPaused) {
+                        await updateEthStatsDisplay();
+                    }
+                }, 30000);
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
