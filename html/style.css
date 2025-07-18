@@ -2220,17 +2220,30 @@ button:disabled {
     border: none;
     color: #A3A7AB;
     cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 4px;
+    padding: 0.25rem;
+    border-radius: 50%;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+.modal-close .material-icons {
+    font-size: 22px;
+    line-height: 1;
 }
 
 .modal-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.08);
+    color: #E8E9EA;
 }
 
 .modal-body {
@@ -2973,4 +2986,535 @@ button:disabled {
     .delegations-table .actions-cell .button .material-icons {
         font-size: 0.9rem;
     }
+}
+
+/* B2 Configuration Styles */
+.b2-config-section {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.b2-config-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #E8E9EA;
+    margin-bottom: 0.75rem;
+}
+
+.b2-config-title .material-icons {
+    color: #012dcb;
+    font-size: 1.25rem;
+}
+
+.b2-config-description {
+    color: #A3A7AB;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+
+.b2-config-button {
+    background: linear-gradient(135deg, #012dcb, #2042be);
+    border: none;
+    color: #FFFFFF;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.b2-config-button:hover {
+    background: linear-gradient(135deg, #2042be, #012dcb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(1, 45, 203, 0.3);
+}
+
+.b2-config-button .material-icons {
+    font-size: 1.1rem;
+}
+
+/* Enhanced Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+    }
+}
+
+.modal-content {
+    background: #1C2833;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: #E8E9EA;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-header h3 .material-icons {
+    color: #012dcb;
+    font-size: 1.4rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #A3A7AB;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #E8E9EA;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-body .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.modal-body .form-group label {
+    display: block;
+    color: #CED4DA;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.3px;
+}
+
+.modal-body .form-control {
+    background-color: #141E27;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+    box-sizing: border-box;
+}
+
+.modal-body .form-control:focus {
+    background-color: #1A272F;
+    border-color: #012dcb;
+    box-shadow: 0 0 0 3px rgba(1, 45, 203, 0.15);
+    outline: none;
+}
+
+.modal-body .form-control::placeholder {
+    color: #6C757D;
+    font-weight: 300;
+    letter-spacing: 0.2px;
+    opacity: 0.6;
+}
+
+.modal-body .form-text {
+    display: block;
+    color: #A3A7AB;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0 0 16px 16px;
+}
+
+.modal-footer .button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    border: none;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.modal-footer .button.primary {
+    background: linear-gradient(135deg, #012dcb, #2042be);
+    color: #FFFFFF;
+}
+
+.modal-footer .button.primary:hover {
+    background: linear-gradient(135deg, #2042be, #012dcb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(1, 45, 203, 0.3);
+}
+
+.modal-footer .button.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #A3A7AB;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #E8E9EA;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 1rem;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer .button {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .b2-config-section {
+        padding: 1rem;
+    }
+    
+    .b2-config-title {
+        font-size: 1rem;
+    }
+    
+    .b2-config-description {
+        font-size: 0.85rem;
+    }
+}
+
+/* B2 Configuration Styles for Backups Page */
+.b2-config-description {
+    color: #A3A7AB;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+
+/* Enhanced Modal Styles for B2 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        backdrop-filter: blur(0px);
+    }
+    to {
+        opacity: 1;
+        backdrop-filter: blur(4px);
+    }
+}
+
+.modal-content {
+    background: #1C2833;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: #E8E9EA;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-header h3 .material-icons {
+    color: #012dcb;
+    font-size: 1.4rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #A3A7AB;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #E8E9EA;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-body .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.modal-body .form-group label {
+    display: block;
+    color: #CED4DA;
+    font-weight: 500;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.3px;
+}
+
+.modal-body .form-control {
+    background-color: #141E27;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    font-weight: 400;
+    box-sizing: border-box;
+}
+
+.modal-body .form-control:focus {
+    background-color: #1A272F;
+    border-color: #012dcb;
+    box-shadow: 0 0 0 3px rgba(1, 45, 203, 0.15);
+    outline: none;
+}
+
+.modal-body .form-control::placeholder {
+    color: #6C757D;
+    font-weight: 300;
+    letter-spacing: 0.2px;
+    opacity: 0.6;
+}
+
+.modal-body .form-text {
+    display: block;
+    color: #A3A7AB;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0 0 16px 16px;
+}
+
+.modal-footer .button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    border: none;
+    min-width: 120px;
+    justify-content: center;
+}
+
+.modal-footer .button.primary {
+    background: linear-gradient(135deg, #012dcb, #2042be);
+    color: #FFFFFF;
+}
+
+.modal-footer .button.primary:hover {
+    background: linear-gradient(135deg, #2042be, #012dcb);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(1, 45, 203, 0.3);
+}
+
+.modal-footer .button.secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: #A3A7AB;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer .button.secondary:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #E8E9EA;
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: none;
+        margin: 1rem;
+    }
+    
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+    
+    .modal-footer .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* B2 Modal Danger Button */
+.modal-footer .button.danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: #FFFFFF;
+}
+
+.modal-footer .button.danger:hover {
+    background: linear-gradient(135deg, #c0392b, #e74c3c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }

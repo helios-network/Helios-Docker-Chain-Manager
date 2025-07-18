@@ -31,6 +31,10 @@
                                     <span class="material-icons">refresh</span>
                                     Refresh
                                 </button>
+                                <button id="configure-b2-button" class="button secondary" onclick="openB2ConfigModal()">
+                                    <span class="material-icons">cloud_upload</span>
+                                    Configure B2
+                                </button>
                             </div>
                         </div>
                         <div class="section-content">
@@ -196,6 +200,61 @@
                     <button class="button danger" onclick="confirmDeleteBackup()">
                         <span class="material-icons">delete</span>
                         Delete Backup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- B2 Configuration Modal -->
+        <div id="b2-config-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons">cloud_upload</span>
+                        Backblaze B2 Configuration
+                    </h3>
+                    <button class="modal-close" onclick="closeB2ConfigModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="b2-application-key-id">Application Key ID</label>
+                        <input type="text" 
+                               id="b2-application-key-id" 
+                               class="form-control"
+                               placeholder="Enter your B2 Application Key ID" />
+                        <small class="form-text">Your Backblaze B2 Application Key ID</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="b2-application-key">Application Key</label>
+                        <input type="password" 
+                               id="b2-application-key" 
+                               class="form-control"
+                               placeholder="Enter your B2 Application Key" />
+                        <small class="form-text">Your Backblaze B2 Application Key (will be stored securely)</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="b2-bucket-name">Bucket Name</label>
+                        <input type="text" 
+                               id="b2-bucket-name" 
+                               class="form-control"
+                               placeholder="Enter your B2 bucket name" />
+                        <small class="form-text">The name of your B2 bucket for storing data</small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button danger" onclick="deleteB2Config()" id="delete-b2-config-btn" style="display: none;">
+                        <span class="material-icons">delete</span>
+                        Delete Configuration
+                    </button>
+                    <button class="button secondary" onclick="closeB2ConfigModal()">
+                        <span class="material-icons">close</span>
+                        Cancel
+                    </button>
+                    <button class="button primary" onclick="saveB2Config()">
+                        <span class="material-icons">save</span>
+                        Save Configuration
                     </button>
                 </div>
             </div>
@@ -576,6 +635,142 @@
                 }
             };
 
+            // B2 Configuration Functions
+            function openB2ConfigModal() {
+                document.getElementById('b2-config-modal').style.display = 'flex';
+                loadB2Config();
+            }
+
+            function closeB2ConfigModal() {
+                document.getElementById('b2-config-modal').style.display = 'none';
+                // Clear form fields
+                document.getElementById('b2-application-key-id').value = '';
+                document.getElementById('b2-application-key').value = '';
+                document.getElementById('b2-bucket-name').value = '';
+            }
+
+            async function loadB2Config() {
+                try {
+                    const response = await fetch('/get-settings', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            // Load existing B2 configuration if available
+                            if (data.settings.b2ApplicationKeyId) {
+                                document.getElementById('b2-application-key-id').value = data.settings.b2ApplicationKeyId;
+                            }
+                            if (data.settings.b2BucketName) {
+                                document.getElementById('b2-bucket-name').value = data.settings.b2BucketName;
+                            }
+                            // Note: We don't load the application key for security reasons
+                            
+                            // Show delete button if configuration exists
+                            if (data.settings.b2ApplicationKeyId || data.settings.b2BucketName) {
+                                document.getElementById('delete-b2-config-btn').style.display = 'inline-flex';
+                            } else {
+                                document.getElementById('delete-b2-config-btn').style.display = 'none';
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading B2 configuration:', error);
+                }
+            }
+
+            async function saveB2Config() {
+                const applicationKeyId = document.getElementById('b2-application-key-id').value.trim();
+                const applicationKey = document.getElementById('b2-application-key').value.trim();
+                const bucketName = document.getElementById('b2-bucket-name').value.trim();
+                
+                if (!applicationKeyId) {
+                    showNotification('error', 'Error', 'Please enter your B2 Application Key ID');
+                    return;
+                }
+                
+                if (!applicationKey) {
+                    showNotification('error', 'Error', 'Please enter your B2 Application Key');
+                    return;
+                }
+                
+                if (!bucketName) {
+                    showNotification('error', 'Error', 'Please enter your B2 bucket name');
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            b2ApplicationKeyId: applicationKeyId,
+                            b2ApplicationKey: applicationKey,
+                            b2BucketName: bucketName
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'B2 configuration saved successfully!');
+                            closeB2ConfigModal();
+                        } else {
+                            showNotification('error', 'Error', 'Error saving B2 configuration: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error saving B2 configuration');
+                    }
+                } catch (error) {
+                    console.error('Error saving B2 configuration:', error);
+                    showNotification('error', 'Error', 'Error saving B2 configuration');
+                }
+            }
+
+            async function deleteB2Config() {
+                if (!confirm('Are you sure you want to delete the B2 configuration? This action cannot be undone.')) {
+                    return;
+                }
+                
+                try {
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            b2ApplicationKeyId: null,
+                            b2ApplicationKey: null,
+                            b2BucketName: null
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'B2 configuration deleted successfully!');
+                            closeB2ConfigModal();
+                        } else {
+                            showNotification('error', 'Error', 'Error deleting B2 configuration: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error deleting B2 configuration');
+                    }
+                } catch (error) {
+                    console.error('Error deleting B2 configuration:', error);
+                    showNotification('error', 'Error', 'Error deleting B2 configuration');
+                }
+            }
+
             const main = async () => {
                 if (password == undefined) {
                     window.location = '/';
@@ -588,6 +783,20 @@
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
                 await loadBackups();
+                
+                // Add event listener to close B2 modal when clicking outside
+                document.getElementById('b2-config-modal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeB2ConfigModal();
+                    }
+                });
+                
+                // Add event listener to close B2 modal with Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && document.getElementById('b2-config-modal').style.display === 'flex') {
+                        closeB2ConfigModal();
+                    }
+                });
             };
 
             window.addEventListener('DOMContentLoaded', async (event) => {
