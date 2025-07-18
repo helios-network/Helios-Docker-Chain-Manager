@@ -91,9 +91,24 @@ module.exports = {
                 // end auth
             }
 
-            if (!app._router.stack.some(layer => 
-                layer.route && 
-                layer.route.path === req.path)) {
+            // Check if route exists, including dynamic routes with parameters
+            const routeExists = app._router.stack.some(layer => {
+                if (!layer.route) return false;
+                
+                // For exact path matches
+                if (layer.route.path === req.path) return true;
+                
+                // For dynamic routes with parameters (e.g., /backup-download/:filename)
+                if (layer.route.path.includes(':')) {
+                    const routePattern = layer.route.path.replace(/:[^/]+/g, '[^/]+');
+                    const regex = new RegExp(`^${routePattern}$`);
+                    return regex.test(req.path);
+                }
+                
+                return false;
+            });
+            
+            if (!routeExists) {
                 res.send((fs.readFileSync(notFounHtmlFilePath)).toString());
                 return ;
             }

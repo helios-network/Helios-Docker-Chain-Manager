@@ -223,6 +223,11 @@ const POSTUploadBackupB2 = (app, environement) => {
             // If this is just a check, return the result
             if (checkOnly) {
                 const fileExists = existingFiles.backup || existingFiles.header;
+                
+                // Generate URLs for existing files
+                const backupUrl = existingFiles.backup ? `${B2_BASE_URL}/${b2BucketName}/${backupFileName}` : null;
+                const headerUrl = existingFiles.header ? `${B2_BASE_URL}/${b2BucketName}/${headerFileName}` : null;
+                
                 return res.json({ 
                     success: true, 
                     fileExists,
@@ -231,13 +236,15 @@ const POSTUploadBackupB2 = (app, environement) => {
                             fileName: existingFiles.backup.fileName,
                             fileId: existingFiles.backup.fileId,
                             size: existingFiles.backup.contentLength,
-                            uploadTimestamp: existingFiles.backup.uploadTimestamp
+                            uploadTimestamp: existingFiles.backup.uploadTimestamp,
+                            url: backupUrl
                         } : null,
                         header: existingFiles.header ? {
                             fileName: existingFiles.header.fileName,
                             fileId: existingFiles.header.fileId,
                             size: existingFiles.header.contentLength,
-                            uploadTimestamp: existingFiles.header.uploadTimestamp
+                            uploadTimestamp: existingFiles.header.uploadTimestamp,
+                            url: headerUrl
                         } : null
                     }
                 });
@@ -246,14 +253,27 @@ const POSTUploadBackupB2 = (app, environement) => {
             // Delete existing files if they exist
             await deleteExistingFiles(b2, existingFiles, backupFileName, headerFileName);
 
-            // Upload header file
-            await uploadHeaderFile(b2, bucketId, headerFile, headerFileName);
-            
-            // Upload backup file
+            // Upload backup file first
             await uploadBackupFile(b2, bucketId, backupFile, backupFileName);
             
-            // Prepare response
+            // Generate download URL for the backup
             const backupUrl = `${B2_BASE_URL}/${b2BucketName}/${backupFileName}`;
+            
+            // Update header with download URL
+            const headerContent = JSON.parse(headerFile.buffer.toString());
+            headerContent.downloadUrl = backupUrl;
+            
+            // Create updated header file
+            const updatedHeaderBuffer = Buffer.from(JSON.stringify(headerContent, null, 2));
+            const updatedHeaderFile = {
+                ...headerFile,
+                buffer: updatedHeaderBuffer
+            };
+            
+            // Upload updated header file
+            await uploadHeaderFile(b2, bucketId, updatedHeaderFile, headerFileName);
+            
+            // Prepare response
             const headerUrl = `${B2_BASE_URL}/${b2BucketName}/${headerFileName}`;
             
             return res.json({ 
@@ -268,7 +288,7 @@ const POSTUploadBackupB2 = (app, environement) => {
                     },
                     header: {
                         name: headerFile.originalname,
-                        size: headerFile.buffer.length,
+                        size: updatedHeaderBuffer.length,
                         url: headerUrl
                     }
                 }

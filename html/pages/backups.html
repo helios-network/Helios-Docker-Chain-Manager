@@ -410,6 +410,7 @@
         <script>
             let password = window.localStorage.getItem("access-code");
             let b2ConfigAvailable = false;
+            let b2UploadInfo = {}; // Store B2 upload information
 
             // Notification system
             const showNotification = (type, title, message, duration = 5000) => {
@@ -488,6 +489,69 @@
                 }
             }
 
+            // Check B2 upload status for backups
+            async function checkB2UploadStatus(backups) {
+                if (!b2ConfigAvailable) return;
+                
+                for (const backup of backups) {
+                    try {
+                        const response = await fetch('/upload-backup-b2', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Code': password
+                            },
+                            body: (() => {
+                                const formData = new FormData();
+                                formData.append('backup', new Blob(['check'], { type: 'application/octet-stream' }), backup.filename);
+                                formData.append('header', new Blob(['check'], { type: 'application/json' }), backup.filename + '.b2header.json');
+                                formData.append('checkOnly', 'true');
+                                return formData;
+                            })()
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log(data)
+                            if (data.success && data.fileExists) {
+                                // Backup exists on B2, show info button
+                                const b2InfoButton = document.getElementById(`b2-info-${backup.filename.replace(/\./g, '-')}`);
+                                if (b2InfoButton) {
+                                    b2InfoButton.style.display = 'inline-flex';
+                                }
+                                
+                                // Store full info if available
+                                if (data.existingFiles?.backup?.url && data.existingFiles?.header?.url) {
+                                    b2UploadInfo[backup.filename] = {
+                                        files: {
+                                            backup: {
+                                                name: backup.filename,
+                                                size: data.existingFiles.backup.size,
+                                                url: data.existingFiles.backup.url
+                                            },
+                                            header: {
+                                                name: backup.filename + '.b2header.json',
+                                                size: data.existingFiles.header.size,
+                                                url: data.existingFiles.header.url
+                                            }
+                                        },
+                                        blockId: backup.blockId,
+                                        uploadedAt: new Date(data.existingFiles.backup.uploadTimestamp * 1000).toISOString()
+                                    };
+                                } else {
+                                    // Store basic info (we'll need to fetch full info when user clicks)
+                                    b2UploadInfo[backup.filename] = {
+                                        exists: true,
+                                        blockId: backup.blockId
+                                    };
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error checking B2 status for', backup.filename, error);
+                    }
+                }
+            }
+
             // Backup management functions
             const loadBackups = async () => {
                 await checkB2Config();
@@ -537,12 +601,16 @@
                                                 <span class="material-icons">delete</span>
                                             </button>
                                             ${b2ConfigAvailable ? `<button class='button secondary small' onclick='uploadBackupToB2("${backup.filename}", ${backup.blockId}, "${backup.formattedDateTime}")' title='Upload to B2'><span class='material-icons'>cloud_upload</span></button>` : ''}
+                                            ${b2ConfigAvailable ? `<button class='button tertiary small' onclick='showB2Info("${backup.filename}", ${backup.blockId})' title='B2 Info' style='display: none;' id='b2-info-${backup.filename.replace(/\./g, '-')}'><span class='material-icons'>info</span></button>` : ''}
                                         </td>
                                     `;
                                     tableBody.appendChild(row);
                                 });
                                 
                                 tableElement.style.display = 'block';
+                                
+                                // Check B2 upload status for all backups
+                                await checkB2UploadStatus(data.backups);
                             } else {
                                 // Show no backups message
                                 noBackupsElement.style.display = 'block';
@@ -559,14 +627,32 @@
                 }
             };
 
-            const downloadBackup = (filename) => {
-                // Create a temporary link to download the file
-                const link = document.createElement('a');
-                link.href = `/download/backup/${encodeURIComponent(filename)}`;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+            const downloadBackup = async (filename) => {
+                try {
+                    // Show loading state
+                    showNotification('info', 'Downloading', 'Preparing backup download...');
+                    
+                    // Use the API function to download the backup
+                    const blob = await apiDownloadBackup(filename);
+                    
+                    // Create download link
+                    const url = window.URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Clean up the URL object
+                    window.URL.revokeObjectURL(url);
+                    
+                    showNotification('success', 'Download Complete', 'Backup downloaded successfully!');
+                    
+                } catch (error) {
+                    console.error('Error downloading backup:', error);
+                    showNotification('error', 'Download Failed', `Failed to download backup: ${error.message}`);
+                }
             };
 
             let selectedBackupFilename = null;
@@ -1132,7 +1218,6 @@
                     const header = {
                         filename: filename,
                         blockId: blockId,
-                        date: formattedDateTime,
                         uploadedAt: new Date().toISOString(),
                         description: `Helios Node Backup - Block ${blockId} - ${formattedDateTime}`
                     };
@@ -1249,7 +1334,6 @@
                 const header = {
                     filename: filename,
                     blockId: blockId,
-                    date: formattedDateTime,
                     uploadedAt: new Date().toISOString(),
                     description: `Helios Node Backup - Block ${blockId} - ${formattedDateTime}`
                 };
@@ -1259,7 +1343,7 @@
                 showNotification('info', 'Upload Started', 'Uploading backup to Backblaze B2... This may take a while for large files.');
 
                 // Récupérer le fichier backup depuis le serveur (en tant que blob)
-                fetch(`/download/backup/${encodeURIComponent(filename)}`, {
+                fetch(`/backup-download/${encodeURIComponent(filename)}`, {
                     method: 'GET',
                     headers: {
                         'Access-Code': password
@@ -1291,8 +1375,22 @@
                     const data = await response.json();
                     
                     if (response.ok && data.success) {
+                        // Save B2 upload information
+                        b2UploadInfo[filename] = {
+                            files: data.files,
+                            blockId: blockId,
+                            uploadedAt: new Date().toISOString()
+                        };
+                        
+                        // Show success modal
                         showB2UploadSuccessModal(data.files, filename, blockId);
                         showNotification('success', 'Upload Successful', 'Backup uploaded to B2 successfully!');
+                        
+                        // Show B2 info button
+                        const b2InfoButton = document.getElementById(`b2-info-${filename.replace(/\./g, '-')}`);
+                        if (b2InfoButton) {
+                            b2InfoButton.style.display = 'inline-flex';
+                        }
                     } else {
                         const errorMessage = data.error || 'Unknown error occurred';
                         showNotification('error', 'Upload Failed', `B2 upload failed: ${errorMessage}`);
@@ -1424,6 +1522,70 @@
                     }).catch(() => {
                         showNotification('error', 'Copy Failed', 'Failed to copy link');
                     });
+                }
+            }
+
+            async function showB2Info(filename, blockId) {
+                const info = b2UploadInfo[filename];
+                if (!info) {
+                    showNotification('error', 'Error', 'No B2 information found for this backup');
+                    return;
+                }
+                
+                // If we only have basic info, fetch the full details
+                if (info.exists && !info.files) {
+                    try {
+                        showNotification('info', 'Loading', 'Fetching B2 information...');
+                        
+                        const response = await fetch('/upload-backup-b2', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Code': password
+                            },
+                            body: (() => {
+                                const formData = new FormData();
+                                formData.append('backup', new Blob(['check'], { type: 'application/octet-stream' }), filename);
+                                formData.append('header', new Blob(['check'], { type: 'application/json' }), filename + '.b2header.json');
+                                formData.append('checkOnly', 'true');
+                                return formData;
+                            })()
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success && data.existingFiles?.backup?.url && data.existingFiles?.header?.url) {
+                                // Update stored info with full details
+                                b2UploadInfo[filename] = {
+                                    files: {
+                                        backup: {
+                                            name: filename,
+                                            size: data.existingFiles.backup.size,
+                                            url: data.existingFiles.backup.url
+                                        },
+                                        header: {
+                                            name: filename + '.b2header.json',
+                                            size: data.existingFiles.header.size,
+                                            url: data.existingFiles.header.url
+                                        }
+                                    },
+                                    blockId: blockId,
+                                    uploadedAt: new Date(data.existingFiles.backup.uploadTimestamp * 1000).toISOString()
+                                };
+                                
+                                showB2UploadSuccessModal(b2UploadInfo[filename].files, filename, blockId);
+                            } else {
+                                showNotification('error', 'Error', 'Failed to fetch B2 information');
+                            }
+                        } else {
+                            showNotification('error', 'Error', 'Failed to fetch B2 information');
+                        }
+                    } catch (error) {
+                        console.error('Error fetching B2 info:', error);
+                        showNotification('error', 'Error', 'Failed to fetch B2 information');
+                    }
+                } else {
+                    // We have full info, show modal directly
+                    showB2UploadSuccessModal(info.files, filename, blockId);
                 }
             }
 

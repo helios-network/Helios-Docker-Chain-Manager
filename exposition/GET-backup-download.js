@@ -1,8 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const GETDownloadBackup = (app, environement) => {
-    app.get('/download/backup/:filename', async (req, res) => {
+const GETBackupDownload = (app, environement) => {
+    app.get('/backup-download/:filename', async (req, res) => {
+        
         try {
             const homeDirectory = await app.actions.getHomeDirectory.use();
             const filename = req.params.filename;
@@ -51,5 +52,5 @@ const GETDownloadBackup = (app, environement) => {
 };
 
 module.exports = {
-    GETDownloadBackup
+    GETBackupDownload
 }; 

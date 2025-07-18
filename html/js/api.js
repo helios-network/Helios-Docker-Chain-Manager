@@ -245,3 +245,19 @@ const apiPost = async (url, data) => {
 
     return await response.json();
 }
+
+const apiDownloadBackup = async (filename) => {    
+    const response = await fetch(`/backup-download/${encodeURIComponent(filename)}`, {
+        method: 'GET',
+        headers: {
+            'Access-Code': password
+        }
+    });
+    
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+    }
+    
+    return await response.blob();
+}
