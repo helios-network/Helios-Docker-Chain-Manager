@@ -248,6 +248,10 @@
                         <span class="material-icons">delete</span>
                         Delete Configuration
                     </button>
+                    <button class="button secondary" onclick="testB2Config()" id="test-b2-config-btn">
+                        <span class="material-icons">bug_report</span>
+                        Test Connection
+                    </button>
                     <button class="button secondary" onclick="closeB2ConfigModal()">
                         <span class="material-icons">close</span>
                         Cancel
@@ -260,9 +264,154 @@
             </div>
         </div>
 
+        <!-- B2 Upload Success Modal -->
+        <div id="b2-upload-success-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons" style="color: #2ECC71;">check_circle</span>
+                        Upload Successful
+                    </h3>
+                    <button class="modal-close" onclick="closeB2UploadSuccessModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="upload-success-info">
+                        <h4>Backup uploaded to Backblaze B2 successfully!</h4>
+                        <p><strong>Backup:</strong> <span id="b2-upload-filename"></span></p>
+                        <p><strong>Block Height:</strong> <span id="b2-upload-block-height"></span></p>
+                    </div>
+                    
+                                                <div class="b2-links-section">
+                                <h4>Download Links:</h4>
+                                <div class="b2-link-item">
+                                    <label>Backup File:</label>
+                                    <div class="link-container">
+                                        <input type="text" value="${files?.backup?.url || 'URL not available'}" readonly class="form-control" id="backup-link">
+                                        <button class="button tertiary small" onclick="copyToClipboard('backup-link')" title="Copy Link">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="b2-link-item">
+                                    <label>Header File:</label>
+                                    <div class="link-container">
+                                        <input type="text" value="${files?.header?.url || 'URL not available'}" readonly class="form-control" id="header-link">
+                                        <button class="button tertiary small" onclick="copyToClipboard('header-link')" title="Copy Link">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                    
+                    <div class="upload-stats">
+                        <h4>Upload Statistics:</h4>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-label">Backup Size:</span>
+                                <span class="stat-value" id="b2-upload-backup-size"></span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Header Size:</span>
+                                <span class="stat-value" id="b2-upload-header-size"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" onclick="closeB2UploadSuccessModal()">
+                        <span class="material-icons">close</span>
+                        Close
+                    </button>
+                    <button class="button primary" onclick="openB2Links()">
+                        <span class="material-icons">open_in_new</span>
+                        Open in B2
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- B2 Test Success Modal -->
+        <div id="b2-test-success-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons" style="color: #2ECC71;">check_circle</span>
+                        B2 Test Successful
+                    </h3>
+                    <button class="modal-close" onclick="closeB2TestModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="test-success-info">
+                        <h4>B2 configuration is valid and working!</h4>
+                        <div class="test-details">
+                            <p><strong>Bucket Name:</strong> <span id="b2-test-bucket-name"></span></p>
+                            <p><strong>Bucket ID:</strong> <span id="b2-test-bucket-id"></span></p>
+                            <p><strong>Bucket Type:</strong> <span id="b2-test-bucket-type"></span></p>
+                            <p><strong>Authorization:</strong> <span style="color: #2ECC71;"> <span id="b2-test-authorization"></span></p>
+                            <p><strong>Permissions:</strong> <span style="color: #2ECC71;"> <span id="b2-test-permissions"></span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button primary" onclick="closeB2TestModal()">
+                        <span class="material-icons">check</span>
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- B2 Test Error Modal -->
+        <div id="b2-test-error-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons" style="color: #e74c3c;">error</span>
+                        B2 Test Failed
+                    </h3>
+                    <button class="modal-close" onclick="closeB2TestModal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="test-error-info">
+                        <h4>B2 test failed: <span id="b2-test-error-message"></span></h4>
+                        <div class="test-details">
+                            <p><strong>Bucket Name:</strong> <span id="b2-test-bucket-name"></span></p>
+                            <p><strong>Bucket ID:</strong> <span id="b2-test-bucket-id"></span></p>
+                            <p><strong>Bucket Type:</strong> <span id="b2-test-bucket-type"></span></p>
+                            <p><strong>Authorization:</strong> <span style="color: #e74c3c;"> <span id="b2-test-authorization"></span></p>
+                            <p><strong>Permissions:</strong> <span style="color: #e74c3c;"> <span id="b2-test-permissions"></span></p>
+                        </div>
+                        <div class="troubleshooting-tips">
+                            <h5>Troubleshooting Tips:</h5>
+                            <ul>
+                                <li>Verify your Application Key ID and Application Key are correct</li>
+                                <li>Ensure your bucket name exists and is accessible</li>
+                                <li>Check that your B2 account has the necessary permissions</li>
+                                <li>Verify your internet connection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button primary" onclick="closeB2TestModal()">
+                        <span class="material-icons">close</span>
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script>
             let password = window.localStorage.getItem("access-code");
+            let b2ConfigAvailable = false;
 
+            // Notification system
             const showNotification = (type, title, message, duration = 5000) => {
                 const container = document.getElementById('notification-container');
                 const notification = document.createElement('div');
@@ -291,9 +440,7 @@
                 
                 container.appendChild(notification);
                 
-                setTimeout(() => {
-                    notification.classList.add('show');
-                }, 10);
+                setTimeout(() => notification.classList.add('show'), 10);
                 
                 if (duration > 0) {
                     setTimeout(() => {
@@ -307,12 +454,11 @@
                     
                     const progress = notification.querySelector('.notification-progress');
                     progress.style.transition = `width ${duration}ms linear`;
-                    setTimeout(() => {
-                        progress.style.width = '0%';
-                    }, 10);
+                    setTimeout(() => progress.style.width = '0%', 10);
                 }
             };
 
+            // Utility functions
             const formatFileSize = (bytes) => {
                 if (bytes === 0) return '0 Bytes';
                 const k = 1024;
@@ -321,7 +467,30 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             };
 
+            // B2 Configuration check
+            async function checkB2Config() {
+                try {
+                    const response = await fetch('/get-settings', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            b2ConfigAvailable = !!(data.settings.b2ApplicationKeyId && data.settings.b2ApplicationKey && data.settings.b2BucketName);
+                        }
+                    }
+                } catch (error) {
+                    b2ConfigAvailable = false;
+                }
+            }
+
+            // Backup management functions
             const loadBackups = async () => {
+                await checkB2Config();
                 try {
                     const loadingElement = document.getElementById('loading-backups');
                     const tableElement = document.getElementById('backups-table');
@@ -367,6 +536,7 @@
                                             <button class="button danger small" onclick="showDeleteBackupModal('${backup.filename}', ${backup.blockId})" title="Delete Backup">
                                                 <span class="material-icons">delete</span>
                                             </button>
+                                            ${b2ConfigAvailable ? `<button class='button secondary small' onclick='uploadBackupToB2("${backup.filename}", ${backup.blockId}, "${backup.formattedDateTime}")' title='Upload to B2'><span class='material-icons'>cloud_upload</span></button>` : ''}
                                         </td>
                                     `;
                                     tableBody.appendChild(row);
@@ -636,18 +806,18 @@
             };
 
             // B2 Configuration Functions
-            function openB2ConfigModal() {
+            const openB2ConfigModal = () => {
                 document.getElementById('b2-config-modal').style.display = 'flex';
                 loadB2Config();
-            }
+            };
 
-            function closeB2ConfigModal() {
+            const closeB2ConfigModal = () => {
                 document.getElementById('b2-config-modal').style.display = 'none';
                 // Clear form fields
                 document.getElementById('b2-application-key-id').value = '';
                 document.getElementById('b2-application-key').value = '';
                 document.getElementById('b2-bucket-name').value = '';
-            }
+            };
 
             async function loadB2Config() {
                 try {
@@ -771,8 +941,504 @@
                 }
             }
 
+            const testB2Config = async () => {
+                const applicationKeyId = document.getElementById('b2-application-key-id').value.trim();
+                const applicationKey = document.getElementById('b2-application-key').value.trim();
+                const bucketName = document.getElementById('b2-bucket-name').value.trim();
+                
+                if (!applicationKeyId || !applicationKey || !bucketName) {
+                    showNotification('warning', 'Warning', 'Please fill in all B2 configuration fields before testing');
+                    return;
+                }
+                
+                // Save configuration temporarily for testing
+                try {
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            b2ApplicationKeyId: applicationKeyId,
+                            b2ApplicationKey: applicationKey,
+                            b2BucketName: bucketName
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        showNotification('error', 'Error', 'Failed to save configuration for testing');
+                        return;
+                    }
+                } catch (error) {
+                    showNotification('error', 'Error', 'Failed to save configuration for testing');
+                    return;
+                }
+                
+                // Test connection
+                showNotification('info', 'Testing', 'Testing B2 connection...');
+                
+                try {
+                    const testResponse = await fetch('/test-b2', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    const testData = await testResponse.json();
+                    
+                    if (testData.success) {
+                        showNotification('success', 'Test Successful', 'B2 configuration is valid and working!');
+                        showB2TestSuccessModal(testData.details);
+                    } else {
+                        showNotification('error', 'Test Failed', `B2 test failed: ${testData.error}`);
+                        showB2TestErrorModal(testData);
+                    }
+                } catch (error) {
+                    showNotification('error', 'Test Error', `Failed to test B2 connection: ${error.message}`);
+                }
+            };
+
+            // B2 Modal functions
+            const showB2TestSuccessModal = (details) => {
+                const modalId = 'b2-test-success-modal';
+                let modal = document.getElementById(modalId);
+                
+                if (modal) modal.remove();
+                
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal';
+                modal.style.display = 'flex';
+                
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>
+                                <span class="material-icons" style="color: #2ECC71;">check_circle</span>
+                                B2 Test Successful
+                            </h3>
+                            <button class="modal-close" onclick="closeB2TestModal()">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="test-success-info">
+                                <h4>B2 configuration is valid and working!</h4>
+                                <div class="test-details">
+                                    <p><strong>Bucket Name:</strong> ${details.bucketName}</p>
+                                    <p><strong>Bucket ID:</strong> ${details.bucketId}</p>
+                                    <p><strong>Bucket Type:</strong> ${details.bucketType}</p>
+                                    <p><strong>Authorization:</strong> <span style="color: #2ECC71;">${details.authorization}</span></p>
+                                    <p><strong>Permissions:</strong> <span style="color: #2ECC71;">${details.permissions}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="button primary" onclick="closeB2TestModal()">
+                                <span class="material-icons">check</span>
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeB2TestModal();
+                });
+            };
+
+            const showB2TestErrorModal = (testData) => {
+                const modalId = 'b2-test-error-modal';
+                let modal = document.getElementById(modalId);
+                
+                if (modal) modal.remove();
+                
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal';
+                modal.style.display = 'flex';
+                
+                const detailsHtml = testData.details ? 
+                    (typeof testData.details === 'object' ? 
+                        Object.entries(testData.details).map(([key, value]) => 
+                            `<p><strong>${key}:</strong> ${JSON.stringify(value)}</p>`
+                        ).join('') : 
+                        `<p>${testData.details}</p>`
+                    ) : '';
+                
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>
+                                <span class="material-icons" style="color: #e74c3c;">error</span>
+                                B2 Test Failed
+                            </h3>
+                            <button class="modal-close" onclick="closeB2TestModal()">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="test-error-info">
+                                <h4>B2 test failed: ${testData.error}</h4>
+                                <div class="test-details">
+                                    ${detailsHtml}
+                                </div>
+                                <div class="troubleshooting-tips">
+                                    <h5>Troubleshooting Tips:</h5>
+                                    <ul>
+                                        <li>Verify your Application Key ID and Application Key are correct</li>
+                                        <li>Ensure your bucket name exists and is accessible</li>
+                                        <li>Check that your B2 account has the necessary permissions</li>
+                                        <li>Verify your internet connection</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="button primary" onclick="closeB2TestModal()">
+                                <span class="material-icons">close</span>
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeB2TestModal();
+                });
+            };
+
+            const closeB2TestModal = () => {
+                const successModal = document.getElementById('b2-test-success-modal');
+                const errorModal = document.getElementById('b2-test-error-modal');
+                
+                if (successModal) successModal.remove();
+                if (errorModal) errorModal.remove();
+            };
+
+            // B2 Upload functions
+            const uploadBackupToB2 = (filename, blockId, formattedDateTime) => {
+                checkB2FileExists(filename, blockId, formattedDateTime);
+            };
+
+            const checkB2FileExists = async (filename, blockId, formattedDateTime) => {
+                try {
+                    // Generate header JSON file for verification
+                    const header = {
+                        filename: filename,
+                        blockId: blockId,
+                        date: formattedDateTime,
+                        uploadedAt: new Date().toISOString(),
+                        description: `Helios Node Backup - Block ${blockId} - ${formattedDateTime}`
+                    };
+                    const headerBlob = new Blob([JSON.stringify(header, null, 2)], { type: 'application/json' });
+                    const headerFile = new File([headerBlob], filename + '.b2header.json', { type: 'application/json' });
+
+                    // Create temporary FormData for existence check
+                    const checkFormData = new FormData();
+                    checkFormData.append('backup', new Blob(['check'], { type: 'application/octet-stream' }), filename);
+                    checkFormData.append('header', headerFile);
+                    checkFormData.append('checkOnly', 'true');
+
+                    const response = await fetch('/upload-backup-b2', {
+                        method: 'POST',
+                        headers: { 'Access-Code': password },
+                        body: checkFormData
+                    });
+
+                    const data = await response.json();
+                    
+                    if (data.fileExists) {
+                        showB2FileExistsModal(filename, blockId, formattedDateTime);
+                    } else {
+                        proceedWithB2Upload(filename, blockId, formattedDateTime);
+                    }
+                } catch (error) {
+                    console.error('Error checking B2 file existence:', error);
+                    proceedWithB2Upload(filename, blockId, formattedDateTime);
+                }
+            };
+
+            function showB2FileExistsModal(filename, blockId, formattedDateTime) {
+                // Créer la modal dynamiquement
+                const modalId = 'b2-file-exists-modal';
+                let modal = document.getElementById(modalId);
+                
+                if (modal) {
+                    modal.remove();
+                }
+                
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal';
+                modal.style.display = 'flex';
+                
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>
+                                <span class="material-icons" style="color: #F39C12;">warning</span>
+                                File Already Exists
+                            </h3>
+                            <button class="modal-close" onclick="closeB2FileExistsModal()">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="warning-message">
+                                <p><strong>Warning:</strong> A backup with the same name already exists on B2.</p>
+                                <p>If you proceed, the existing backup will be replaced with the new one.</p>
+                            </div>
+                            
+                            <div class="backup-info">
+                                <h4>Backup Details:</h4>
+                                <p><strong>Filename:</strong> ${filename}</p>
+                                <p><strong>Block Height:</strong> ${blockId.toLocaleString()}</p>
+                                <p><strong>Date:</strong> ${formattedDateTime}</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="button secondary" onclick="closeB2FileExistsModal()">
+                                <span class="material-icons">close</span>
+                                Cancel
+                            </button>
+                            <button class="button primary" onclick="proceedWithB2Upload('${filename}', ${blockId}, '${formattedDateTime}')">
+                                <span class="material-icons">cloud_upload</span>
+                                Replace & Upload
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Ajouter event listener pour fermer en cliquant à l'extérieur
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeB2FileExistsModal();
+                    }
+                });
+            }
+
+            function closeB2FileExistsModal() {
+                const modal = document.getElementById('b2-file-exists-modal');
+                if (modal) {
+                    modal.remove();
+                }
+            }
+
+            function proceedWithB2Upload(filename, blockId, formattedDateTime) {
+                // Fermer la modal si elle est ouverte
+                closeB2FileExistsModal();
+                
+                // Trouver le bouton d'upload original dans la table
+                const uploadButton = document.querySelector(`button[onclick*="uploadBackupToB2('${filename}"]`);
+                let originalContent = '';
+                if (uploadButton) {
+                    originalContent = uploadButton.innerHTML;
+                    uploadButton.innerHTML = '<span class="spinner-border"></span> Uploading...';
+                    uploadButton.disabled = true;
+                }
+
+                // Générer le fichier d'entête JSON
+                const header = {
+                    filename: filename,
+                    blockId: blockId,
+                    date: formattedDateTime,
+                    uploadedAt: new Date().toISOString(),
+                    description: `Helios Node Backup - Block ${blockId} - ${formattedDateTime}`
+                };
+                const headerBlob = new Blob([JSON.stringify(header, null, 2)], { type: 'application/json' });
+                const headerFile = new File([headerBlob], filename + '.b2header.json', { type: 'application/json' });
+
+                showNotification('info', 'Upload Started', 'Uploading backup to Backblaze B2... This may take a while for large files.');
+
+                // Récupérer le fichier backup depuis le serveur (en tant que blob)
+                fetch(`/download/backup/${encodeURIComponent(filename)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Access-Code': password
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Failed to download backup: ${response.status} ${response.statusText}`);
+                    }
+                    return response.blob();
+                })
+                .then(backupBlob => {
+                    const formData = new FormData();
+                    formData.append('backup', backupBlob, filename);
+                    formData.append('header', headerFile);
+                    formData.append('blockId', blockId);
+                    formData.append('date', formattedDateTime);
+                    
+                    // Envoyer au backend qui gérera l'upload multipart B2
+                    return fetch('/upload-backup-b2', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password
+                        },
+                        body: formData
+                    });
+                })
+                .then(async response => {
+                    const data = await response.json();
+                    
+                    if (response.ok && data.success) {
+                        showB2UploadSuccessModal(data.files, filename, blockId);
+                        showNotification('success', 'Upload Successful', 'Backup uploaded to B2 successfully!');
+                    } else {
+                        const errorMessage = data.error || 'Unknown error occurred';
+                        showNotification('error', 'Upload Failed', `B2 upload failed: ${errorMessage}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('B2 upload error:', error);
+                    showNotification('error', 'Upload Failed', `B2 upload failed: ${error.message}`);
+                })
+                .finally(() => {
+                    // Restaurer le bouton
+                    if (uploadButton) {
+                        uploadButton.innerHTML = originalContent;
+                        uploadButton.disabled = false;
+                    }
+                });
+            }
+
+            function showB2UploadSuccessModal(files, filename, blockId) {                
+                // Créer la modal dynamiquement
+                const modalId = 'b2-upload-success-modal';
+                let modal = document.getElementById(modalId);
+                
+                if (modal) {
+                    modal.remove();
+                }
+                
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.className = 'modal';
+                modal.style.display = 'flex';
+                
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3>
+                                <span class="material-icons" style="color: #2ECC71;">check_circle</span>
+                                Upload Successful
+                            </h3>
+                            <button class="modal-close" onclick="closeB2UploadSuccessModal()">
+                                <span class="material-icons">close</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="upload-success-info">
+                                <h4>Backup uploaded to Backblaze B2 successfully!</h4>
+                                <p><strong>Backup:</strong> ${filename}</p>
+                                <p><strong>Block Height:</strong> ${blockId.toLocaleString()}</p>
+                            </div>
+                            
+                            <div class="b2-links-section">
+                                <h4>Download Links:</h4>
+                                <div class="b2-link-item">
+                                    <label>Backup File:</label>
+                                    <div class="link-container">
+                                        <input type="text" value="${files.backup.url}" readonly class="form-control" id="backup-link">
+                                        <button class="button tertiary small" onclick="copyToClipboard('backup-link')" title="Copy Link">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="b2-link-item">
+                                    <label>Header File:</label>
+                                    <div class="link-container">
+                                        <input type="text" value="${files.header.url}" readonly class="form-control" id="header-link">
+                                        <button class="button tertiary small" onclick="copyToClipboard('header-link')" title="Copy Link">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="upload-stats">
+                                <h4>Upload Statistics:</h4>
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Backup Size:</span>
+                                        <span class="stat-value">${formatFileSize(files.backup.size)}</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Header Size:</span>
+                                        <span class="stat-value">${formatFileSize(files.header.size)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="button secondary" onclick="closeB2UploadSuccessModal()">
+                                <span class="material-icons">close</span>
+                                Close
+                            </button>
+                            <button class="button primary" onclick="openB2Links()">
+                                <span class="material-icons">open_in_new</span>
+                                Open in B2
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                // Ajouter event listener pour fermer en cliquant à l'extérieur
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeB2UploadSuccessModal();
+                    }
+                });
+            }
+
+            function closeB2UploadSuccessModal() {
+                const modal = document.getElementById('b2-upload-success-modal');
+                if (modal) {
+                    modal.remove();
+                }
+            }
+
+            function copyToClipboard(elementId) {
+                const element = document.getElementById(elementId);
+                element.select();
+                element.setSelectionRange(0, 99999); // Pour mobile
+                
+                try {
+                    document.execCommand('copy');
+                    showNotification('success', 'Copied!', 'Link copied to clipboard');
+                } catch (err) {
+                    // Fallback pour les navigateurs modernes
+                    navigator.clipboard.writeText(element.value).then(() => {
+                        showNotification('success', 'Copied!', 'Link copied to clipboard');
+                    }).catch(() => {
+                        showNotification('error', 'Copy Failed', 'Failed to copy link');
+                    });
+                }
+            }
+
+            function openB2Links() {
+                const backupLink = document.getElementById('backup-link').value;
+                const headerLink = document.getElementById('header-link').value;
+                
+                // Ouvrir les liens dans de nouveaux onglets
+                window.open(backupLink, '_blank');
+                window.open(headerLink, '_blank');
+            }
+
+            // Main initialization
             const main = async () => {
-                if (password == undefined) {
+                if (password === undefined) {
                     window.location = '/';
                     return;
                 }
@@ -784,15 +1450,14 @@
                 document.querySelectorAll('.main-content')[0].style.display = '';
                 await loadBackups();
                 
-                // Add event listener to close B2 modal when clicking outside
-                document.getElementById('b2-config-modal').addEventListener('click', function(e) {
-                    if (e.target === this) {
+                // Add event listeners for B2 modal
+                document.getElementById('b2-config-modal').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
                         closeB2ConfigModal();
                     }
                 });
                 
-                // Add event listener to close B2 modal with Escape key
-                document.addEventListener('keydown', function(e) {
+                document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape' && document.getElementById('b2-config-modal').style.display === 'flex') {
                         closeB2ConfigModal();
                     }

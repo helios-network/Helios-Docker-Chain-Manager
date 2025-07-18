@@ -3518,3 +3518,212 @@ button:disabled {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
 }
+
+/* B2 Upload Success Modal Styles */
+.upload-success-info {
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.upload-success-info h4 {
+    color: #2ECC71;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.upload-success-info p {
+    margin: 0.5rem 0;
+    color: #E8E9EA;
+    font-size: 0.9rem;
+}
+
+.upload-success-info strong {
+    color: #2ECC71;
+}
+
+.b2-links-section {
+    margin-bottom: 1.5rem;
+}
+
+.b2-links-section h4 {
+    color: #E8E9EA;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.b2-link-item {
+    margin-bottom: 1rem;
+}
+
+.b2-link-item:last-child {
+    margin-bottom: 0;
+}
+
+.b2-link-item label {
+    display: block;
+    color: #CED4DA;
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.3px;
+}
+
+.link-container {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.link-container .form-control {
+    flex: 1;
+    background-color: #141E27;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #FFFFFF;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: 'Courier New', monospace;
+    cursor: text;
+}
+
+.link-container .form-control:focus {
+    background-color: #1A272F;
+    border-color: #012dcb;
+    box-shadow: 0 0 0 2px rgba(1, 45, 203, 0.15);
+    outline: none;
+}
+
+.link-container .button {
+    padding: 0.6rem;
+    min-width: auto;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.link-container .button .material-icons {
+    font-size: 16px;
+}
+
+.upload-stats {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.upload-stats h4 {
+    color: #E8E9EA;
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.stats-grid .stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stats-grid .stat-label {
+    color: #A3A7AB;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.stats-grid .stat-value {
+    color: #E8E9EA;
+    font-size: 0.9rem;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+/* Responsive adjustments for B2 success modal */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .link-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .link-container .button {
+        width: 100%;
+        height: 40px;
+    }
+    
+    .upload-success-info,
+    .upload-stats {
+        padding: 0.75rem;
+    }
+}
+
+/* B2 File Exists Modal Styles */
+.backup-info {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.backup-info h4 {
+    color: #E8E9EA;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.backup-info p {
+    color: #CED4DA;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.backup-info p:last-child {
+    margin-bottom: 0;
+}
+
+.backup-info strong {
+    color: #E8E9EA;
+    font-weight: 500;
+}
+
+.backup-info span {
+    color: #A3A7AB;
+    font-weight: 400;
+}
+
+@media (max-width: 768px) {
+    .backup-info {
+        padding: 1rem;
+    }
+    
+    .backup-info p {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+}
