@@ -2988,6 +2988,120 @@ button:disabled {
     }
 }
 
+/* Commands Modal Styles */
+.commands-section {
+    margin-bottom: 1.5rem;
+}
+
+.commands-section h4 {
+    color: #E8E9EA;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.command-item {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.command-header {
+    margin-bottom: 1rem;
+}
+
+.command-title {
+    display: block;
+    color: #E8E9EA;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.command-description {
+    display: block;
+    color: #A3A7AB;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.command-input-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.command-input-group label {
+    color: #E8E9EA;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.command-input-group input {
+    flex: 1;
+    min-width: 150px;
+}
+
+.command-logs {
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.logs-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px 6px 0 0;
+}
+
+.logs-header span {
+    color: #E8E9EA;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.logs-content {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.logs-content pre {
+    color: #A3A7AB;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+@media (max-width: 768px) {
+    .command-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .command-input-group input {
+        min-width: auto;
+    }
+    
+    .logs-content {
+        max-height: 200px;
+    }
+}
+
 /* B2 Configuration Styles */
 .b2-config-section {
     background: rgba(255, 255, 255, 0.02);
@@ -3725,5 +3839,141 @@ button:disabled {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.25rem;
+    }
+}
+
+/* Fullscreen Modal Styles */
+.fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+.fullscreen-content {
+    width: 95vw;
+    height: 90vh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    background: #1C2833;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.fullscreen-content .modal-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.fullscreen-content .modal-body {
+    flex: 1;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.fullscreen-content .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+/* Tab Styles */
+.modal-tabs {
+    display: flex;
+    background: #141E27;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0 2rem;
+    flex-shrink: 0;
+}
+
+.tab-button {
+    background: transparent;
+    border: none;
+    color: #A3A7AB;
+    padding: 1rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: auto;
+    height: auto;
+}
+
+.tab-button:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #E8E9EA;
+}
+
+.tab-button.active {
+    color: #012dcb;
+    border-bottom-color: #012dcb;
+    background: rgba(1, 45, 203, 0.1);
+}
+
+.tab-button .material-icons {
+    font-size: 1.2rem;
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.tab-pane {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 2rem;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Responsive adjustments for fullscreen modal */
+@media (max-width: 768px) {
+    .fullscreen-content {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+    
+    .fullscreen-content .modal-header,
+    .fullscreen-content .modal-footer {
+        padding: 1rem;
+    }
+    
+    .modal-tabs {
+        padding: 0 1rem;
+    }
+    
+    .tab-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .tab-pane {
+        padding: 1rem;
     }
 }

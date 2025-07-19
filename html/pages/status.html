@@ -136,6 +136,109 @@
                 </div>
             </div>
         </div>
+
+        <!-- Commands Modal -->
+        <div id="commands-modal" class="modal fullscreen-modal" style="display: none;">
+            <div class="modal-content fullscreen-content">
+                <div class="modal-header">
+                    <h3>
+                        <i class="material-icons">terminal</i>
+                        Node Commands
+                    </h3>
+                    <button class="modal-close" onclick="closeCommandsModal()">
+                        <i class="material-icons">close</i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tabs -->
+                    <div class="modal-tabs">
+                        <button class="tab-button active" onclick="switchTab('block-operations')">
+                            <i class="material-icons">block</i>
+                            Block Operations
+                        </button>
+                        <button class="tab-button" onclick="switchTab('database-operations')">
+                            <i class="material-icons">storage</i>
+                            Database Operations
+                        </button>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content">
+                        <!-- Block Operations Tab -->
+                        <div id="block-operations" class="tab-pane active">
+                            <div class="commands-section">
+                                <h4>Block Operations</h4>
+                                
+                                <!-- Rollback Command -->
+                                <div class="command-item">
+                                    <div class="command-header">
+                                        <span class="command-title">Rollback One Block</span>
+                                        <span class="command-description">Rollback the latest block and delete its state</span>
+                                    </div>
+                                    <button id="rollback-btn" class="button danger" onclick="executeRollback()">
+                                        <i class="material-icons">undo</i>
+                                        Execute Rollback
+                                    </button>
+                                    <div id="rollback-logs" class="command-logs" style="display: none;">
+                                        <div class="logs-header">
+                                            <span>Rollback Logs</span>
+                                            <button class="button tertiary small" onclick="clearRollbackLogs()">
+                                                <i class="material-icons">clear</i>
+                                                Clear
+                                            </button>
+                                        </div>
+                                        <div class="logs-content">
+                                            <pre id="rollback-output"></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Database Operations Tab -->
+                        <div id="database-operations" class="tab-pane">
+                            <div class="commands-section">
+                                <h4>Database Operations</h4>
+                                
+                                <!-- Application DB Info Command -->
+                                <div class="command-item">
+                                    <div class="command-header">
+                                        <span class="command-title">Application DB Info</span>
+                                        <span class="command-description">Get information about a specific block height</span>
+                                    </div>
+                                    <div class="command-input-group">
+                                        <label for="block-height">Block Height:</label>
+                                        <input type="number" id="block-height" class="form-control" placeholder="Enter block height">
+                                        <button id="db-info-btn" class="button primary" onclick="executeDbInfo()">
+                                            <i class="material-icons">info</i>
+                                            Get Info
+                                        </button>
+                                    </div>
+                                    <div id="db-info-logs" class="command-logs" style="display: none;">
+                                        <div class="logs-header">
+                                            <span>DB Info Output</span>
+                                            <button class="button tertiary small" onclick="clearDbInfoLogs()">
+                                                <i class="material-icons">clear</i>
+                                                Clear
+                                            </button>
+                                        </div>
+                                        <div class="logs-content">
+                                            <pre id="db-info-output"></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" onclick="closeCommandsModal()">
+                        <i class="material-icons">close</i>
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
         <script>
             let password = window.localStorage.getItem("access-code");
 
@@ -248,11 +351,8 @@
             }
 
             function showMoreOptions() {
-                window.btn_prompt({
-                    callback: async () => {
-                        console.log('btn action')
-                    }
-                });
+                const modal = document.getElementById('commands-modal');
+                modal.style.display = 'flex';
             }
 
             function copyAddress() {
@@ -334,6 +434,137 @@
                 if (confirm(`Are you sure you want to remove this ${type} peer?\n\n${peer}`)) {
                     // TODO: Implement peer removal API call
                     console.log(`Removing ${type} peer:`, peer);
+                }
+            }
+
+            // Modal and Commands Functions
+            function closeCommandsModal() {
+                const modal = document.getElementById('commands-modal');
+                modal.style.display = 'none';
+            }
+
+            async function executeRollback() {
+                if (!confirm('Are you sure you want to rollback one block? This action cannot be undone.')) {
+                    return;
+                }
+
+                const button = document.getElementById('rollback-btn');
+                const logsContainer = document.getElementById('rollback-logs');
+                const output = document.getElementById('rollback-output');
+
+                // Disable button and show logs
+                button.disabled = true;
+                button.innerHTML = '<i class="material-icons">hourglass_empty</i> Executing...';
+                logsContainer.style.display = 'block';
+                output.textContent = 'Executing rollback command...\n';
+
+                try {
+                    const response = await fetch('/execute-rollback', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({})
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            output.textContent += data.output || 'Rollback completed successfully.\n';
+                        } else {
+                            output.textContent += `Error: ${data.error}\n`;
+                        }
+                    } else {
+                        output.textContent += 'Error: Failed to execute rollback command.\n';
+                    }
+                } catch (error) {
+                    console.error('Error executing rollback:', error);
+                    output.textContent += `Error: ${error.message}\n`;
+                } finally {
+                    // Re-enable button
+                    button.disabled = false;
+                    button.innerHTML = '<i class="material-icons">undo</i> Execute Rollback';
+                }
+            }
+
+            async function executeDbInfo() {
+                const blockHeight = document.getElementById('block-height').value;
+                const button = document.getElementById('db-info-btn');
+                const logsContainer = document.getElementById('db-info-logs');
+                const output = document.getElementById('db-info-output');
+
+                // Disable button and show logs
+                button.disabled = true;
+                button.innerHTML = '<i class="material-icons">hourglass_empty</i> Executing...';
+                logsContainer.style.display = 'block';
+                output.textContent = 'Executing DB info command...\n';
+
+                try {
+                    const response = await fetch('/execute-db-info', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            height: blockHeight || 'latest'
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            output.textContent += data.output || 'DB info retrieved successfully.\n';
+                        } else {
+                            output.textContent += `Error: ${data.error}\n`;
+                        }
+                    } else {
+                        output.textContent += 'Error: Failed to execute DB info command.\n';
+                    }
+                } catch (error) {
+                    console.error('Error executing DB info:', error);
+                    output.textContent += `Error: ${error.message}\n`;
+                } finally {
+                    // Re-enable button
+                    button.disabled = false;
+                    button.innerHTML = '<i class="material-icons">info</i> Get Info';
+                }
+            }
+
+            function clearRollbackLogs() {
+                document.getElementById('rollback-output').textContent = '';
+                document.getElementById('rollback-logs').style.display = 'none';
+            }
+
+            function clearDbInfoLogs() {
+                document.getElementById('db-info-output').textContent = '';
+                document.getElementById('db-info-logs').style.display = 'none';
+            }
+
+            function switchTab(tabName) {
+                // Hide all tab panes
+                const tabPanes = document.querySelectorAll('.tab-pane');
+                tabPanes.forEach(pane => {
+                    pane.classList.remove('active');
+                });
+
+                // Remove active class from all tab buttons
+                const tabButtons = document.querySelectorAll('.tab-button');
+                tabButtons.forEach(button => {
+                    button.classList.remove('active');
+                });
+
+                // Show selected tab pane
+                const selectedPane = document.getElementById(tabName);
+                if (selectedPane) {
+                    selectedPane.classList.add('active');
+                }
+
+                // Add active class to clicked button
+                const clickedButton = event.target.closest('.tab-button');
+                if (clickedButton) {
+                    clickedButton.classList.add('active');
                 }
             }
 

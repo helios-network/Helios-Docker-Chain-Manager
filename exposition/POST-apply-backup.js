@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execWrapper } = require('../utils/exec-wrapper');
+const { execWrapperWithRes } = require('../utils/exec-wrapper');
 
 const POSTApplyBackup = (app, environement) => {
     app.post('/apply-backup', async (req, res) => {
@@ -63,9 +63,21 @@ const POSTApplyBackup = (app, environement) => {
                     const timestamp = now.toISOString().slice(0, 19).replace(/:/g, '-').replace('T', '_');
                     const backupFilename = `snapshot_${currentBlockHeight}_${timestamp}.tar.gz`;
                     const backupPath = path.join(backupDir, backupFilename);
+
+                    // copie genesis.json to data directory if exists
+                    if (fs.existsSync(path.join(homeDirectory, 'config', 'genesis.json'))) {
+                        fs.copyFileSync(path.join(homeDirectory, 'config', 'genesis.json'), path.join(homeDirectory, 'data', 'genesis.json'));
+                    } else {
+                        return res.status(500).json({ success: false, error: 'Genesis file not found' });
+                    }
                     
                     // Create tar.gz of current data
-                    await execWrapper(`tar -czf "${backupPath}" -C "${homeDirectory}" data`);
+                    const result = await execWrapperWithRes(`tar -czf "${backupPath}" -C "${homeDirectory}" data`);
+
+                    if (!result.success) {
+                        return res.status(500).json({ success: false, error: 'Failed to create backup: ' + result.stderr });
+                    }
+
                     console.log(`Current data backed up as: ${backupFilename}`);
                 } catch (error) {
                     console.error('Error backing up current data:', error);
@@ -84,7 +96,19 @@ const POSTApplyBackup = (app, environement) => {
             console.log('New data directory created');
             
             // Extract snapshot to data directory
-            await execWrapper(`tar -xzf "${snapshotPath}" -C "${path.join(homeDirectory, 'data')}"`);
+            const result = await execWrapperWithRes(`tar -xzf "${snapshotPath}" -C "${path.join(homeDirectory, 'data')}"`);
+
+            if (!result.success) {
+                return res.status(500).json({ success: false, error: 'Failed to extract snapshot: ' + result.stderr });
+            }
+
+            // move genesis.json to config directory if exists
+            if (fs.existsSync(path.join(homeDirectory, 'data', 'genesis.json'))) {
+                fs.renameSync(path.join(homeDirectory, 'data', 'genesis.json'), path.join(homeDirectory, 'config', 'genesis.json'));
+            } else {
+                return res.status(500).json({ success: false, error: 'Genesis file not found And snapshot erased data directory' });
+            }
+
             console.log('Snapshot extracted successfully');
             
             // Create priv_validator_state.json
