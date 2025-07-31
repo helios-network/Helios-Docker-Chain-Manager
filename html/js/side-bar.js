@@ -67,4 +67,31 @@ const displaySideBar = () => {
     links.forEach((x, i) => {
         navContainer.innerHTML += `<a href="${x.path}" class="${'sidebar-button' + (i > 0 ? ' mt-1': '') + (url.pathname == x.path ? ' selected' : '')}" title="${x.name}">${x.icon}<span>${x.name}</span></a>`;
     });
+
+    // Add theme toggle functionality
+    const themeToggleBtn = sidebarElement.querySelector('#theme-toggle-sidebar');
+    if (themeToggleBtn) {
+        // Set initial icon based on current theme
+        const icon = themeToggleBtn.querySelector('.material-icons');
+        if (icon && window.themeManager) {
+            icon.textContent = window.themeManager.getCurrentTheme() === 'light' ? 'dark_mode' : 'light_mode';
+        }
+        
+        themeToggleBtn.addEventListener('click', () => {
+            if (window.themeManager) {
+                window.themeManager.toggleTheme();
+                // Update the sidebar button icon
+                if (icon) {
+                    icon.textContent = window.themeManager.getCurrentTheme() === 'light' ? 'dark_mode' : 'light_mode';
+                }
+            }
+        });
+        
+        // Listen for theme changes from other sources (like the floating toggle)
+        document.addEventListener('themeChanged', (event) => {
+            if (icon) {
+                icon.textContent = event.detail.theme === 'light' ? 'dark_mode' : 'light_mode';
+            }
+        });
+    }
 }
