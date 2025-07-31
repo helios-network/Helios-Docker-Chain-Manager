@@ -28,16 +28,16 @@ const runMinerNode = async (app, environement) => {
         case "medium":
             pruningArgs = [
                 `--pruning=custom`,
-                `--pruning-keep-recent=100000`,
+                `--pruning-keep-recent=10000`,
                 `--pruning-interval=10`,
-                `--min-retain-blocks=5000`,
+                `--min-retain-blocks=10000`,
                 `--skip-evidence-retention=true`,
             ];
             break;
         case "light":
             pruningArgs = [
                 `--pruning=custom`,
-                `--pruning-keep-recent=10000`,
+                `--pruning-keep-recent=1000`,
                 `--pruning-interval=10`,
                 `--min-retain-blocks=1000`,
                 `--skip-evidence-retention=true`,
