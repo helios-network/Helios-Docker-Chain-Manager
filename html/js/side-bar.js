@@ -8,10 +8,12 @@ const displaySideBar = () => {
 
     sidebarElement.innerHTML = `
             <div class="sidebar-logo">
-                <img src="./logo.png" alt="Logo">
+                <img src="./logo_black.png" alt="Logo">
             </div>
             <div class="sidebar-logo-mobile">
                 <img src="./icon.png" alt="Logo">
+            </div>
+            <div class="sidebar-nav">
             </div>
     `;
 
@@ -60,7 +62,9 @@ const displaySideBar = () => {
 
     const url = new URL(window.location.href);
 
+    const navContainer = sidebarElement.querySelector('.sidebar-nav');
+    
     links.forEach((x, i) => {
-        sidebarElement.innerHTML += `<a href="${x.path}" class="${'sidebar-button' + (i > 0 ? ' mt-1': '') + (url.pathname == x.path ? ' selected' : '')}" title="${x.name}">${x.icon}<span>${x.name}</span></a>`;
+        navContainer.innerHTML += `<a href="${x.path}" class="${'sidebar-button' + (i > 0 ? ' mt-1': '') + (url.pathname == x.path ? ' selected' : '')}" title="${x.name}">${x.icon}<span>${x.name}</span></a>`;
     });
 }

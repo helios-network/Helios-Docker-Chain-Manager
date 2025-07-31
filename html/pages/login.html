@@ -3,42 +3,73 @@
         <title>Helios Node</title>
         <link rel="icon" type="image/png" href="favicon.png">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="style.css">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="theme-color" content="#002DCB">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="default">
     </head>
     <body>
-        <div class="login-container">
-            <div class="logo-container">
-                <img src="./logo.png" alt="Helios Node Logo"/>
+        <div class="login-background">
+            <div class="floating-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+                <div class="shape shape-4"></div>
             </div>
-            <div class="login-box">
-                <h1 class="login-title">Welcome to Helios Node</h1>
-                <p class="login-subtitle">Please set up your access password to continue</p>
-                
-                <form id="login-form" novalidate>
-                    <div class="form-group">
-                        <label class="form-label">Access Password</label>
-                        <input 
-                            id="access-password" 
-                            type="password" 
-                            class="form-control"
-                            placeholder="Enter your password" 
-                            required
-                            minlength="4"
-                        />
-                        <div id="password-feedback" class="invalid-feedback"></div>
+            
+            <div class="login-container">
+                <div class="logo-container">
+                    <div class="logo-wrapper">
+                        <img src="./logo_black.png" alt="Helios Node Logo"/>
+                        <div class="logo-glow"></div>
                     </div>
+                </div>
+                
+                <div class="login-box">
+                    <div class="login-header">
+                        <h1 class="login-title">Welcome to Helios Node</h1>
+                        <p class="login-subtitle">Please set up your access password to continue</p>
+                    </div>
+                    
+                    <form id="login-form" novalidate>
+                        <div class="form-group">
+                            <div class="input-wrapper">
+                                <label class="form-label">
+                                    <span class="material-icons">lock</span>
+                                    Access Password
+                                </label>
+                                <div class="input-container">
+                                    <input 
+                                        id="access-password" 
+                                        type="password" 
+                                        class="form-control"
+                                        placeholder="Enter your password" 
+                                        required
+                                        minlength="4"
+                                    />
+                                    <div class="input-border"></div>
+                                    <div class="input-focus-border"></div>
+                                </div>
+                                <div id="password-feedback" class="invalid-feedback"></div>
+                            </div>
+                        </div>
 
-                    <button 
-                        id="login-btn" 
-                        type="submit"
-                        class="btn w-100" 
-                        onclick="setupPassword()"
-                    >
-                        Create Secure Access
-                    </button>
-                </form>
+                        <button 
+                            id="login-btn" 
+                            type="submit"
+                            class="btn w-100" 
+                            onclick="setupPassword()"
+                        >
+                            <span class="btn-content">
+                                <span class="material-icons">shield</span>
+                                <span class="btn-text">Create Secure Access</span>
+                            </span>
+                            <div class="btn-ripple"></div>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -47,6 +78,17 @@
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 document.getElementById('login-btn').disabled = true;
+                
+                // Add entrance animation
+                document.querySelector('.login-container').style.opacity = '0';
+                document.querySelector('.login-container').style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    document.querySelector('.login-container').style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    document.querySelector('.login-container').style.opacity = '1';
+                    document.querySelector('.login-container').style.transform = 'translateY(0)';
+                }, 100);
+                
                 if (window.localStorage.getItem("access-code") != undefined) {
                     window.location = '/setup';
                 } else {
@@ -63,7 +105,13 @@
                     }
                     if (await hasSetupAccount()) {
                         document.querySelectorAll(".login-title")[0].innerHTML = 'Welcome Back';
-                        document.getElementById("login-btn").innerHTML = 'Login';
+                        document.getElementById("login-btn").innerHTML = `
+                            <span class="btn-content">
+                                <span class="material-icons">login</span>
+                                <span class="btn-text">Login</span>
+                            </span>
+                            <div class="btn-ripple"></div>
+                        `;
                         isWelcomeBack = true;
                     }
                 }
@@ -87,8 +135,11 @@
                 const button = document.getElementById('login-btn');
                 const originalText = button.innerHTML;
                 button.innerHTML = `
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                    Loading...
+                    <span class="btn-content">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span class="btn-text">Loading...</span>
+                    </span>
+                    <div class="btn-ripple"></div>
                 `;
                 button.disabled = true;
 
@@ -117,7 +168,13 @@
                         document.getElementById('access-password').classList.add('is-invalid');
                         document.getElementById('password-feedback').textContent = 'Invalid Password retry in 10 seconds.';
                         document.getElementById('login-btn').disabled = true;
-                        document.getElementById('login-btn').innerHTML = 'Login'; 
+                        document.getElementById('login-btn').innerHTML = `
+                            <span class="btn-content">
+                                <span class="material-icons">login</span>
+                                <span class="btn-text">Login</span>
+                            </span>
+                            <div class="btn-ripple"></div>
+                        `; 
                         document.getElementById('access-password').value = '';
                     }
                     return ;
@@ -157,6 +214,26 @@
                     e.target.classList.add('is-valid');
                     submitButton.disabled = false;
                 }
+            });
+
+            // Add ripple effect to button
+            document.getElementById('login-btn').addEventListener('click', function(e) {
+                const button = e.currentTarget;
+                const ripple = button.querySelector('.btn-ripple');
+                
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.classList.add('ripple-active');
+                
+                setTimeout(() => {
+                    ripple.classList.remove('ripple-active');
+                }, 600);
             });
         </script>
         <script src="js/utils.js"></script>

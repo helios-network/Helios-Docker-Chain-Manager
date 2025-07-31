@@ -9,7 +9,7 @@
     <body>
         <div class="setup-container">
             <div class="logo-container">
-                <img height="50px" src="./logo.png" alt="Logo"/>
+                <img height="50px" src="./logo_black.png" alt="Logo"/>
             </div>
 
             <div class="setup-box" style="display: none">
@@ -60,9 +60,23 @@
                 <div id="step2" class="setup-step">
                     <h1 class="setup-title">Genesis Configuration</h1>
                     <div class="setup-section">
-                        <div class="button-group">
-                            <button id="existingGenesisBtn" onclick="startWith('existingGenesis')" disabled>From Existing Genesis</button>
-                            <button id="newGenesisBtn" onclick="startWith('newGenesis')">New Genesis</button>
+                        <div class="genesis-categories">
+                            <div id="existingGenesisBtn" class="genesis-category disabled" onclick="startWith('existingGenesis')">
+                                <div class="genesis-category-badge">Recommended</div>
+                                <div class="genesis-category-icon">
+                                    <span class="material-icons">download</span>
+                                </div>
+                                <h3 class="genesis-category-title">From Existing Genesis</h3>
+                                <p class="genesis-category-description">Connect to an existing network using a genesis file from an official node. Perfect for joining established networks.</p>
+                            </div>
+                            <div id="newGenesisBtn" class="genesis-category" onclick="startWith('newGenesis')">
+                                <div class="genesis-category-badge">Advanced</div>
+                                <div class="genesis-category-icon">
+                                    <span class="material-icons">add_circle</span>
+                                </div>
+                                <h3 class="genesis-category-title">New Genesis</h3>
+                                <p class="genesis-category-description">Create a completely new blockchain network with your own genesis configuration. For experienced users.</p>
+                            </div>
                         </div>
 
                         <div id="fromExistingGenesisTr" class="input-group-container">
@@ -272,14 +286,9 @@
 
             function startWith(value) {
                 if (value === 'existingGenesis') {
-                    document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
-                    document.getElementById('existingGenesisBtn').style.border = 'none';
-                    document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
-                    document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
-                    document.getElementById('newGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                    document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
-                    document.getElementById('existingGenesisBtn').disabled = true;
-                    document.getElementById('newGenesisBtn').disabled = false;
+                    document.getElementById('existingGenesisBtn').classList.add('selected');
+                    document.getElementById('existingGenesisBtn').classList.remove('disabled');
+                    document.getElementById('newGenesisBtn').classList.remove('selected');
                     document.getElementById('fromExistingGenesisTr').style.display = '';
                     document.getElementById('genesisURL').style.display = '';
                     document.getElementById('nodeIP').style.display = '';
@@ -292,14 +301,9 @@
                     document.getElementById('genesisURL').disabled = true;
                     fromGenesisType = value;
                 } else {
-                    document.getElementById('newGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
-                    document.getElementById('newGenesisBtn').style.border = 'none';
-                    document.getElementById('newGenesisBtn').style.color = '#FFFFFF';
-                    document.getElementById('existingGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
-                    document.getElementById('existingGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                    document.getElementById('existingGenesisBtn').style.color = '#A3A7AB';
-                    document.getElementById('existingGenesisBtn').disabled = false;
-                    document.getElementById('newGenesisBtn').disabled = true;
+                    document.getElementById('newGenesisBtn').classList.add('selected');
+                    document.getElementById('existingGenesisBtn').classList.remove('selected');
+                    document.getElementById('existingGenesisBtn').classList.add('disabled');
                     document.getElementById('fromExistingGenesisTr').style.display = '';
                     document.getElementById('genesisURL').style.display = 'none';
                     ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
@@ -604,14 +608,9 @@
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
-                document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #012dcb, #012dcb)';
-                document.getElementById('existingGenesisBtn').style.border = 'none';
-                document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
-                document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
-                document.getElementById('newGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
-                document.getElementById('existingGenesisBtn').disabled = true;
-                document.getElementById('newGenesisBtn').disabled = false;
+                document.getElementById('existingGenesisBtn').classList.add('selected');
+                document.getElementById('existingGenesisBtn').classList.remove('disabled');
+                document.getElementById('newGenesisBtn').classList.remove('selected');
                 
                 document.querySelectorAll('.step-dot')[0].classList.add('active');
                 document.querySelectorAll('.step-label')[0].classList.add('active');
