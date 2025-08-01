@@ -95,18 +95,45 @@ const POSTApplyBackup = (app, environement) => {
             fs.mkdirSync(dataDir, { recursive: true });
             console.log('New data directory created');
             
-            // Extract snapshot to data directory
-            const result = await execWrapperWithRes(`tar -xzf "${snapshotPath}" -C "${path.join(homeDirectory, 'data')}"`);
+            // Extract snapshot to home directory (comprehensive backup)
+            const result = await execWrapperWithRes(`tar -xzf "${snapshotPath}" -C "${homeDirectory}"`);
 
             if (!result.success) {
                 return res.status(500).json({ success: false, error: 'Failed to extract snapshot: ' + result.stderr });
             }
 
-            // move genesis.json to config directory if exists
-            if (fs.existsSync(path.join(homeDirectory, 'data', 'genesis.json'))) {
-                fs.renameSync(path.join(homeDirectory, 'data', 'genesis.json'), path.join(homeDirectory, 'config', 'genesis.json'));
-            } else {
-                return res.status(500).json({ success: false, error: 'Genesis file not found And snapshot erased data directory' });
+            console.log('Comprehensive backup extracted successfully');
+            
+            // Handle persistent_peers.json if it exists in config directory
+            const persistentPeersPath = path.join(homeDirectory, 'config', 'persistent_peers.json');
+            if (fs.existsSync(persistentPeersPath)) {
+                try {
+                    const persistentPeersData = JSON.parse(fs.readFileSync(persistentPeersPath, 'utf8'));
+                    const configTomlPath = path.join(homeDirectory, 'config', 'config.toml');
+                    
+                    if (fs.existsSync(configTomlPath)) {
+                        // Use the node function to restore persistent peers
+                        if (app.node && app.node.restorePersistentPeersFromBackup) {
+                            await app.node.restorePersistentPeersFromBackup(persistentPeersData);
+                        } else {
+                            // Fallback to direct file manipulation
+                            const configData = fs.readFileSync(configTomlPath, 'utf8');
+                            const peersString = persistentPeersData.join(',');
+                            const newConfigData = configData.replace(
+                                new RegExp(`persistent_peers \= "(.*)"`, 'gm'), 
+                                `persistent_peers = "${peersString}"`
+                            );
+                            fs.writeFileSync(configTomlPath, newConfigData);
+                            console.log('persistent_peers restored to config.toml (fallback)');
+                        }
+                        console.log('persistent_peers restored to config.toml');
+                    }
+                    
+                    // Clean up temporary persistent_peers.json
+                    fs.unlinkSync(persistentPeersPath);
+                } catch (error) {
+                    console.error('Error restoring persistent_peers:', error);
+                }
             }
 
             console.log('Snapshot extracted successfully');

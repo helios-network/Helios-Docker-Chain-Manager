@@ -55,20 +55,74 @@ const POSTCreateBackup = (app, environement) => {
                 return res.status(500).json({ success: false, error: 'Genesis file not found' });
             }
 
-            // Check if required files exist
-            const requiredFiles = ['application.db', 'state.db', 'blockstore.db', 'genesis.json'];
-            const missingFiles = requiredFiles.filter(file => !fs.existsSync(path.join(dataDir, file)));
+            // Check if required data files exist
+            const requiredDataFiles = ['application.db', 'state.db', 'blockstore.db'];
+            const missingDataFiles = requiredDataFiles.filter(file => !fs.existsSync(path.join(dataDir, file)));
             
-            if (missingFiles.length > 0) {
+            if (missingDataFiles.length > 0) {
                 return res.status(400).json({ 
                     success: false, 
-                    error: `Missing required files: ${missingFiles.join(', ')}` 
+                    error: `Missing required data files: ${missingDataFiles.join(', ')}` 
                 });
             }
             
-            // Create tar.gz of specific files
-            const filesToBackup = requiredFiles.join(' ');
-            await execWrapper(`tar -czf "${backupPath}" -C "${dataDir}" ${filesToBackup}`);
+            // Create a comprehensive backup including all configuration files
+            // We'll create the backup from the home directory to include both data and config
+            
+            // Create persistent_peers.json from config.toml for backup
+            const configTomlPath = path.join(homeDirectory, 'config', 'config.toml');
+            const persistentPeersPath = path.join(homeDirectory, 'config', 'persistent_peers.json');
+            if (fs.existsSync(configTomlPath)) {
+                const configData = fs.readFileSync(configTomlPath, 'utf8');
+                const match = (new RegExp(`persistent_peers \= "(.*)"`, 'gm')).exec(configData);
+                let persistentPeers = [];
+                if (match && match[1]) {
+                    persistentPeers = match[1].split(',').map(x => x.trim()).filter(x => x.length > 0);
+                }
+                fs.writeFileSync(persistentPeersPath, JSON.stringify(persistentPeers, null, 2));
+                console.log('persistent_peers.json created from config.toml');
+            }
+            
+            // Create comprehensive backup including data and config files
+            const backupFiles = [
+                'data/application.db',
+                'data/state.db', 
+                'data/blockstore.db',
+                'data/metadata.json',
+                'config/genesis.json',
+                'config/addrbook.json',
+                'config/persistent_peers.json'
+            ];
+            
+            // Check which files exist and create the backup
+            const existingFiles = [];
+            const missingFiles = [];
+            
+            for (const file of backupFiles) {
+                const filePath = path.join(homeDirectory, file);
+                if (fs.existsSync(filePath)) {
+                    existingFiles.push(file);
+                } else {
+                    missingFiles.push(file);
+                }
+            }
+            
+            if (existingFiles.length === 0) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: 'No files found to backup' 
+                });
+            }
+            
+            // Create tar.gz from home directory including all files
+            const filesToBackup = existingFiles.join(' ');
+            await execWrapper(`tar -czf "${backupPath}" -C "${homeDirectory}" ${filesToBackup}`);
+            
+            // Clean up temporary persistent_peers.json
+            if (fs.existsSync(persistentPeersPath)) {
+                fs.unlinkSync(persistentPeersPath);
+                console.log('persistent_peers.json cleaned up');
+            }
             
 
             // remove genesis.json from data directory

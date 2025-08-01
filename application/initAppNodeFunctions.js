@@ -132,6 +132,20 @@ const initAppNodeFunctions = async (app, environement) => {
         fs.writeFileSync(path.join(homeDirectory, 'config/config.toml'), newData);
     }
 
+    app.node.restorePersistentPeersFromBackup = async (persistentPeersData) => {
+        try {
+            if (Array.isArray(persistentPeersData) && persistentPeersData.length > 0) {
+                await app.node.setPersistentPeers(persistentPeersData);
+                console.log(`Restored ${persistentPeersData.length} persistent peers from backup`);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error restoring persistent peers from backup:', error);
+            return false;
+        }
+    }
+
     app.node.addPeer = async (peerAddress) => {
         if (!peerAddress.match(/^[a-zA-Z0-9]+@[a-zA-Z0-9.]+:[0-9]+$/)) {
             return false;

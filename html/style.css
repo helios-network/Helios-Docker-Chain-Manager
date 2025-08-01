@@ -5512,11 +5512,14 @@ button:disabled {
 .modal-footer {
     display: flex;
     justify-content: flex-end;
-    gap: 1rem;
+    align-items: center;
+    gap: 0.5rem;
     padding: 1.5rem;
     border-top: 1px solid rgba(0, 45, 203, 0.10);
     background: rgba(255, 255, 255, 0.02);
     border-radius: 0 0 16px 16px;
+    flex-wrap: nowrap;
+    overflow: hidden;
 }
 
 .modal-footer .button {
@@ -5538,26 +5541,17 @@ button:disabled {
 .modal-footer .button.primary {
     background: var(--bg-button-primary);
     color: var(--text-inverse);
+    border: 1px solid var(--bg-button-primary);
 }
 
 .modal-footer .button.primary:hover {
     background: var(--bg-button-primary);
+    color: var(--text-inverse);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(1, 45, 203, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 45, 203, 0.3);
 }
 
-.modal-footer .button.secondary {
-    background: var(--bg-button-secondary);
-    color: var(--text-secondary) !important;
-    border: 1px solid var(--border-primary);
-    box-shadow: 0 1px 4px rgba(0, 45, 203, 0.05);
-}
-
-.modal-footer .button.secondary:hover {
-    background: var(--bg-button-secondary-hover);
-    color: var(--accent-primary) !important;
-    border: 1px solid var(--accent-primary);
-}
+/* Styles dupliqués supprimés - voir plus haut dans le fichier */
 
 /* Responsive Modal */
 @media (max-width: 600px) {
@@ -5565,6 +5559,7 @@ button:disabled {
         width: 95%;
         max-width: none;
         margin: 1rem;
+        max-height: 95vh;
     }
     
     .modal-header,
@@ -5574,12 +5569,28 @@ button:disabled {
     }
     
     .modal-footer {
-        flex-direction: column;
+        flex-direction: row;
+        gap: 0.5rem;
+        flex-wrap: nowrap;
+        overflow: hidden;
+        padding: 1rem;
     }
     
     .modal-footer .button {
-        width: 100%;
-        justify-content: center;
+        flex: 1;
+        min-width: auto;
+        white-space: nowrap;
+        min-height: 44px;
+        max-width: 120px;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.8rem;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+    
+    .modal-footer .button .material-icons {
+        font-size: 0.8rem;
+        margin-right: 0.2rem;
     }
     
     .b2-config-section {
@@ -5593,6 +5604,49 @@ button:disabled {
     .b2-config-description {
         font-size: 0.85rem;
     }
+    
+    /* Ensure footer stays visible on mobile */
+    #b2-config-modal .modal-footer,
+    #b2-upload-success-modal .modal-footer,
+    #b2-test-success-modal .modal-footer,
+    #b2-upload-progress-modal .modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: var(--bg-card);
+        border-top: 1px solid rgba(0, 45, 203, 0.10);
+        z-index: 10;
+        padding: 1rem;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        overflow: hidden;
+    }
+    
+    /* Mobile styles for upload progress */
+    .upload-progress-container {
+        margin-bottom: 1rem;
+    }
+    
+    .progress-bar-container {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .progress-percentage {
+        text-align: center;
+        min-width: auto;
+    }
+    
+    .upload-progress-info {
+        padding: 0.75rem;
+    }
+    
+    .upload-progress-info h4 {
+        font-size: 1rem;
+    }
+    
+    .upload-progress-info p {
+        font-size: 0.85rem;
+    }
 }
 
 /* B2 Configuration Styles for Backups Page */
@@ -5601,6 +5655,92 @@ button:disabled {
     font-size: 0.9rem;
     line-height: 1.5;
     margin-bottom: 1.25rem;
+}
+
+/* B2 Upload Progress Styles */
+.upload-progress-info {
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.upload-progress-info h4 {
+    color: #3498db;
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.upload-progress-info p {
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.upload-progress-container {
+    margin-bottom: 1.5rem;
+}
+
+.progress-status {
+    color: var(--text-primary);
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 12px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2980b9);
+    border-radius: 6px;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+.progress-percentage {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    min-width: 40px;
+    text-align: right;
+}
+
+.upload-info {
+    background: rgba(52, 152, 219, 0.05);
+    border-radius: 6px;
+    padding: 0.75rem;
+    border-left: 3px solid #3498db;
+}
+
+.upload-info p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* Error state for progress */
+.progress-fill.error {
+    background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+.progress-status.error {
+    color: #e74c3c;
 }
 
 /* Enhanced Modal Styles for B2 */
@@ -5777,29 +5917,7 @@ button:disabled {
     justify-content: center;
 }
 
-.modal-footer .button.primary {
-    background: var(--bg-button-primary);
-    color: var(--text-inverse);
-}
-
-.modal-footer .button.primary:hover {
-    background: var(--bg-button-primary);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(1, 45, 203, 0.3);
-}
-
-.modal-footer .button.secondary {
-    background: var(--bg-button-secondary);
-    color: var(--text-secondary) !important;
-    border: 1px solid var(--border-primary);
-    box-shadow: 0 1px 4px rgba(0, 45, 203, 0.05);
-}
-
-.modal-footer .button.secondary:hover {
-    background: var(--bg-button-secondary-hover);
-    color: var(--accent-primary) !important;
-    border: 1px solid var(--accent-primary);
-}
+/* Styles dupliqués supprimés - voir plus haut dans le fichier */
 
 /* Responsive Modal */
 @media (max-width: 600px) {
@@ -5825,16 +5943,120 @@ button:disabled {
     }
 }
 
-/* B2 Modal Danger Button */
+/* B2 Modal Layout - Fixed Footer */
+#b2-config-modal .modal-content,
+#b2-upload-success-modal .modal-content,
+#b2-test-success-modal .modal-content {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+}
+
+#b2-config-modal .modal-body,
+#b2-upload-success-modal .modal-body,
+#b2-test-success-modal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+    padding: 1.5rem;
+}
+
+#b2-config-modal .modal-footer,
+#b2-upload-success-modal .modal-footer,
+#b2-test-success-modal .modal-footer {
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background: var(--bg-card);
+    border-top: 1px solid rgba(0, 45, 203, 0.10);
+    z-index: 10;
+}
+
+/* B2 Modal Button Styles - Fixed */
+.modal-footer .button {
+    position: relative;
+    overflow: hidden;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0.75rem 0.75rem;
+    min-width: auto;
+    white-space: nowrap;
+    flex: 1;
+    max-width: 150px;
+    font-size: 0.85rem;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.modal-footer .button.primary {
+    background: var(--bg-button-primary);
+    color: var(--text-inverse);
+    border: 1px solid var(--bg-button-primary);
+    box-shadow: 0 2px 4px rgba(0, 45, 203, 0.1);
+}
+
+.modal-footer .button.primary:hover {
+    background: var(--bg-button-primary);
+    color: var(--text-inverse);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 45, 203, 0.25);
+}
+
+.modal-footer .button.secondary {
+    background: var(--bg-button-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.modal-footer .button.secondary:hover {
+    background: var(--bg-button-secondary-hover);
+    color: var(--accent-primary);
+    border: 1px solid var(--accent-primary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 45, 203, 0.15);
+}
+
 .modal-footer .button.danger {
     background: var(--accent-error);
     color: var(--text-inverse);
+    border: 1px solid var(--accent-error);
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
 }
 
 .modal-footer .button.danger:hover {
     background: var(--accent-error);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(130, 141, 179, 0.3);
+    color: var(--text-inverse);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
+}
+
+.modal-footer .button:active {
+    transform: translateY(0);
+    transition: transform 0.1s ease;
+}
+
+.modal-footer .button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.modal-footer .button .material-icons {
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    margin-right: 0.25rem;
+}
+
+.modal-footer .button:hover .material-icons {
+    transform: scale(1.1);
 }
 
 /* B2 Upload Success Modal Styles */
