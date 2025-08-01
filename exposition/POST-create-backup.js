@@ -48,8 +48,15 @@ const POSTCreateBackup = (app, environement) => {
             const backupFilename = `snapshot_${currentBlockHeight}_${timestamp}.tar.gz`;
             const backupPath = path.join(backupDir, backupFilename);
             
+            // copie genesis.json to data directory if exists
+            if (fs.existsSync(path.join(homeDirectory, 'config', 'genesis.json'))) {
+                fs.copyFileSync(path.join(homeDirectory, 'config', 'genesis.json'), path.join(homeDirectory, 'data', 'genesis.json'));
+            } else {
+                return res.status(500).json({ success: false, error: 'Genesis file not found' });
+            }
+
             // Check if required files exist
-            const requiredFiles = ['application.db', 'state.db', 'blockstore.db'];
+            const requiredFiles = ['application.db', 'state.db', 'blockstore.db', 'genesis.json'];
             const missingFiles = requiredFiles.filter(file => !fs.existsSync(path.join(dataDir, file)));
             
             if (missingFiles.length > 0) {
@@ -63,6 +70,12 @@ const POSTCreateBackup = (app, environement) => {
             const filesToBackup = requiredFiles.join(' ');
             await execWrapper(`tar -czf "${backupPath}" -C "${dataDir}" ${filesToBackup}`);
             
+
+            // remove genesis.json from data directory
+            if (fs.existsSync(path.join(dataDir, 'genesis.json'))) {
+                fs.unlinkSync(path.join(dataDir, 'genesis.json'));
+            }
+
             // Get file size
             const stats = fs.statSync(backupPath);
             
