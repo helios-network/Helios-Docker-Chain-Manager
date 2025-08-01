@@ -6431,3 +6431,37 @@ button.btn {
     }
 }
 
+/* Backup Info Grid for B2 Link Modal */
+.backup-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.backup-info-grid .info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.backup-info-grid .info-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.backup-info-grid .info-value {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    word-break: break-word;
+}
+
+@media (max-width: 600px) {
+    .backup-info-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+}
+

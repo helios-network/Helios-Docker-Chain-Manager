@@ -36,6 +36,10 @@
                                     <span class="material-icons">cloud_upload</span>
                                     Configure B2
                                 </button>
+                                <button id="create-backup-from-b2" class="button secondary" onclick="showCreateBackupFromB2Modal()">
+                                    <span class="material-icons">cloud_download</span>
+                                    From B2 Link
+                                </button>
                             </div>
                         </div>
                         <div class="section-content">
@@ -113,7 +117,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="button secondary" onclick="hideApplyBackupModal()">Cancel</button>
                     <button class="button danger" onclick="applyBackup()">
                         <span class="material-icons">restore</span>
                         Apply Backup
@@ -164,7 +167,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="button secondary" onclick="hideCreateBackupModal()">Cancel</button>
                     <button id="confirm-create-backup" class="button primary" onclick="confirmCreateBackup()" style="display: none;">
                         <span class="material-icons">backup</span>
                         Create Backup
@@ -198,7 +200,6 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="button secondary" onclick="hideDeleteBackupModal()">Cancel</button>
                     <button class="button danger" onclick="confirmDeleteBackup()">
                         <span class="material-icons">delete</span>
                         Delete Backup
@@ -265,40 +266,34 @@
                 <div class="modal-header">
                     <h3>
                         <span class="material-icons" style="color: #2ECC71;">check_circle</span>
-                        Upload Successful
+                        B2 Backup
                     </h3>
                     <button class="modal-close" onclick="closeB2UploadSuccessModal()">
                         <span class="material-icons">close</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="upload-success-info">
-                        <h4>Backup uploaded to Backblaze B2 successfully!</h4>
-                        <p><strong>Backup:</strong> <span id="b2-upload-filename"></span></p>
-                        <p><strong>Block Height:</strong> <span id="b2-upload-block-height"></span></p>
-                    </div>
-                    
-                                                <div class="b2-links-section">
-                                <h4>Download Links:</h4>
-                                <div class="b2-link-item">
-                                    <label>Backup File:</label>
-                                    <div class="link-container">
-                                        <input type="text" value="${files?.backup?.url || 'URL not available'}" readonly class="form-control" id="backup-link">
-                                        <button class="button tertiary small" onclick="copyToClipboard('backup-link')" title="Copy Link">
-                                            <span class="material-icons">content_copy</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="b2-link-item">
-                                    <label>Header File:</label>
-                                    <div class="link-container">
-                                        <input type="text" value="${files?.header?.url || 'URL not available'}" readonly class="form-control" id="header-link">
-                                        <button class="button tertiary small" onclick="copyToClipboard('header-link')" title="Copy Link">
-                                            <span class="material-icons">content_copy</span>
-                                        </button>
-                                    </div>
-                                </div>
+                    <div class="b2-links-section">
+                        <h4>Download Links:</h4>
+                        <div class="b2-link-item">
+                            <label>Backup File:</label>
+                            <div class="link-container">
+                                <input type="text" value="${files?.backup?.url || 'URL not available'}" readonly class="form-control" id="backup-link">
+                                <button class="button tertiary small" onclick="copyToClipboard('backup-link')" title="Copy Link">
+                                    <span class="material-icons">content_copy</span>
+                                </button>
                             </div>
+                        </div>
+                        <div class="b2-link-item">
+                            <label>Header File:</label>
+                            <div class="link-container">
+                                <input type="text" value="${files?.header?.url || 'URL not available'}" readonly class="form-control" id="header-link">
+                                <button class="button tertiary small" onclick="copyToClipboard('header-link')" title="Copy Link">
+                                    <span class="material-icons">content_copy</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="upload-stats">
                         <h4>Upload Statistics:</h4>
@@ -322,6 +317,67 @@
                     <button class="button primary" onclick="openB2Links()">
                         <span class="material-icons">open_in_new</span>
                         Open in B2
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Backup from B2 Link Modal -->
+        <div id="create-backup-from-b2-modal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>
+                        <span class="material-icons">cloud_download</span>
+                        Create Backup from B2 Link
+                    </h3>
+                    <button class="modal-close" onclick="hideCreateBackupFromB2Modal()">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="info-message">
+                        <p>This will download a backup from a Backblaze B2 header file link and create a local backup.</p>
+                        <p>The header file should contain information about the backup file to download.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="b2-header-url">B2 Header File URL:</label>
+                        <input type="url" id="b2-header-url" class="form-control" 
+                               placeholder="https://f003.backblazeb2.com/file/helios-testnet-snapshots/backups/snapshot_89_2025-08-01_00-51-03.tar.gz.b2header.json"
+                               value="">
+                        <small class="form-help">Enter the URL of the B2 header file (.b2header.json)</small>
+                    </div>
+                    
+                    <div class="backup-preview" id="b2-backup-preview" style="display: none;">
+                        <h4>Backup Information:</h4>
+                        <div class="backup-info-grid">
+                            <div class="info-item">
+                                <span class="info-label">Filename:</span>
+                                <span class="info-value" id="b2-preview-filename"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Block ID:</span>
+                                <span class="info-value" id="b2-preview-block-id"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Upload Date:</span>
+                                <span class="info-value" id="b2-preview-upload-date"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Description:</span>
+                                <span class="info-value" id="b2-preview-description"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="button secondary" onclick="previewB2Backup()" id="preview-b2-backup-btn">
+                        <span class="material-icons">preview</span>
+                        Preview
+                    </button>
+                    <button class="button primary" onclick="createBackupFromB2()" id="create-b2-backup-btn" disabled>
+                        <span class="material-icons">cloud_download</span>
+                        Download & Create Backup
                     </button>
                 </div>
             </div>
@@ -1092,10 +1148,6 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="button secondary" onclick="closeB2FileExistsModal()">
-                                <span class="material-icons">close</span>
-                                Cancel
-                            </button>
                             <button class="button primary" onclick="proceedWithB2Upload('${filename}', ${blockId}, '${formattedDateTime}')">
                                 <span class="material-icons">cloud_upload</span>
                                 Replace & Upload
@@ -1362,19 +1414,13 @@
                         <div class="modal-header">
                             <h3>
                                 <span class="material-icons" style="color: #2ECC71;">check_circle</span>
-                                Upload Successful
+                                B2 Backup
                             </h3>
                             <button class="modal-close" onclick="closeB2UploadSuccessModal()">
                                 <span class="material-icons">close</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <div class="upload-success-info">
-                                <h4>Backup uploaded to Backblaze B2 successfully!</h4>
-                                <p><strong>Backup:</strong> ${filename}</p>
-                                <p><strong>Block Height:</strong> ${blockId.toLocaleString()}</p>
-                            </div>
-                            
                             <div class="b2-links-section">
                                 <h4>Download Links:</h4>
                                 <div class="b2-link-item">
@@ -1530,6 +1576,142 @@
                 // Ouvrir les liens dans de nouveaux onglets
                 window.open(backupLink, '_blank');
                 window.open(headerLink, '_blank');
+            }
+
+            // Create Backup from B2 Link functions
+            function showCreateBackupFromB2Modal() {
+                const modal = document.getElementById('create-backup-from-b2-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    
+                    // Reset form
+                    document.getElementById('b2-header-url').value = '';
+                    document.getElementById('b2-backup-preview').style.display = 'none';
+                    document.getElementById('create-b2-backup-btn').disabled = true;
+                    
+                    // Add event listeners
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            hideCreateBackupFromB2Modal();
+                        }
+                    });
+                    
+                    document.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape' && modal.style.display === 'flex') {
+                            hideCreateBackupFromB2Modal();
+                        }
+                    });
+                }
+            }
+
+            function hideCreateBackupFromB2Modal() {
+                const modal = document.getElementById('create-backup-from-b2-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+            }
+
+            async function previewB2Backup() {
+                const headerUrl = document.getElementById('b2-header-url').value.trim();
+                
+                if (!headerUrl) {
+                    showNotification('error', 'Error', 'Please enter a B2 header file URL');
+                    return;
+                }
+                
+                if (!headerUrl.endsWith('.b2header.json')) {
+                    showNotification('error', 'Error', 'URL must end with .b2header.json');
+                    return;
+                }
+                
+                try {
+                    showNotification('info', 'Loading', 'Fetching backup information...');
+                    
+                    const response = await fetch('/fetch-b2-backup-info', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Code': password
+                        },
+                        body: JSON.stringify({
+                            headerUrl: headerUrl
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        if (data.success && data.backup) {
+                            // Update preview with backup information
+                            document.getElementById('b2-preview-filename').textContent = data.backup.filename || 'Unknown';
+                            document.getElementById('b2-preview-block-id').textContent = data.backup.blockId || 'Unknown';
+                            document.getElementById('b2-preview-upload-date').textContent = data.backup.uploadedAt ? new Date(data.backup.uploadedAt).toLocaleString() : 'Unknown';
+                            document.getElementById('b2-preview-description').textContent = data.backup.description || 'No description';
+                            
+                            // Show preview and enable download button
+                            document.getElementById('b2-backup-preview').style.display = 'block';
+                            document.getElementById('create-b2-backup-btn').disabled = false;
+                            
+                            showNotification('success', 'Success', 'Backup information loaded successfully');
+                        } else {
+                            showNotification('error', 'Error', data.error || 'Failed to fetch backup information');
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to fetch backup information');
+                    }
+                } catch (error) {
+                    console.error('Error previewing B2 backup:', error);
+                    showNotification('error', 'Error', 'Failed to preview backup');
+                }
+            }
+
+            async function createBackupFromB2() {
+                const headerUrl = document.getElementById('b2-header-url').value.trim();
+                
+                if (!headerUrl) {
+                    showNotification('error', 'Error', 'Please enter a B2 header file URL');
+                    return;
+                }
+                
+                try {
+                    showNotification('info', 'Loading', 'Downloading and creating backup...');
+                    
+                    // Disable buttons during download
+                    document.getElementById('preview-b2-backup-btn').disabled = true;
+                    document.getElementById('create-b2-backup-btn').disabled = true;
+                    
+                    const response = await fetch('/create-backup-from-b2', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Code': password
+                        },
+                        body: JSON.stringify({
+                            headerUrl: headerUrl
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            showNotification('success', 'Success', 'Backup created successfully from B2 link');
+                            hideCreateBackupFromB2Modal();
+                            await loadBackups(); // Refresh the backups list
+                        } else {
+                            showNotification('error', 'Error', data.error || 'Failed to create backup');
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Failed to create backup');
+                    }
+                } catch (error) {
+                    console.error('Error creating backup from B2:', error);
+                    showNotification('error', 'Error', 'Failed to create backup');
+                } finally {
+                    // Re-enable buttons
+                    document.getElementById('preview-b2-backup-btn').disabled = false;
+                    document.getElementById('create-b2-backup-btn').disabled = false;
+                }
             }
 
             // Main initialization
