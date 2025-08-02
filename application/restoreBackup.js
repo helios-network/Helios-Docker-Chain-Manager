@@ -6,7 +6,7 @@ const restoreBackup = async (app, filename, backupCurrentData = false) => {
     try {
         const homeDirectory = await app.actions.getHomeDirectory.use();
         
-        if (!filename || !filename.match(/^snapshot_\d+_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.tar\.gz$/)) {
+        if (!filename || !filename.match(/^(snapshot_\d+_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}|backup-\d+)\.tar\.gz$/)) {
             throw new Error('Invalid filename format');
         }
         
@@ -50,7 +50,7 @@ const restoreBackup = async (app, filename, backupCurrentData = false) => {
             }
         }
         
-        const result = await execWrapper(`cd "${backupDir}" && heliades backups restore "${filename}" --home "${homeDirectory}"`);
+        const result = await execWrapper(`heliades backups restore "${filename}" --home "${homeDirectory}"`);
 
         return {
             success: true,

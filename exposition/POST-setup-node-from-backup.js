@@ -1,23 +1,14 @@
 const fs = require('fs');
 const { execWrapper } = require('../utils/exec-wrapper');
-const keyth = require('keythereum');
 const { fileGetContent } = require('../utils/file-get-content');
 const path = require('path');
-const os = require('os');
-const { setupNode } = require('../application/setup-node');
+const { setupNodeFromBackup } = require('../application/setupNodeFromBackup');
 
 const unrot13 = str => str.split('')
     .map(char => String.fromCharCode(char.charCodeAt(0) - 13))
     .join('');
 
-const decrypt2 = async (json, password) => {
-    const keyobj = JSON.parse(json);
-    const privateKey = keyth.recover(password,keyobj);
-    console.log(privateKey.toString('hex'));
-    return privateKey.toString('hex');
-}
-
-const setupNodeFromBackup = (app, environement) => {
+const setupNodeFromBackupEndpoint = (app, environment) => {
     app.post('/setup-node-from-backup', async (req, res) => {
         try {
             const keyStoreNode = req.body['keyStoreNode'];
@@ -29,18 +20,13 @@ const setupNodeFromBackup = (app, environement) => {
 
             const homeDirectory = await app.actions.getHomeDirectory.use();
             
-            // Create backup directory
-            const backupDir = path.join(homeDirectory, 'backup-temp');
-            if (fs.existsSync(backupDir)) {
-                await execWrapper(`rm -rf ${backupDir}`);
+            const tempDir = path.join(homeDirectory, 'backup-temp');
+            if (fs.existsSync(tempDir)) {
+                await execWrapper(`rm -rf ${tempDir}`);
             }
-            fs.mkdirSync(backupDir, { recursive: true });
+            fs.mkdirSync(tempDir, { recursive: true });
 
             try {
-                // Download and extract the backup
-                console.log('Downloading backup from:', headerUrl);
-                
-                // Download the header file first
                 const headerContent = await fileGetContent(headerUrl);
                 const headerData = JSON.parse(headerContent.toString());
                 
@@ -48,65 +34,37 @@ const setupNodeFromBackup = (app, environement) => {
                     throw new Error('Invalid backup header file - missing downloadUrl');
                 }
 
-                // Download the actual backup file
                 const backupFileName = `backup-${Date.now()}.tar.gz`;
-                const backupFilePath = path.join(backupDir, backupFileName);
-                
-                console.log('Downloading backup file from:', headerData.downloadUrl);
+                const backupFilePath = path.join(tempDir, backupFileName);
+
                 await execWrapper(`curl -L -o "${backupFilePath}" "${headerData.downloadUrl}"`);
                 
-                // Extract the backup
-                console.log('Extracting backup...');
-                await execWrapper(`cd "${backupDir}" && tar -xzf "${backupFileName}"`);
-                
-                // Check what was extracted
-                const extractedItems = fs.readdirSync(backupDir);
-                console.log('Extracted items:', extractedItems);
-                
-                // Find the extracted backup directory or use backupDir directly
-                let extractedBackupPath;
-                const extractedDirs = extractedItems.filter(item => {
-                    const itemPath = path.join(backupDir, item);
-                    return fs.statSync(itemPath).isDirectory() && item !== '__MACOSX';
-                });
-                
-                // Always use backupDir as the backup path since the structure is:
-                // backup-temp/
-                // ├── backup-*.tar.gz (original file)
-                // ├── config/ (config files)
-                // └── data/ (data files)
-                extractedBackupPath = backupDir;
-                console.log('Backup extracted to:', extractedBackupPath);
-                console.log('Using backup path:', extractedBackupPath);
+                if (!fs.existsSync(backupFilePath)) {
+                    throw new Error('Failed to download backup file');
+                }
 
-                // Setup node from backup using the new setupNode function
-                const success = await setupNode(
+                const success = await setupNodeFromBackup(
                     app, 
                     keyStoreNode, 
                     unrot13(atob(passwordCrypted)), 
                     moniker, 
                     chainId, 
-                    undefined, // genesisURL not needed for backup
-                    {}, // peerInfos not needed for backup
                     mode, 
-                    true, // fromBackup = true
-                    extractedBackupPath // backupPath
+                    backupFilePath
                 );
 
                 if (!success) {
                     throw new Error('Failed to setup node from backup');
                 }
 
-                // Clean up backup files
-                await execWrapper(`rm -rf ${backupDir}`);
+                await execWrapper(`rm -rf ${tempDir}`);
                 
                 app.node.setup = true;
                 res.send({ status: 'ready', success: true });
 
             } catch (error) {
-                // Clean up on error
-                if (fs.existsSync(backupDir)) {
-                    await execWrapper(`rm -rf ${backupDir}`);
+                if (fs.existsSync(tempDir)) {
+                    await execWrapper(`rm -rf ${tempDir}`);
                 }
                 throw error;
             }
@@ -119,5 +77,5 @@ const setupNodeFromBackup = (app, environement) => {
 };
 
 module.exports = {
-    setupNodeFromBackup
+    setupNodeFromBackup: setupNodeFromBackupEndpoint
 }; 
