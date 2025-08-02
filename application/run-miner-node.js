@@ -32,6 +32,7 @@ const runMinerNode = async (app, environement) => {
                 `--pruning-interval=10`,
                 `--min-retain-blocks=10000`,
                 `--skip-evidence-retention=true`,
+                `--archive-mode=false`,
             ];
             break;
         case "light":
@@ -41,6 +42,7 @@ const runMinerNode = async (app, environement) => {
                 `--pruning-interval=10`,
                 `--min-retain-blocks=1000`,
                 `--skip-evidence-retention=true`,
+                `--archive-mode=false`,
             ];
             break;
         case "very-light":
@@ -50,11 +52,16 @@ const runMinerNode = async (app, environement) => {
                 `--pruning-interval=10`,
                 `--min-retain-blocks=10`,
                 `--skip-evidence-retention=true`,
+                `--archive-mode=false`,
             ];
             break;
         default: // archive
             pruningArgs = [
-                `--pruning=nothing`,
+                `--pruning=custom`,
+                `--pruning-keep-recent=172800`, // 1 month
+                `--pruning-interval=10`,
+                `--min-retain-blocks=10`,
+                `--archive-mode=true`
             ];
     }
 
