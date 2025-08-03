@@ -16,9 +16,7 @@ const setupNodeFromBackup = async (app, keyStoreNode, walletPassword, moniker, c
             chainId, 
             undefined,
             {},
-            mode, 
-            false,
-            null
+            mode
         );
         
         if (!setupSuccess) {

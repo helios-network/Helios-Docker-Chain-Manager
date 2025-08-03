@@ -6,7 +6,7 @@ const os = require('os');
 const { keyStoreRecover } = require('../utils/key-store');
 const { ethers } = require('ethers');
 
-const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos, mode = "archive", fromBackup = false, backupPath = null) => {
+const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, genesisURL, peerInfos, mode = "archive") => {
     
     const jsonKeyStoreNode = JSON.parse(keyStoreNode);
     const privateKey = await keyStoreRecover(keyStoreNode, walletPassword);
@@ -61,98 +61,6 @@ const setupNode = async (app, keyStoreNode, walletPassword, moniker, chainId, ge
     // }
 
     configToml = configToml.replace(/timeout_commit \= \".*?\"/gm, `timeout_commit = "15000ms"`);
-
-    if (fromBackup) {
-        // Copy files individually according to the specified structure
-        const backupConfigPath = path.join(backupPath, 'config');
-        const configFiles = ['addrbook.json', 'genesis.json', 'persistent_peers.json'];
-        
-        for (const configFile of configFiles) {
-            let sourcePath = path.join(backupConfigPath, configFile);
-            let destPath = path.join(homeDirectory, 'config', configFile);
-            
-            if (!fs.existsSync(sourcePath)) {
-                sourcePath = path.join(backupPath, configFile);
-            }
-            
-            if (fs.existsSync(sourcePath)) {
-                if (configFile === 'persistent_peers.json') {
-                    try {
-                        const persistentPeersData = JSON.parse(fs.readFileSync(sourcePath, 'utf8'));
-                        if (app.node && app.node.setPersistentPeers) {
-                            await app.node.setPersistentPeers(persistentPeersData);
-                        } else {
-                            // Fallback: copy the file to config directory
-                            fs.copyFileSync(sourcePath, destPath);
-                        }
-                    } catch (error) {
-                        console.error('Error restoring persistent peers:', error);
-                    }
-                } else {
-                    fs.copyFileSync(sourcePath, destPath);
-                }
-            }
-        }
-        
-        // Copy all data files from backup/data to homeDirectory/data
-        const backupDataPath = path.join(backupPath, 'data');
-        const targetDataPath = path.join(homeDirectory, 'data');
-        
-        if (fs.existsSync(backupDataPath)) {
-            // Ensure target directory exists
-            if (!fs.existsSync(targetDataPath)) {
-                fs.mkdirSync(targetDataPath, { recursive: true });
-            }
-            
-            await execWrapper(`cp -r ${backupDataPath}/* ${targetDataPath}/`);
-        } else {
-            const backupContents = fs.readdirSync(backupPath);
-            
-            const dataDirs = backupContents.filter(item => {
-                const itemPath = path.join(backupPath, item);
-                return fs.statSync(itemPath).isDirectory() && 
-                       (item === 'application.db' || item === 'blockstore.db' || item === 'state.db');
-            });
-            
-            if (dataDirs.length > 0) {
-                if (!fs.existsSync(targetDataPath)) {
-                    fs.mkdirSync(targetDataPath, { recursive: true });
-                }
-                
-                for (const dataDir of dataDirs) {
-                    const sourcePath = path.join(backupPath, dataDir);
-                    const destPath = path.join(targetDataPath, dataDir);
-                    await execWrapper(`cp -r "${sourcePath}" "${destPath}"`);
-                }
-                
-                // Copy metadata.json if it exists
-                const metadataSource = path.join(backupPath, 'metadata.json');
-                if (fs.existsSync(metadataSource)) {
-                    const metadataDest = path.join(targetDataPath, 'metadata.json');
-                    fs.copyFileSync(metadataSource, metadataDest);
-                }
-                
-            }
-        }
-        
-        let backupMetadataPath = path.join(backupPath, 'data', 'metadata.json');
-        if (!fs.existsSync(backupMetadataPath)) {
-            backupMetadataPath = path.join(backupPath, 'metadata.json');
-        }
-        
-        if (fs.existsSync(backupMetadataPath)) {
-            fs.copyFileSync(backupMetadataPath, path.join(homeDirectory, 'data', 'metadata.json'));
-        }
-        
-        let appTomlPath = path.join(homeDirectory, 'config/app.toml');
-        if (fs.existsSync(appTomlPath)) {
-            let appToml = fs.readFileSync(appTomlPath).toString();
-            appToml = appToml.replace("tcp://localhost:1317", "tcp://0.0.0.0:1317");
-            fs.writeFileSync(appTomlPath, appToml);
-        }
-        
-        return true;
-    }
 
     if (genesisContent != undefined && genesisContent != '') { // sync to peer
         const destGenesisPath = path.join(homeDirectory, 'config/genesis.json');
