@@ -28,6 +28,8 @@ const runEthStats = (app, environement) => {
             app.ethStats.nodeName = 'Helios_Docker_Node_' + getRandomFileName();
         }
 
+        let resolved = false;
+
         const childProcess = spawn
         (
             'node',
@@ -47,22 +49,42 @@ const runEthStats = (app, environement) => {
             console.log(data.toString());
             app.ethStats.logs.push(... data.toString().split('\n'));
             app.ethStats.logs = app.ethStats.logs.slice(-1000);
+
+            if (resolved == false) {
+                resolved = true;
+                res.send(true);
+            }
         });
         childProcess.stderr.on('data', (data) => {
             console.log(data.toString());
             app.ethStats.logs.push(... data.toString().split('\n'));
             app.ethStats.logs = app.ethStats.logs.slice(-1000);
+
+            if (resolved == false) {
+                resolved = true;
+                res.send(false);
+            }
         });
 
         childProcess.on('error', (error) => {
             console.log(`[STACKTRACE] ${error.stack}`);
             app.ethStats.logs.push(`${error.name}: ${error.message}`);
             app.ethStats.logs.push(`[STACKTRACE] ${error.stack}`);
+
+            if (resolved == false) {
+                resolved = true;
+                res.send(false);
+            }
         });
 
         childProcess.on('exit', (code, signal) => {
             console.log(`[EXIT] ${code}`);
             app.ethStats.logs.push(`[EXIT] ${code}`);
+
+            if (resolved == false) {
+                resolved = true;
+                res.send(false);
+            }
         });
         app.ethStats.checkIsAlive = async () => {
             app.ethStats.status = childProcess.exitCode == undefined ? '1' : '0';
@@ -70,9 +92,6 @@ const runEthStats = (app, environement) => {
         app.ethStats.stop = () => {
             childProcess.kill('SIGTERM');
         }
-
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        res.send(true);
     });
 };
 
