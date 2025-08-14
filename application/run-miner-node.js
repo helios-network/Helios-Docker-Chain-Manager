@@ -60,7 +60,7 @@ const runMinerNode = async (app, environement) => {
                 `--pruning=custom`,
                 `--pruning-keep-recent=172800`, // 1 month
                 `--pruning-interval=10`,
-                `--min-retain-blocks=10`,
+                `--min-retain-blocks=172800`,
                 `--archive-mode=true`
             ];
     }
