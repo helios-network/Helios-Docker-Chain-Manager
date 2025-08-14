@@ -240,8 +240,8 @@
                     }
 
                     if (backupHeaderUrl && backupHeaderUrl.value) {
-                        if (!backupHeaderUrl.value.endsWith('.b2header.json')) {
-                            showError(backupHeaderUrl, 'URL must end with .b2header.json');
+                        if (!backupHeaderUrl.value.endsWith('.b2header.json') && !backupHeaderUrl.value.endsWith('.header.json')) {
+                            showError(backupHeaderUrl, 'URL must end with .b2header.json or .header.json');
                             isValid = false;
                         } else {
                             try {
@@ -531,8 +531,8 @@
                     return;
                 }
                 
-                if (!headerUrl.endsWith('.b2header.json')) {
-                    showNotification('error', 'Error', 'URL must end with .b2header.json');
+                if (!headerUrl.endsWith('.b2header.json') && !headerUrl.endsWith('.header.json')) {
+                    showNotification('error', 'Error', 'URL must end with .b2header.json or .header.json');
                     return;
                 }
                 
@@ -723,8 +723,8 @@
                         showError(backupHeaderUrlElement, 'Backup header URL is required');
                         backupHeaderUrlElement.classList.add('error');
                         hasError = true;
-                    } else if (!backupHeaderUrlElement.value.endsWith('.b2header.json')) {
-                        showError(backupHeaderUrlElement, 'URL must end with .b2header.json');
+                    } else if (!backupHeaderUrlElement.value.endsWith('.b2header.json') && !backupHeaderUrlElement.value.endsWith('.header.json')) {
+                        showError(backupHeaderUrlElement, 'URL must end with .b2header.json or .header.json');
                         backupHeaderUrlElement.classList.add('error');
                         hasError = true;
                     } else {

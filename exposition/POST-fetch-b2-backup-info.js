@@ -10,10 +10,10 @@ const fetchB2BackupInfo = (app, environement) => {
                 });
             }
             
-            if (!headerUrl.endsWith('.b2header.json')) {
+            if (!headerUrl.endsWith('.b2header.json') && !headerUrl.endsWith('.header.json')) {
                 return res.status(400).json({ 
                     success: false, 
-                    error: 'URL must end with .b2header.json' 
+                    error: 'URL must end with .b2header.json or .header.json' 
                 });
             }
             

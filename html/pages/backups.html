@@ -1619,8 +1619,8 @@
                     return;
                 }
                 
-                if (!headerUrl.endsWith('.b2header.json')) {
-                    showNotification('error', 'Error', 'URL must end with .b2header.json');
+                if (!headerUrl.endsWith('.b2header.json') && !headerUrl.endsWith('.header.json')) {
+                    showNotification('error', 'Error', 'URL must end with .b2header.json or .header.json');
                     return;
                 }
                 
