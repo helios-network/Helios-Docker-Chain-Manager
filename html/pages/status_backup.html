@@ -211,10 +211,6 @@
                             <i class="material-icons">storage</i>
                             Database Operations
                         </button>
-                        <button class="custom-tab-button" data-tab="compact-storage">
-                            <i class="material-icons">compress</i>
-                            Compact Storage
-                        </button>
                     </div>
 
                     <!-- Tab Content -->
@@ -237,7 +233,7 @@
                                     <div id="rollback-logs" class="command-logs" style="display: none;">
                                         <div class="logs-header">
                                             <span>Rollback Logs</span>
-                                            <button class="button tertiary small" style="float: right;" onclick="clearRollbackLogs()">
+                                            <button class="button tertiary small" onclick="clearRollbackLogs()">
                                                 <i class="material-icons">clear</i>
                                                 Clear
                                             </button>
@@ -272,44 +268,13 @@
                                     <div id="db-info-logs" class="command-logs" style="display: none;">
                                         <div class="logs-header">
                                             <span>DB Info Output</span>
-                                            <button class="button tertiary small" style="float: right;" onclick="clearDbInfoLogs()">
+                                            <button class="button tertiary small" onclick="clearDbInfoLogs()">
                                                 <i class="material-icons">clear</i>
                                                 Clear
                                             </button>
                                         </div>
                                         <div class="logs-content">
                                             <pre id="db-info-output"></pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Compact Storage Tab -->
-                        <div id="compact-storage" class="custom-tab-pane">
-                            <div class="commands-section">
-                                <h4>Compact Storage</h4>
-                                
-                                <!-- Compact Storage Command -->
-                                <div class="command-item">
-                                    <div class="command-header">
-                                        <span class="command-title">Compact Storage</span>
-                                        <span class="command-description">Compact application database and experimental GoLevelDB storage</span>
-                                    </div>
-                                    <button id="compact-storage-btn" class="button primary" onclick="executeCompactStorage()">
-                                        <i class="material-icons">compress</i>
-                                        Execute Compact Storage
-                                    </button>
-                                    <div id="compact-storage-logs" class="command-logs" style="display: none;">
-                                        <div class="logs-header">
-                                            <span>Compact Storage Logs</span>
-                                            <button class="button tertiary small" style="float: right;" onclick="clearCompactStorageLogs()">
-                                                <i class="material-icons">clear</i>
-                                                Clear
-                                            </button>
-                                        </div>
-                                        <div class="logs-content">
-                                            <pre id="compact-storage-output"></pre>
                                         </div>
                                     </div>
                                 </div>
@@ -626,78 +591,6 @@
             function clearDbInfoLogs() {
                 document.getElementById('db-info-output').textContent = '';
                 document.getElementById('db-info-logs').style.display = 'none';
-            }
-
-            async function executeCompactStorage() {
-                const button = document.getElementById('compact-storage-btn');
-                const logsContainer = document.getElementById('compact-storage-logs');
-                const output = document.getElementById('compact-storage-output');
-
-                // Disable button and show logs
-                button.disabled = true;
-                button.innerHTML = '<i class="material-icons">hourglass_empty</i> Executing...';
-                logsContainer.style.display = 'block';
-                output.textContent = 'Executing compact storage commands...\n';
-
-                try {
-                    // Execute first command: heliades application-db compact
-                    output.textContent += 'Step 1: Compacting application database...\n';
-                    const response1 = await fetch('/execute-compact-application-db', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    });
-
-                    if (response1.ok) {
-                        const data1 = await response1.json();
-                        if (data1.success) {
-                            output.textContent += data1.output || 'Application database compacted successfully.\n';
-                        } else {
-                            output.textContent += `Error: ${data1.error}\n`;
-                        }
-                    } else {
-                        output.textContent += 'Error: Failed to compact application database.\n';
-                    }
-
-                    // Execute second command: heliades experimental-compact-goleveldb
-                    output.textContent += '\nStep 2: Compacting experimental GoLevelDB...\n';
-                    const response2 = await fetch('/execute-compact-goleveldb', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    });
-
-                    if (response2.ok) {
-                        const data2 = await response2.json();
-                        if (data2.success) {
-                            output.textContent += data2.output || 'Experimental GoLevelDB compacted successfully.\n';
-                        } else {
-                            output.textContent += `Error: ${data2.error}\n`;
-                        }
-                    } else {
-                        output.textContent += 'Error: Failed to compact experimental GoLevelDB.\n';
-                    }
-
-                    output.textContent += '\nCompact storage operation completed.\n';
-                } catch (error) {
-                    console.error('Error executing compact storage:', error);
-                    output.textContent += `Error: ${error.message}\n`;
-                } finally {
-                    // Re-enable button
-                    button.disabled = false;
-                    button.innerHTML = '<i class="material-icons">compress</i> Execute Compact Storage';
-                }
-            }
-
-            function clearCompactStorageLogs() {
-                document.getElementById('compact-storage-output').textContent = '';
-                document.getElementById('compact-storage-logs').style.display = 'none';
             }
 
             function switchTab(tabName) {

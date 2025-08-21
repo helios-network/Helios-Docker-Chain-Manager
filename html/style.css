@@ -4453,7 +4453,7 @@ button:disabled {
     padding: 0.5rem;
     font-size: 0.8rem;
     height: 36px;
-    width: 36px;
+    /* width: 36px; */
     min-width: 36px;
     display: flex;
     align-items: center;
@@ -6472,4 +6472,68 @@ button.btn {
 
 .comming-soon-banner {
     color: orange !important;
+}
+
+/* Fullscreen Modal Styles */
+.fullscreen-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 9999 !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.fullscreen-content {
+    width: 95vw !important;
+    height: 95vh !important;
+    max-width: 1400px !important;
+    max-height: 900px !important;
+    background: var(--bg-card, #ffffff) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+}
+
+.fullscreen-content .modal-header {
+    padding: 20px 24px !important;
+    border-bottom: 1px solid var(--border-primary, #e0e0e0) !important;
+    background: var(--bg-card, #ffffff) !important;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.fullscreen-content .modal-body {
+    flex: 1 !important;
+    padding: 24px !important;
+    overflow-y: auto !important;
+    background: var(--bg-card, #ffffff) !important;
+}
+
+.fullscreen-content .modal-footer {
+    padding: 20px 24px !important;
+    border-top: 1px solid var(--border-primary, #e0e0e0) !important;
+    background: var(--bg-card, #ffffff) !important;
+    border-radius: 0 0 12px 12px !important;
+}
+
+/* Responsive adjustments for fullscreen modal */
+@media (max-width: 768px) {
+    .fullscreen-content {
+        width: 100vw !important;
+        height: 100vh !important;
+        border-radius: 0 !important;
+    }
+    
+    .fullscreen-content .modal-header,
+    .fullscreen-content .modal-body,
+    .fullscreen-content .modal-footer {
+        border-radius: 0 !important;
+    }
 }

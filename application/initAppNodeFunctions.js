@@ -68,6 +68,13 @@ const initAppNodeFunctions = async (app, environement) => {
         return app.node.heliosAddress;
     }
 
+    app.node.getMoniker = async () => {
+        if (fs.existsSync(path.join(homeDirectory, 'moniker'))) {
+            return fs.readFileSync(path.join(homeDirectory, 'moniker')).toString();
+        }
+        return undefined;
+    }
+
     app.node.getHeliosValAddress = async () => {
         if (app.node.heliosValAddress == undefined) {
             const data = await execWrapper(`heliades keys show user0 -a --bech=val --keyring-backend="local"`);

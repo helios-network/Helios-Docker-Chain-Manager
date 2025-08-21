@@ -223,12 +223,12 @@
                 // Initial display
                 await updateEthStatsDisplay();
 
-                // Update every 30 seconds
+                // Update every 5 seconds
                 setInterval(async () => {
                     if (!isPaused) {
                         await updateEthStatsDisplay();
                     }
-                }, 30000);
+                }, 5000);
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

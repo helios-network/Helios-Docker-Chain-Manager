@@ -128,7 +128,7 @@ const runMinerNode = async (app, environement) => {
     childProcess.stdout.on('data', (data) => {
         const regex = new RegExp(`${String.fromCharCode(27)}\\[[0-9]{1,2}m`, 'gm');// remove termcaps
         app.node.logs.push(... data.toString().replace(regex, '').split('\n'));
-        app.node.logs = app.node.logs.slice(-1000);
+        app.node.logs = app.node.logs.slice(-3000);
 
         app.node.lastLogTime = Date.now();
         if (environement.env['helios-logs'] === 'enabled') {
@@ -149,17 +149,14 @@ const runMinerNode = async (app, environement) => {
         app.node.logs.push(`[EXIT] ${code}`);
         if (!app.node.stopOrdonned) {
 
-            if (app.node.startRetries == undefined || app.node.startRetries < 3) {
+            if (app.node.startRetries == undefined || app.node.startRetries < 1000000) {
                 app.node.startRetries = app.node.startRetries == undefined ? 0 : app.node.startRetries + 1;
-                app.node.logs.push(`[RETRY] ${app.node.startRetries} / 3 (wait ${10000 * app.node.startRetries}ms)`);
-                await new Promise((resolve) => setTimeout(resolve, 10000 * app.node.startRetries)); // wait 10 seconds before restarting the node
-                app.node.logs.push(`[RETRY] ${app.node.startRetries} / 3 Starting...`);
-                app.node.start();
-            } else {
-                app.node.logs.push(`[RETRY] FAILED (restarted ${app.node.startRetries} times)`);
-                app.node.startRetries = 0;
-                app.node.stopOrdonned = false;
-
+                app.node.logs.push(`[RETRY] Number: ${app.node.startRetries} (wait 60 seconds)`);
+                await new Promise((resolve) => setTimeout(resolve, 60000)); // wait 60 seconds before restarting the node
+                app.node.logs.push(`[RETRY] Number: ${app.node.startRetries} Starting...`);
+                if (!app.node.stopOrdonned) {
+                    app.node.start();
+                }
             }
         } else {
             app.node.stopOrdonned = false;

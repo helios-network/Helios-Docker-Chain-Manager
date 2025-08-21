@@ -18,6 +18,7 @@ const runEthStatsProgram = async (app, environement, ethStatsServerUrl, ethStats
     }
 
     let resolved = false;
+    app.ethStats.manualStop = false;
 
     const childProcess = spawn
     (
@@ -76,7 +77,7 @@ const runEthStatsProgram = async (app, environement, ethStatsServerUrl, ethStats
         console.log(`[EXIT] ${code}`);
         app.ethStats.logs.push(`[EXIT] ${code}`);
 
-        if (code == 255 && resolved == true) {
+        if (code == 255 && resolved == true && app.ethStats.manualStop == false) {
             await new Promise(resolve => setTimeout(resolve, 1000));
             await runEthStatsProgram(app, environement, ethStatsServerUrl, ethStatsNodeName, undefined);
             return;
@@ -93,6 +94,7 @@ const runEthStatsProgram = async (app, environement, ethStatsServerUrl, ethStats
         app.ethStats.status = childProcess.exitCode == undefined ? '1' : '0';
     };
     app.ethStats.stop = () => {
+        app.ethStats.manualStop = true;
         childProcess.kill('SIGTERM');
     }
 
