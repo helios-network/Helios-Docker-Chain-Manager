@@ -22,6 +22,11 @@ const runMinerNode = async (app, environement) => {
         settings = { ...settings, ...savedSettings };
     }
 
+    let appTomlPath = path.join(homeDirectory, 'config/app.toml');
+    let appToml = fs.readFileSync(appTomlPath).toString();
+    let configTomlPath = path.join(homeDirectory, 'config/config.toml');
+    let configToml = fs.readFileSync(configTomlPath).toString();
+
     let pruningArgs = [];
 
     switch (settings.nodeMode) {
@@ -46,6 +51,7 @@ const runMinerNode = async (app, environement) => {
             ];
             break;
         case "very-light":
+            configToml = configToml.replace(/indexer = \"kv\"/gm, `indexer = \"null\"`);
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=10`,
@@ -64,6 +70,10 @@ const runMinerNode = async (app, environement) => {
                 `--archive-mode=true`
             ];
     }
+
+    // write app.toml and config.toml
+    fs.writeFileSync(configTomlPath, configToml);
+    fs.writeFileSync(appTomlPath, appToml);
 
     // backup flags if enabled and node mode is very-light
     let backupArgs = [];
@@ -149,9 +159,7 @@ const runMinerNode = async (app, environement) => {
                 app.node.logs.push(`[RETRY] FAILED (restarted ${app.node.startRetries} times)`);
                 app.node.startRetries = 0;
                 app.node.stopOrdonned = false;
-                setTimeout(() => {
-                    app.node.start();
-                }, 1000 * 60); // 1 minute
+
             }
         } else {
             app.node.stopOrdonned = false;

@@ -6465,3 +6465,11 @@ button.btn {
     }
 }
 
+.comming-soon {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.comming-soon-banner {
+    color: orange !important;
+}

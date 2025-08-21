@@ -46,11 +46,13 @@ const displaySideBar = () => {
         {
             name: 'Hyperions',
             path: '/hyperions',
+            comming_soon: true,
             icon: '<i class="material-icons">blur_on</i>'
         },
         {
             name: 'IBC Relayers',
             path: '/ibc-relayers',
+            comming_soon: true,
             icon: '<i class="material-icons">multiple_stop</i>'
         },
         {
@@ -65,7 +67,11 @@ const displaySideBar = () => {
     const navContainer = sidebarElement.querySelector('.sidebar-nav');
     
     links.forEach((x, i) => {
-        navContainer.innerHTML += `<a href="${x.path}" class="${'sidebar-button' + (i > 0 ? ' mt-1': '') + (url.pathname == x.path ? ' selected' : '')}" title="${x.name}">${x.icon}<span>${x.name}</span></a>`;
+        navContainer.innerHTML += `
+        <a href="${x.path}" class="${'sidebar-button' + (i > 0 ? ' mt-1': '') + (url.pathname == x.path ? ' selected' : '') + (x.comming_soon ? ' comming-soon' : '')}" title="${x.name}">
+        ${x.icon}
+        <span>${x.comming_soon ? '<span class="comming-soon-banner">Soon</span> - ' : ''}${x.name}</span>
+        </a>`;
     });
 
     // Add theme toggle functionality

@@ -1,6 +1,7 @@
 const { execWrapper } = require('../utils/exec-wrapper');
 const fs = require('fs');
 const path = require('path');
+const { spawnWrapper } = require('../utils/spawn-wrapper');
 
 const restoreBackup = async (app, filename, backupCurrentData = false) => {
     try {
@@ -50,7 +51,7 @@ const restoreBackup = async (app, filename, backupCurrentData = false) => {
             }
         }
         
-        const result = await execWrapper(`heliades backups restore "${filename}" --home "${homeDirectory}"`);
+        await spawnWrapper(`heliades`, [`backups`, `restore`, filename, `--home`, homeDirectory]);
 
         return {
             success: true,

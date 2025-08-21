@@ -5,8 +5,6 @@ const multer = require('multer');
 const B2 = require('backblaze-b2');
 const crypto = require('crypto');
 
-const upload = multer({ storage: multer.memoryStorage() });
-
 // Constants
 const PART_SIZE = 100 * 1024 * 1024; // 100MB
 const B2_BASE_URL = 'https://f003.backblazeb2.com/file';
@@ -103,13 +101,14 @@ const uploadHeaderFile = async (b2, bucketId, headerFile, headerFileName) => {
 
 const uploadBackupFileSimple = async (b2, bucketId, backupFile, backupFileName) => {
     const uploadUrlRes = await b2.getUploadUrl({ bucketId });
-    const sha1 = calculateSha1(backupFile.buffer);
+    const fileBuffer = fs.readFileSync(backupFile.path);
+    const sha1 = calculateSha1(fileBuffer);
     
     return await b2.uploadFile({
         uploadUrl: uploadUrlRes.data.uploadUrl,
         uploadAuthToken: uploadUrlRes.data.authorizationToken,
         fileName: backupFileName,
-        data: backupFile.buffer,
+        data: fileBuffer,
         contentType: backupFile.mimetype || 'application/octet-stream',
         hash: sha1
     });
@@ -126,15 +125,35 @@ const uploadBackupFileMultipart = async (b2, bucketId, backupFile, backupFileNam
     const uploadPartRes = await b2.getUploadPartUrl({ fileId });
     const { uploadUrl, authorizationToken } = uploadPartRes.data;
     
-    const totalSize = backupFile.buffer.length;
+    const stats = fs.statSync(backupFile.path);
+    const totalSize = stats.size;
     const numParts = Math.ceil(totalSize / PART_SIZE);
     const partSha1Array = [];
     
     try {
+        // const fileStream = fs.createReadStream(backupFile.path);
+        
         for (let i = 0; i < numParts; i++) {
             const start = i * PART_SIZE;
             const end = Math.min(start + PART_SIZE, totalSize);
-            const partBuffer = backupFile.buffer.slice(start, end);
+            const partSize = end - start;
+            
+            // Read part from file stream
+            const partBuffer = Buffer.alloc(partSize);
+            const readStream = fs.createReadStream(backupFile.path, { start, end: end - 1 });
+            
+            await new Promise((resolve, reject) => {
+                let bytesRead = 0;
+                readStream.on('data', (chunk) => {
+                    chunk.copy(partBuffer, bytesRead);
+                    bytesRead += chunk.length;
+                });
+                readStream.on('end', () => {
+                    resolve();
+                });
+                readStream.on('error', reject);
+            });
+            
             const sha1 = calculateSha1(partBuffer);
             partSha1Array.push(sha1);
             
@@ -163,7 +182,8 @@ const uploadBackupFileMultipart = async (b2, bucketId, backupFile, backupFileNam
 };
 
 const uploadBackupFile = async (b2, bucketId, backupFile, backupFileName) => {
-    if (backupFile.buffer.length < PART_SIZE) {
+    const stats = fs.statSync(backupFile.path);
+    if (stats.size < PART_SIZE) {
         return await uploadBackupFileSimple(b2, bucketId, backupFile, backupFileName);
     } else {
         return await uploadBackupFileMultipart(b2, bucketId, backupFile, backupFileName);
@@ -171,10 +191,7 @@ const uploadBackupFile = async (b2, bucketId, backupFile, backupFileName) => {
 };
 
 const POSTUploadBackupB2 = (app, environement) => {
-    app.post('/upload-backup-b2', upload.fields([
-        { name: 'backup', maxCount: 1 },
-        { name: 'header', maxCount: 1 }
-    ]), async (req, res) => {
+    app.post('/upload-backup-b2', multer({ storage: multer.memoryStorage() }).any(), async (req, res) => {
         let b2 = null;
         
         try {
@@ -189,12 +206,35 @@ const POSTUploadBackupB2 = (app, environement) => {
             const settings = loadSettings(homeDirectory);
             const { b2ApplicationKeyId, b2ApplicationKey, b2BucketName } = validateB2Config(settings);
 
+            // Handle file storage manually
+            let backupFile, headerFile;
+            
+            for (const file of req.files) {
+                if (file.fieldname === 'backup') {
+                    // Store backup file on disk
+                    const tempDir = path.join(process.cwd(), 'temp');
+                    if (!fs.existsSync(tempDir)) {
+                        fs.mkdirSync(tempDir, { recursive: true });
+                    }
+                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                    const filename = 'backup-' + uniqueSuffix + '-' + file.originalname;
+                    const filepath = path.join(tempDir, filename);
+                    
+                    fs.writeFileSync(filepath, file.buffer);
+                    backupFile = { ...file, path: filepath };
+                } else if (file.fieldname === 'header') {
+                    // Keep header file in memory
+                    headerFile = file;
+                }
+            }
+
             // Validate files
-            const backupFile = req.files['backup']?.[0];
-            const headerFile = req.files['header']?.[0];
             if (!backupFile || !headerFile) {
                 return res.status(400).json({ success: false, error: 'Missing backup or header file.' });
             }
+
+            console.log('backupFile', backupFile);
+            console.log('headerFile', headerFile);
 
             // Check if this is just a file existence check
             const checkOnly = req.body.checkOnly === 'true';
@@ -258,10 +298,14 @@ const POSTUploadBackupB2 = (app, environement) => {
             
             // Generate download URL for the backup
             const backupUrl = `${B2_BASE_URL}/${b2BucketName}/${backupFileName}`;
+
+            // Get file sizes before cleanup
+            const backupSize = fs.statSync(backupFile.path).size;
             
             // Update header with download URL
             const headerContent = JSON.parse(headerFile.buffer.toString());
             headerContent.downloadUrl = backupUrl;
+            headerContent.fileSize = backupFile.size;
             
             // Create updated header file
             const updatedHeaderBuffer = Buffer.from(JSON.stringify(headerContent, null, 2));
@@ -276,6 +320,15 @@ const POSTUploadBackupB2 = (app, environement) => {
             // Prepare response
             const headerUrl = `${B2_BASE_URL}/${b2BucketName}/${headerFileName}`;
             
+            // Clean up temporary backup file
+            try {
+                if (backupFile.path && fs.existsSync(backupFile.path)) {
+                    fs.unlinkSync(backupFile.path);
+                }
+            } catch (cleanupError) {
+                console.error('Error cleaning up temporary backup file:', cleanupError);
+            }
+            
             return res.json({ 
                 success: true, 
                 message: 'Backup uploaded to B2 successfully!',
@@ -283,7 +336,7 @@ const POSTUploadBackupB2 = (app, environement) => {
                 files: {
                     backup: {
                         name: backupFile.originalname,
-                        size: backupFile.buffer.length,
+                        size: backupSize,
                         url: backupUrl
                     },
                     header: {
