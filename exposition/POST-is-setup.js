@@ -13,7 +13,7 @@ const isSetup = (app, environement) => {
                 return ;
             }
         }
-        res.send(true);
+        res.send(false);
     });
 };
 

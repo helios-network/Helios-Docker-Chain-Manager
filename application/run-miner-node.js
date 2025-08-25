@@ -30,6 +30,26 @@ const runMinerNode = async (app, environement) => {
     let pruningArgs = [];
 
     switch (settings.nodeMode) {
+        case "extra-large": // 1 month
+            pruningArgs = [
+                `--pruning=custom`,
+                `--pruning-keep-recent=181440`,
+                `--pruning-interval=10`,
+                `--min-retain-blocks=181440`,
+                `--skip-evidence-retention=true`,
+                `--archive-mode=false`,
+            ];
+            break;
+        case "large": // 1 week
+            pruningArgs = [
+                `--pruning=custom`,
+                `--pruning-keep-recent=40320`,
+                `--pruning-interval=10`,
+                `--min-retain-blocks=40320`,
+                `--skip-evidence-retention=true`,
+                `--archive-mode=false`,
+            ];
+            break;
         case "medium":
             pruningArgs = [
                 `--pruning=custom`,
