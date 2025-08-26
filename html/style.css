@@ -3235,9 +3235,66 @@ button:disabled {
     margin-top: 1rem;
 }
 
+.progress-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.progress-overlay.show { opacity: 1; }
+.progress-overlay.hide { opacity: 0; }
 
+.progress-card {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+    box-shadow: 0 20px 40px rgba(0, 45, 203, 0.10), 0 8px 16px rgba(0, 45, 203, 0.06), inset 0 1px 0 rgba(255,255,255,0.04);
+    border-radius: 16px;
+    padding: 18px 20px;
+    width: min(560px, 92vw);
+    animation: cardPop 160ms ease-out;
+}
 
+.progress-header { display: flex; gap: 12px; align-items: center; padding-bottom: 12px; border-bottom: 1px solid var(--border-primary); margin-bottom: 12px; }
+.progress-texts { display: flex; flex-direction: column; gap: 4px; }
+.progress-title { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.2px; }
+.progress-details { color: var(--text-secondary); font-size: 0.9rem; }
+.progress-meta { margin-top: 10px; font-size: 0.85rem; color: var(--text-secondary); }
+.progress-kv { margin-top: 2px; }
 
+.progress-spinner {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 3px solid var(--bg-button-secondary);
+    border-top-color: var(--accent-primary);
+    animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.progress-stepper { position: relative; display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin: 8px 0 12px; padding: 8px 0; }
+.progress-stepper::before { content: ''; position: absolute; top: 20px; left: 24px; right: 24px; height: 2px; background: var(--border-primary); z-index: 0; }
+.stepper-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; position: relative; z-index: 1; text-align: center; }
+.stepper-marker { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border-primary); background: var(--bg-card); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-size: 12px; }
+.stepper-item.active .stepper-marker { border-color: var(--accent-primary); box-shadow: 0 0 0 4px rgba(0,45,203,0.12); color: var(--accent-primary); }
+.stepper-item.completed .stepper-marker { background: var(--accent-primary); border-color: var(--accent-primary); color: var(--text-inverse); }
+.stepper-content { display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.stepper-title { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
+.stepper-sub { font-size: 0.85rem; color: var(--text-secondary); }
+
+.progress-bar { position: relative; height: 8px; border-radius: 999px; background: var(--bg-button-secondary); overflow: hidden; border: 1px solid var(--border-primary); }
+.progress-bar-inner { position: absolute; left: -40%; top: 0; bottom: 0; width: 40%; background: var(--bg-button-primary); border-radius: 999px; animation: indeterminate 1.1s infinite ease-in-out; }
+@keyframes indeterminate { 0% { left: -40%; width: 40%; } 50% { left: 20%; width: 60%; } 100% { left: 100%; width: 40%; } }
+
+@keyframes cardPop {
+    0% { transform: translateY(6px) scale(0.98); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
 
 /* Tablettes et mobiles */
 @media (max-width: 600px) {

@@ -150,6 +150,43 @@
                 </div>
             </div>
         </div>
+
+        <div id="progressOverlay" class="progress-overlay" style="display:none;">
+            <div class="progress-card" role="dialog" aria-live="polite" aria-atomic="true">
+                <div class="progress-header">
+                    <div class="progress-spinner"></div>
+                    <div class="progress-texts">
+                        <div id="progressTitle" class="progress-title">Preparing…</div>
+                        <div id="progressDetails" class="progress-details">Please wait while the backup is being downloaded and applied.</div>
+                    </div>
+                </div>
+                <div class="progress-stepper" aria-label="Étapes">
+                    <div id="step-validate" class="stepper-item active" role="listitem">
+                        <div class="stepper-marker"><span class="check-icon">✔</span></div>
+                        <div class="stepper-content">
+                            <div class="stepper-title">Validation</div>
+                            <div class="stepper-sub">Validating header file</div>
+                        </div>
+                    </div>
+                    <div id="step-download" class="stepper-item" role="listitem">
+                        <div class="stepper-marker"><span class="check-icon">✔</span></div>
+                        <div class="stepper-content">
+                            <div class="stepper-title">Download</div>
+                            <div class="stepper-sub">Downloading backup</div>
+                        </div>
+                    </div>
+                    <div id="step-apply" class="stepper-item" role="listitem">
+                        <div class="stepper-marker"><span class="check-icon">✔</span></div>
+                        <div class="stepper-content">
+                            <div class="stepper-title">Apply</div>
+                            <div class="stepper-sub">Configuring the node</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-bar" aria-hidden="true"><div class="progress-bar-inner"></div></div>
+                <div id="progressMeta" class="progress-meta" style="display:none;"></div>
+            </div>
+        </div>
         <script>
             let password = window.localStorage.getItem("access-code");
             let fromGenesisType = 'fromBackup';
@@ -539,6 +576,57 @@
                 }, duration);
             }
 
+            function showSetupProgress(title = 'In progress…', details = '') {
+                const overlay = document.getElementById('progressOverlay');
+                document.getElementById('progressTitle').textContent = title;
+                document.getElementById('progressDetails').textContent = details || '';
+                overlay.classList.remove('hide');
+                overlay.style.display = 'flex';
+                requestAnimationFrame(() => overlay.classList.add('show'));
+            }
+
+            function updateSetupProgress(title, details, metaHtml) {
+                if (title !== undefined) document.getElementById('progressTitle').textContent = title;
+                if (details !== undefined) document.getElementById('progressDetails').textContent = details;
+                const meta = document.getElementById('progressMeta');
+                if (metaHtml) {
+                    meta.innerHTML = metaHtml;
+                    meta.style.display = '';
+                }
+            }
+
+            function hideSetupProgress() {
+                const overlay = document.getElementById('progressOverlay');
+                overlay.classList.remove('show');
+                overlay.classList.add('hide');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    overlay.classList.remove('hide');
+                }, 200);
+                const meta = document.getElementById('progressMeta');
+                meta.innerHTML = '';
+                meta.style.display = 'none';
+            }
+
+            function setProgressStep(stage) {
+                const steps = ['validate','download','apply'];
+                const ids = {
+                    validate: 'step-validate',
+                    download: 'step-download',
+                    apply: 'step-apply'
+                };
+                steps.forEach((s) => {
+                    const el = document.getElementById(ids[s]);
+                    el.classList.remove('active','completed');
+                });
+                const currentIndex = steps.indexOf(stage);
+                steps.forEach((s, idx) => {
+                    const el = document.getElementById(ids[s]);
+                    if (idx < currentIndex) el.classList.add('completed');
+                    if (idx === currentIndex) el.classList.add('active');
+                });
+            }
+
             async function fire() {
                 console.log('Fire function called, fromGenesisType:', fromGenesisType);
                 const privateKeyStoreNodeElement = document.getElementById('nodeKeyStoreInput');
@@ -690,7 +778,6 @@
                     let result;
                     
                     if (fromGenesisType === 'fromBackup') {
-                        // Use the backup setup endpoint
                         const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
                         const backupMonikerElement = document.getElementById('backupMoniker');
                         const backupChainIdElement = document.getElementById('backupChainId');
@@ -700,6 +787,37 @@
                             headerUrl: backupHeaderUrlElement.value,
                             moniker: backupMonikerElement.value
                         });
+
+                        showSetupProgress('Validating backup…', 'Checking header file');
+                        setProgressStep('validate');
+                        try {
+                            const infoRes = await fetch('/fetch-b2-backup-info', {
+                                method: 'POST',
+                                headers: {
+                                    'Access-Code': password,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ headerUrl: backupHeaderUrlElement.value })
+                            });
+                            const infoJson = await infoRes.json();
+                            if (infoRes.ok && infoJson.success) {
+                                const b = infoJson.backup || {};
+                                updateSetupProgress(
+                                    'Downloading backup…',
+                                    'This step may take several minutes depending on your connection.',
+                                    `<div class="progress-kv"><strong>Fichier:</strong> ${b.filename || 'inconnu'}</div>` +
+                                    `${b.blockId ? `<div class=\"progress-kv\"><strong>Block ID:</strong> ${b.blockId}</div>` : ''}` +
+                                    `${b.uploadedAt ? `<div class=\"progress-kv\"><strong>Uploaded at:</strong> ${b.uploadedAt}</div>` : ''}`
+                                );
+                                setProgressStep('download');
+                            } else {
+                                updateSetupProgress('Downloading backup…', 'Header validation failed, continuing anyway.');
+                                setProgressStep('download');
+                            }
+                        } catch (e) {
+                            updateSetupProgress('Downloading backup…', 'Unable to validate header, continuing anyway.');
+                            setProgressStep('download');
+                        }
                         
                         result = await fetch('/setup-node-from-backup', {
                             method: 'POST',
@@ -716,6 +834,8 @@
                                 mode: backupModeElement.value,
                             })
                         });
+                        updateSetupProgress('Applying backup…', 'Node is being configured.');
+                        setProgressStep('apply');
                     } else {
                         // Use the existing endpoint for other setup types
                         result = await fetch('/setup-node', {
@@ -744,13 +864,18 @@
                     const jsonResult = await result.json();
 
                     if (jsonResult.success || jsonResult.status === 'ready') {
+                        if (fromGenesisType === 'fromBackup') {
+                            updateSetupProgress('Done ✔', 'Redirecting to node status…');
+                            setProgressStep('apply');
+                            // Let the user read the confirmation briefly
+                        }
                         window.location.href = `/status`;
                     } else if (jsonResult.status === 'ko') {
                         if (fromGenesisType === 'existingGenesis') {
                             showError(genesisURLElement, 'Unable to fetch genesis from this URL');
                             genesisURLElement.classList.add('error');
                         } else {
-                            throw new Error('SETUP ERROR');
+                            throw new Error(jsonResult.error || 'SETUP ERROR');
                         }
                     }
                 } catch (error) {
@@ -759,11 +884,15 @@
                         showError(genesisURLElement, 'Failed to connect to genesis URL');
                         genesisURLElement.classList.add('error');
                     } else if (fromGenesisType === 'fromBackup') {
-                        const errorMessage = jsonResult.error || 'Failed to setup node from backup';
+                        const errorMessage = (error && error.message) ? error.message : 'Failed to setup node from backup';
+                        hideSetupProgress();
                         showNotification('error', 'Setup Failed', errorMessage);
                     }
                 } finally {
                     fireButton.disabled = false;
+                    if (fromGenesisType === 'fromBackup') {
+                        hideSetupProgress();
+                    }
                 }
             }
 
