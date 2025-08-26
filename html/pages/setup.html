@@ -61,29 +61,26 @@
                     <h1 class="setup-title">Genesis Configuration</h1>
                     <div class="setup-section">
                         <div class="genesis-categories">
-                            <div id="existingGenesisBtn" class="genesis-category disabled" onclick="startWith('existingGenesis')">
-                                <div class="genesis-category-badge">Recommended</div>
+                            <div id="fromBackupBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('fromBackup')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('fromBackup')}">
+                                <div class="genesis-category-icon">
+                                    <span class="material-icons">cloud_download</span>
+                                </div>
+                                <h3 class="genesis-category-title">From Backup</h3>
+                                <p class="genesis-category-description">Restore a node from a B2 backup file. Perfect for quickly setting up a node with existing blockchain data.</p>
+                            </div>
+                            <div id="existingGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('existingGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('existingGenesis')}">
                                 <div class="genesis-category-icon">
                                     <span class="material-icons">download</span>
                                 </div>
                                 <h3 class="genesis-category-title">From Existing Genesis</h3>
                                 <p class="genesis-category-description">Connect to an existing network using a genesis file from an official node. Perfect for joining established networks.</p>
                             </div>
-                            <div id="newGenesisBtn" class="genesis-category" onclick="startWith('newGenesis')">
-                                <div class="genesis-category-badge">Advanced</div>
+                            <div id="newGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('newGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('newGenesis')}">
                                 <div class="genesis-category-icon">
                                     <span class="material-icons">add_circle</span>
                                 </div>
                                 <h3 class="genesis-category-title">New Genesis</h3>
                                 <p class="genesis-category-description">Create a completely new blockchain network with your own genesis configuration. For experienced users.</p>
-                            </div>
-                            <div id="fromBackupBtn" class="genesis-category" onclick="startWith('fromBackup')">
-                                <div class="genesis-category-badge">Backup</div>
-                                <div class="genesis-category-icon">
-                                    <span class="material-icons">cloud_download</span>
-                                </div>
-                                <h3 class="genesis-category-title">From Backup</h3>
-                                <p class="genesis-category-description">Restore a node from a B2 backup file. Perfect for quickly setting up a node with existing blockchain data.</p>
                             </div>
                         </div>
 
@@ -114,45 +111,14 @@
                             </select>
                         </div>
 
-                        <div id="fromBackupTr" class="input-group-container" style="display: none;">
-                            <div class="info-message">
-                                <p>This will download and restore a backup from a B2 header file, setting up your node with the existing blockchain data.</p>
-                                <p>The backup includes all configuration files and blockchain data. Only the validator name needs to be updated.</p>
-                            </div>
-                            
-                            <label for="backupHeaderUrl">B2 Header File URL:</label>
+                        <div id="fromBackupTr" class="input-group-container" style="display: none;">                            
+                            <label for="backupHeaderUrl">Header File URL:</label>
                             <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
                                 <input id="backupHeaderUrl" type="url" class="form-control" 
-                                       placeholder="https://f003.backblazeb2.com/file/helios-testnet-snapshots/backups/snapshot_89_2025-08-01_00-51-03.tar.gz.b2header.json" 
+                                       placeholder="https://snapshots.helioschainlabs.org/snapshots/snapshot_227000_2025-08-25_22-14-39.tar.gz.header.json" 
                                        style="flex: 1;" 
                                        onchange="validateGenesisFields()" 
                                        oninput="validateGenesisFields()" />
-                                <button onclick="previewBackup()" class="button secondary" style="height: 42px; padding: 0 1rem;">
-                                    <span class="material-icons">preview</span>
-                                    Preview
-                                </button>
-                            </div>
-                            
-                            <div class="backup-preview" id="backup-preview" style="display: none;">
-                                <h4>Backup Information:</h4>
-                                <div class="backup-info-grid">
-                                    <div class="info-item">
-                                        <span class="info-label">Filename:</span>
-                                        <span class="info-value" id="backup-preview-filename"></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Block ID:</span>
-                                        <span class="info-value" id="backup-preview-block-id"></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Upload Date:</span>
-                                        <span class="info-value" id="backup-preview-upload-date"></span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Description:</span>
-                                        <span class="info-value" id="backup-preview-description"></span>
-                                    </div>
-                                </div>
                             </div>
                             
                             <label for="backupMoniker">Name of your Validator</label>
@@ -186,7 +152,7 @@
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
-            let fromGenesisType = 'existingGenesis';
+            let fromGenesisType = 'fromBackup';
             let traceDB = false;
             
             // Initialize validation on page load
@@ -411,17 +377,31 @@
 
             function startWith(value) {
                 // Reset all categories
-                document.getElementById('existingGenesisBtn').classList.remove('selected');
-                document.getElementById('newGenesisBtn').classList.remove('selected');
-                document.getElementById('fromBackupBtn').classList.remove('selected');
+                const existingBtn = document.getElementById('existingGenesisBtn');
+                const newBtn = document.getElementById('newGenesisBtn');
+                const backupBtn = document.getElementById('fromBackupBtn');
+
+                // If any is marked disabled, ignore clicks
+                if ((value === 'existingGenesis' && existingBtn.classList.contains('disabled')) ||
+                    (value === 'newGenesis' && newBtn.classList.contains('disabled')) ||
+                    (value === 'fromBackup' && backupBtn.classList.contains('disabled'))) {
+                    return;
+                }
+
+                existingBtn.classList.remove('selected');
+                newBtn.classList.remove('selected');
+                backupBtn.classList.remove('selected');
+                existingBtn.setAttribute('aria-pressed', 'false');
+                newBtn.setAttribute('aria-pressed', 'false');
+                backupBtn.setAttribute('aria-pressed', 'false');
                 
                 // Hide all sections
                 document.getElementById('fromExistingGenesisTr').style.display = 'none';
                 document.getElementById('fromBackupTr').style.display = 'none';
                 
                 if (value === 'existingGenesis') {
-                    document.getElementById('existingGenesisBtn').classList.add('selected');
-                    document.getElementById('existingGenesisBtn').classList.remove('disabled');
+                    existingBtn.classList.add('selected');
+                    existingBtn.setAttribute('aria-pressed', 'true');
                     document.getElementById('fromExistingGenesisTr').style.display = '';
                     document.getElementById('genesisURL').style.display = '';
                     document.getElementById('nodeIP').style.display = '';
@@ -434,15 +414,14 @@
                     document.getElementById('genesisURL').disabled = true;
                     fromGenesisType = value;
                 } else if (value === 'fromBackup') {
-                    document.getElementById('fromBackupBtn').classList.add('selected');
-                    document.getElementById('existingGenesisBtn').classList.add('disabled');
-                    document.getElementById('newGenesisBtn').classList.add('disabled');
+                    backupBtn.classList.add('selected');
+                    backupBtn.setAttribute('aria-pressed', 'true');
                     document.getElementById('fromBackupTr').style.display = '';
                     fromGenesisType = value;
                 } else {
-                    document.getElementById('newGenesisBtn').classList.add('selected');
-                    document.getElementById('existingGenesisBtn').classList.remove('selected');
-                    document.getElementById('existingGenesisBtn').classList.add('disabled');
+                    newBtn.classList.add('selected');
+                    newBtn.setAttribute('aria-pressed', 'true');
+                    existingBtn.classList.remove('selected');
                     document.getElementById('fromExistingGenesisTr').style.display = '';
                     document.getElementById('genesisURL').style.display = 'none';
                     ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
@@ -524,60 +503,6 @@
                 privateKeyStoreElement.value = JSON.stringify(jsonResult, null, 2);
                 
                 validateKeystore();
-            }
-
-            // Backup preview functionality
-            async function previewBackup() {
-                const headerUrl = document.getElementById('backupHeaderUrl').value.trim();
-                
-                if (!headerUrl) {
-                    showNotification('error', 'Error', 'Please enter a B2 header file URL');
-                    return;
-                }
-                
-                if (!headerUrl.endsWith('.b2header.json') && !headerUrl.endsWith('.header.json')) {
-                    showNotification('error', 'Error', 'URL must end with .b2header.json or .header.json');
-                    return;
-                }
-                
-                try {
-                    showNotification('info', 'Loading', 'Fetching backup information...');
-                    
-                    const response = await fetch('/fetch-b2-backup-info', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Access-Code': password
-                        },
-                        body: JSON.stringify({
-                            headerUrl: headerUrl
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        if (data.success && data.backup) {
-                            // Update preview with backup information
-                            document.getElementById('backup-preview-filename').textContent = data.backup.filename || 'Unknown';
-                            document.getElementById('backup-preview-block-id').textContent = data.backup.blockId || 'Unknown';
-                            document.getElementById('backup-preview-upload-date').textContent = data.backup.uploadedAt ? new Date(data.backup.uploadedAt).toLocaleString() : 'Unknown';
-                            document.getElementById('backup-preview-description').textContent = data.backup.description || 'No description';
-                            
-                            // Show preview
-                            document.getElementById('backup-preview').style.display = 'block';
-                            
-                            showNotification('success', 'Success', 'Backup information loaded successfully');
-                        } else {
-                            showNotification('error', 'Error', data.error || 'Failed to fetch backup information');
-                        }
-                    } else {
-                        showNotification('error', 'Error', 'Failed to fetch backup information');
-                    }
-                } catch (error) {
-                    console.error('Error previewing backup:', error);
-                    showNotification('error', 'Error', 'Failed to preview backup');
-                }
             }
 
             // Simple notification function for setup page
@@ -903,14 +828,13 @@
                     return ;
                 }
                 document.querySelectorAll('.setup-box')[0].style.display = '';
-                startWith('existingGenesis');
+                startWith('fromBackup');
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
-                document.getElementById('existingGenesisBtn').classList.add('selected');
-                document.getElementById('existingGenesisBtn').classList.remove('disabled');
-                document.getElementById('newGenesisBtn').classList.remove('selected');
+                document.getElementById('fromBackupBtn').classList.add('selected');
+                document.getElementById('fromBackupBtn').setAttribute('aria-pressed', 'true');
                 
                 document.querySelectorAll('.step-dot')[0].classList.add('active');
                 document.querySelectorAll('.step-label')[0].classList.add('active');

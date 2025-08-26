@@ -330,7 +330,7 @@ body {
     border: 1px solid var(--border-primary);
 }
 
-[data-theme="dark"] .genesis-category:hover {
+[data-theme="dark"] .genesis-category:hover:not(.disabled) {
     background: var(--bg-button-hover);
     border-color: var(--accent-primary);
 }
@@ -343,7 +343,8 @@ body {
 [data-theme="dark"] .genesis-category.disabled {
     background: var(--bg-tertiary);
     border-color: var(--border-secondary);
-    opacity: 0.5;
+    opacity: 0.6;
+    pointer-events: none;
 }
 
 [data-theme="dark"] .step-dot {
@@ -4329,6 +4330,7 @@ button:disabled {
 }
 
 .setting-input[type="number"] {
+    appearance: textfield;
     -moz-appearance: textfield;
 }
 
