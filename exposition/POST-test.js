@@ -16,8 +16,8 @@ const test = (app, environement) => {
             data.ethStats = {
                 status: app.ethStats?.status ? app.ethStats?.status : '0',
                 logs: app.ethStats?.logs ? app.ethStats?.logs : [],
-                nodeName: app.ethStats?.nodeName ? app.ethStats?.nodeName : '',
-                serverUrl: app.ethStats?.serverUrl ? app.ethStats?.serverUrl : '',
+                nodeName: app.ethStats?.nodeName ? app.ethStats?.nodeName : await app.node.getMoniker(),
+                serverUrl: app.ethStats?.serverUrl ? app.ethStats?.serverUrl : 'https://stats.helioschainlabs.org',
             }
         }
         

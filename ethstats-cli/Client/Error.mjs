@@ -66,6 +66,10 @@ export default class Error {
   }
 
   resolve(error) {
+    if (error == undefined) {
+      return 'Unknown error';
+    }
+
     let solution = this.getSolution(error.message);
     return solution;
   }

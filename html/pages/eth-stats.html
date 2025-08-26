@@ -223,18 +223,19 @@
                 // Initial display
                 await updateEthStatsDisplay();
 
-                // Update every 30 seconds
+                // Update every 5 seconds
                 setInterval(async () => {
                     if (!isPaused) {
                         await updateEthStatsDisplay();
                     }
-                }, 30000);
+                }, 5000);
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
             });
         </script>
+        <script src="js/theme.js"></script>
         <script src="js/side-bar.js"></script>
         <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>

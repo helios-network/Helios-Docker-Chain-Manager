@@ -9,7 +9,7 @@
     <body>
         <div class="setup-container">
             <div class="logo-container">
-                <img height="50px" src="./logo.png" alt="Logo"/>
+                <img height="50px" src="./logo_black.png" alt="Logo"/>
             </div>
 
             <div class="setup-box" style="display: none">
@@ -60,9 +60,28 @@
                 <div id="step2" class="setup-step">
                     <h1 class="setup-title">Genesis Configuration</h1>
                     <div class="setup-section">
-                        <div class="button-group">
-                            <button id="existingGenesisBtn" onclick="startWith('existingGenesis')" disabled>From Existing Genesis</button>
-                            <button id="newGenesisBtn" onclick="startWith('newGenesis')">New Genesis</button>
+                        <div class="genesis-categories">
+                            <div id="fromBackupBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('fromBackup')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('fromBackup')}">
+                                <div class="genesis-category-icon">
+                                    <span class="material-icons">cloud_download</span>
+                                </div>
+                                <h3 class="genesis-category-title">From Backup</h3>
+                                <p class="genesis-category-description">Restore a node from a B2 backup file. Perfect for quickly setting up a node with existing blockchain data.</p>
+                            </div>
+                            <div id="existingGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('existingGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('existingGenesis')}">
+                                <div class="genesis-category-icon">
+                                    <span class="material-icons">download</span>
+                                </div>
+                                <h3 class="genesis-category-title">From Existing Genesis</h3>
+                                <p class="genesis-category-description">Connect to an existing network using a genesis file from an official node. Perfect for joining established networks.</p>
+                            </div>
+                            <div id="newGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('newGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('newGenesis')}">
+                                <div class="genesis-category-icon">
+                                    <span class="material-icons">add_circle</span>
+                                </div>
+                                <h3 class="genesis-category-title">New Genesis</h3>
+                                <p class="genesis-category-description">Create a completely new blockchain network with your own genesis configuration. For experienced users.</p>
+                            </div>
                         </div>
 
                         <div id="fromExistingGenesisTr" class="input-group-container">
@@ -84,11 +103,43 @@
                             <input id="chainId" type="text" class="form-control" placeholder="42000 (chainId)" />
                             <select id="mode" class="form-control">
                                 <option value="archive" selected>Archive Node (default)</option>
+                                <option value="extra-large">Extra Large Node</option>
+                                <option value="large">Large Node</option>
                                 <option value="medium">Medium Node</option>
                                 <option value="light">Light Node</option>
                                 <option value="very-light">Very Light Node</option>
                             </select>
                         </div>
+
+                        <div id="fromBackupTr" class="input-group-container" style="display: none;">                            
+                            <label for="backupHeaderUrl">Header File URL:</label>
+                            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
+                                <input id="backupHeaderUrl" type="url" class="form-control" 
+                                       placeholder="https://snapshots.helioschainlabs.org/snapshots/snapshot_227000_2025-08-25_22-14-39.tar.gz.header.json" 
+                                       style="flex: 1;" 
+                                       onchange="validateGenesisFields()" 
+                                       oninput="validateGenesisFields()" />
+                            </div>
+                            
+                            <label for="backupMoniker">Name of your Validator</label>
+                            <input id="backupMoniker" type="text" class="form-control" placeholder="name-of-your-node (moniker)" 
+                                   onchange="validateGenesisFields()" 
+                                   oninput="validateGenesisFields()" />
+                            <label for="backupChainId">Chain Id</label>
+                            <input id="backupChainId" type="text" class="form-control" placeholder="42000 (chainId)" 
+                                   onchange="validateGenesisFields()" 
+                                   oninput="validateGenesisFields()" />
+                            <label for="backupMode">Node Mode</label>
+                            <select id="backupMode" class="form-control" onchange="validateGenesisFields()">
+                                <option value="archive" selected>Archive Node (default)</option>
+                                <option value="extra-large">Extra Large Node</option>
+                                <option value="large">Large Node</option>
+                                <option value="medium">Medium Node</option>
+                                <option value="light">Light Node</option>
+                                <option value="very-light">Very Light Node</option>
+                            </select>
+                        </div>
+                        
                         <p class="info-text">Select an official node for the existing genesis option.</p>
                     </div>
 
@@ -99,10 +150,52 @@
                 </div>
             </div>
         </div>
+
+        <div id="progressOverlay" class="progress-overlay" style="display:none;">
+            <div class="progress-card" role="dialog" aria-live="polite" aria-atomic="true">
+                <div class="progress-header">
+                    <div class="progress-spinner"></div>
+                    <div class="progress-texts">
+                        <div id="progressTitle" class="progress-title">Preparing…</div>
+                        <div id="progressDetails" class="progress-details">Please wait while the backup is being downloaded and applied.</div>
+                    </div>
+                </div>
+                <div class="progress-stepper" aria-label="Étapes">
+                    <div id="step-validate" class="stepper-item active" role="listitem">
+                        <div class="stepper-marker"><span class="check-icon">✔</span></div>
+                        <div class="stepper-content">
+                            <div class="stepper-title">Validation</div>
+                            <div class="stepper-sub">Validating header file</div>
+                        </div>
+                    </div>
+                    <div id="step-download" class="stepper-item" role="listitem">
+                        <div class="stepper-marker"><span class="check-icon">✔</span></div>
+                        <div class="stepper-content">
+                            <div class="stepper-title">Download</div>
+                            <div class="stepper-sub">Downloading backup</div>
+                        </div>
+                    </div>
+                    <div id="step-apply" class="stepper-item" role="listitem">
+                        <div class="stepper-marker"><span class="check-icon">✔</span></div>
+                        <div class="stepper-content">
+                            <div class="stepper-title">Apply</div>
+                            <div class="stepper-sub">Configuring the node</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-bar" aria-hidden="true"><div class="progress-bar-inner"></div></div>
+                <div id="progressMeta" class="progress-meta" style="display:none;"></div>
+            </div>
+        </div>
         <script>
             let password = window.localStorage.getItem("access-code");
-            let fromGenesisType = 'existingGenesis';
+            let fromGenesisType = 'fromBackup';
             let traceDB = false;
+            
+            // Initialize validation on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                validateGenesisFields();
+            });
 
             function showError(inputElement, message) {
                 inputElement.classList.add('error');
@@ -133,48 +226,97 @@
                 const genesisURL = document.getElementById('genesisURL');
                 const moniker = document.getElementById('moniker');
                 const chainId = document.getElementById('chainId');
+                const backupHeaderUrl = document.getElementById('backupHeaderUrl');
+                const backupMoniker = document.getElementById('backupMoniker');
+                const backupChainId = document.getElementById('backupChainId');
                 const fireButton = document.querySelector('.navigation-buttons .primary-button');
 
                 let isValid = true;
 
-                if (moniker.value) {
-                    if (!/^[a-z0-9-]+$/.test(moniker.value)) {
-                        showError(moniker, 'Moniker must contain only lowercase letters, numbers, and hyphens');
-                        isValid = false;
+                if (fromGenesisType === 'fromBackup') {
+                    // Validate backup fields
+                    if (backupMoniker && backupMoniker.value) {
+                        if (!/^[a-z0-9-]+$/.test(backupMoniker.value)) {
+                            showError(backupMoniker, 'Moniker must contain only lowercase letters, numbers, and hyphens');
+                            isValid = false;
+                        } else {
+                            hideError(backupMoniker);
+                        }
+                    } else {
+                        hideError(backupMoniker);
+                    }
+
+                    if (backupHeaderUrl && backupHeaderUrl.value) {
+                        if (!backupHeaderUrl.value.endsWith('.b2header.json') && !backupHeaderUrl.value.endsWith('.header.json')) {
+                            showError(backupHeaderUrl, 'URL must end with .b2header.json or .header.json');
+                            isValid = false;
+                        } else {
+                            try {
+                                new URL(backupHeaderUrl.value);
+                                hideError(backupHeaderUrl);
+                            } catch (e) {
+                                showError(backupHeaderUrl, 'Please enter a valid URL');
+                                isValid = false;
+                            }
+                        }
+                    } else {
+                        hideError(backupHeaderUrl);
+                    }
+
+                    if (backupChainId && backupChainId.value) {
+                        if (isNaN(backupChainId.value)) {
+                            showError(backupChainId, 'Chain ID must be a number');
+                            isValid = false;
+                        } else {
+                            hideError(backupChainId);
+                        }
+                    } else {
+                        hideError(backupChainId);
+                    }
+
+                    // Enable button for backup if all fields are valid and filled
+                    fireButton.disabled = !isValid || !backupMoniker.value || !backupHeaderUrl.value || !backupChainId.value;
+                } else {
+                    // Validate regular genesis fields
+                    if (moniker.value) {
+                        if (!/^[a-z0-9-]+$/.test(moniker.value)) {
+                            showError(moniker, 'Moniker must contain only lowercase letters, numbers, and hyphens');
+                            isValid = false;
+                        } else {
+                            hideError(moniker);
+                        }
                     } else {
                         hideError(moniker);
                     }
-                } else {
-                    hideError(moniker);
-                }
 
-                if (chainId.value) {
-                    if (isNaN(chainId.value)) {
-                        showError(chainId, 'Chain ID must be a number');
-                        isValid = false;
+                    if (chainId.value) {
+                        if (isNaN(chainId.value)) {
+                            showError(chainId, 'Chain ID must be a number');
+                            isValid = false;
+                        } else {
+                            hideError(chainId);
+                        }
                     } else {
                         hideError(chainId);
                     }
-                } else {
-                    hideError(chainId);
-                }
 
-                if (fromGenesisType === 'existingGenesis' && genesisURL.value) {
-                    try {
-                        new URL(genesisURL.value);
+                    if (fromGenesisType === 'existingGenesis' && genesisURL.value) {
+                        try {
+                            new URL(genesisURL.value);
+                            hideError(genesisURL);
+                        } catch (e) {
+                            showError(genesisURL, 'Please enter a valid URL');
+                            isValid = false;
+                        }
+                    } else {
                         hideError(genesisURL);
-                    } catch (e) {
-                        showError(genesisURL, 'Please enter a valid URL');
-                        isValid = false;
                     }
-                } else {
-                    hideError(genesisURL);
-                }
 
-                if (fromGenesisType === 'existingGenesis') {
-                    fireButton.disabled = !isValid || !moniker.value || !chainId.value || !genesisURL.value;
-                } else {
-                    fireButton.disabled = !isValid || !moniker.value || !chainId.value;
+                    if (fromGenesisType === 'existingGenesis') {
+                        fireButton.disabled = !isValid || !moniker.value || !chainId.value || !genesisURL.value;
+                    } else {
+                        fireButton.disabled = !isValid || !moniker.value || !chainId.value;
+                    }
                 }
             }
 
@@ -271,15 +413,32 @@
             }
 
             function startWith(value) {
+                // Reset all categories
+                const existingBtn = document.getElementById('existingGenesisBtn');
+                const newBtn = document.getElementById('newGenesisBtn');
+                const backupBtn = document.getElementById('fromBackupBtn');
+
+                // If any is marked disabled, ignore clicks
+                if ((value === 'existingGenesis' && existingBtn.classList.contains('disabled')) ||
+                    (value === 'newGenesis' && newBtn.classList.contains('disabled')) ||
+                    (value === 'fromBackup' && backupBtn.classList.contains('disabled'))) {
+                    return;
+                }
+
+                existingBtn.classList.remove('selected');
+                newBtn.classList.remove('selected');
+                backupBtn.classList.remove('selected');
+                existingBtn.setAttribute('aria-pressed', 'false');
+                newBtn.setAttribute('aria-pressed', 'false');
+                backupBtn.setAttribute('aria-pressed', 'false');
+                
+                // Hide all sections
+                document.getElementById('fromExistingGenesisTr').style.display = 'none';
+                document.getElementById('fromBackupTr').style.display = 'none';
+                
                 if (value === 'existingGenesis') {
-                    document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
-                    document.getElementById('existingGenesisBtn').style.border = 'none';
-                    document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
-                    document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
-                    document.getElementById('newGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                    document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
-                    document.getElementById('existingGenesisBtn').disabled = true;
-                    document.getElementById('newGenesisBtn').disabled = false;
+                    existingBtn.classList.add('selected');
+                    existingBtn.setAttribute('aria-pressed', 'true');
                     document.getElementById('fromExistingGenesisTr').style.display = '';
                     document.getElementById('genesisURL').style.display = '';
                     document.getElementById('nodeIP').style.display = '';
@@ -291,15 +450,15 @@
                     document.getElementById('chainId').disabled = true;
                     document.getElementById('genesisURL').disabled = true;
                     fromGenesisType = value;
+                } else if (value === 'fromBackup') {
+                    backupBtn.classList.add('selected');
+                    backupBtn.setAttribute('aria-pressed', 'true');
+                    document.getElementById('fromBackupTr').style.display = '';
+                    fromGenesisType = value;
                 } else {
-                    document.getElementById('newGenesisBtn').style.background = 'linear-gradient(135deg, #2042be, #012dcb)';
-                    document.getElementById('newGenesisBtn').style.border = 'none';
-                    document.getElementById('newGenesisBtn').style.color = '#FFFFFF';
-                    document.getElementById('existingGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
-                    document.getElementById('existingGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                    document.getElementById('existingGenesisBtn').style.color = '#A3A7AB';
-                    document.getElementById('existingGenesisBtn').disabled = false;
-                    document.getElementById('newGenesisBtn').disabled = true;
+                    newBtn.classList.add('selected');
+                    newBtn.setAttribute('aria-pressed', 'true');
+                    existingBtn.classList.remove('selected');
                     document.getElementById('fromExistingGenesisTr').style.display = '';
                     document.getElementById('genesisURL').style.display = 'none';
                     ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
@@ -383,7 +542,93 @@
                 validateKeystore();
             }
 
+            // Simple notification function for setup page
+            function showNotification(type, title, message, duration = 5000) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#2196F3'};
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    max-width: 300px;
+                    font-size: 0.9rem;
+                `;
+                
+                notification.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 0.5rem;">${title}</div>
+                    <div>${message}</div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after duration
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, duration);
+            }
+
+            function showSetupProgress(title = 'In progress…', details = '') {
+                const overlay = document.getElementById('progressOverlay');
+                document.getElementById('progressTitle').textContent = title;
+                document.getElementById('progressDetails').textContent = details || '';
+                overlay.classList.remove('hide');
+                overlay.style.display = 'flex';
+                requestAnimationFrame(() => overlay.classList.add('show'));
+            }
+
+            function updateSetupProgress(title, details, metaHtml) {
+                if (title !== undefined) document.getElementById('progressTitle').textContent = title;
+                if (details !== undefined) document.getElementById('progressDetails').textContent = details;
+                const meta = document.getElementById('progressMeta');
+                if (metaHtml) {
+                    meta.innerHTML = metaHtml;
+                    meta.style.display = '';
+                }
+            }
+
+            function hideSetupProgress() {
+                const overlay = document.getElementById('progressOverlay');
+                overlay.classList.remove('show');
+                overlay.classList.add('hide');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    overlay.classList.remove('hide');
+                }, 200);
+                const meta = document.getElementById('progressMeta');
+                meta.innerHTML = '';
+                meta.style.display = 'none';
+            }
+
+            function setProgressStep(stage) {
+                const steps = ['validate','download','apply'];
+                const ids = {
+                    validate: 'step-validate',
+                    download: 'step-download',
+                    apply: 'step-apply'
+                };
+                steps.forEach((s) => {
+                    const el = document.getElementById(ids[s]);
+                    el.classList.remove('active','completed');
+                });
+                const currentIndex = steps.indexOf(stage);
+                steps.forEach((s, idx) => {
+                    const el = document.getElementById(ids[s]);
+                    if (idx < currentIndex) el.classList.add('completed');
+                    if (idx === currentIndex) el.classList.add('active');
+                });
+            }
+
             async function fire() {
+                console.log('Fire function called, fromGenesisType:', fromGenesisType);
                 const privateKeyStoreNodeElement = document.getElementById('nodeKeyStoreInput');
                 const privatePasswordElement = document.getElementById('nodePasswordInput');
                 const genesisURLElement = document.getElementById('genesisURL');
@@ -401,36 +646,45 @@
 
                 fireButton.disabled = true;
 
-                hideError(monikerElement);
-                hideError(chainIdElement);
                 if (fromGenesisType === 'existingGenesis') {
                     hideError(genesisURLElement);
+                    hideError(monikerElement);
+                    hideError(chainIdElement);
+                } else if (fromGenesisType === 'fromBackup') {
+                    const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
+                    const backupMonikerElement = document.getElementById('backupMoniker');
+                    hideError(backupHeaderUrlElement);
+                    hideError(backupMonikerElement);
+                } else {
+                    hideError(monikerElement);
+                    hideError(chainIdElement);
                 }
 
                 let hasError = false;
 
-                if (!monikerElement.value.trim()) {
-                    showError(monikerElement, 'Moniker is required');
-                    monikerElement.classList.add('error');
-                    hasError = true;
-                    return ;
-                } else if (!/^[a-z0-9-]+$/.test(monikerElement.value)) {
-                    showError(monikerElement, 'Moniker must contain only lowercase letters, numbers, and hyphens');
-                    monikerElement.classList.add('error');
-                    hasError = true;
-                    return ;
-                }
+                if (fromGenesisType === 'fromBackup') {
+                    // Validation for backup mode - handled in the backup section below
+                } else {
+                    // Validation for other modes
+                    if (!monikerElement.value.trim()) {
+                        showError(monikerElement, 'Moniker is required');
+                        monikerElement.classList.add('error');
+                        hasError = true;
+                    } else if (!/^[a-z0-9-]+$/.test(monikerElement.value)) {
+                        showError(monikerElement, 'Moniker must contain only lowercase letters, numbers, and hyphens');
+                        monikerElement.classList.add('error');
+                        hasError = true;
+                    }
 
-                if (!chainIdElement.value.trim()) {
-                    showError(chainIdElement, 'Chain ID is required');
-                    chainIdElement.classList.add('error');
-                    hasError = true;
-                    return ;
-                } else if (isNaN(chainIdElement.value)) {
-                    showError(chainIdElement, 'Chain ID must be a number');
-                    chainIdElement.classList.add('error');
-                    hasError = true;
-                    return ;
+                    if (!chainIdElement.value.trim()) {
+                        showError(chainIdElement, 'Chain ID is required');
+                        chainIdElement.classList.add('error');
+                        hasError = true;
+                    } else if (isNaN(chainIdElement.value)) {
+                        showError(chainIdElement, 'Chain ID must be a number');
+                        chainIdElement.classList.add('error');
+                        hasError = true;
+                    }
                 }
 
                 if (fromGenesisType === 'existingGenesis') {
@@ -439,42 +693,36 @@
                         showError(nodeIPElement, 'Node IP is required');
                         nodeIPElement.classList.add('error');
                         hasError = true;
-                        return ;
                     }
 
                     if (!nodeIdElement.value.trim()) {
                         showError(nodeIdElement, 'Node Id is required');
                         nodeIdElement.classList.add('error');
                         hasError = true;
-                        return ;
                     }
 
                     if (!nodeP2PPortElement.value.trim()) {
                         showError(nodeP2PPortElement, 'Node P2P Port is required');
                         nodeP2PPortElement.classList.add('error');
                         hasError = true;
-                        return ;
                     }
 
                     if (!nodeRPCPortElement.value.trim()) {
                         showError(nodeRPCPortElement, 'Node RPC Port is required');
                         nodeRPCPortElement.classList.add('error');
                         hasError = true;
-                        return ;
                     }
 
                     if (!nodeGRPCPortElement.value.trim()) {
                         showError(nodeGRPCPortElement, 'Node GRPC Port is required');
                         nodeGRPCPortElement.classList.add('error');
                         hasError = true;
-                        return ;
                     }
 
                     if (!genesisURLElement.value.trim()) {
                         showError(genesisURLElement, 'Genesis URL is required');
                         genesisURLElement.classList.add('error');
                         hasError = true;
-                        return ;
                     } else {
                         try {
                             new URL(genesisURLElement.value);
@@ -482,8 +730,38 @@
                             showError(genesisURLElement, 'Please enter a valid URL');
                             genesisURLElement.classList.add('error');
                             hasError = true;
-                            return ;
                         }
+                    }
+                } else if (fromGenesisType === 'fromBackup') {
+                    const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
+                    const backupMonikerElement = document.getElementById('backupMoniker');
+
+                    if (!backupHeaderUrlElement.value.trim()) {
+                        showError(backupHeaderUrlElement, 'Backup header URL is required');
+                        backupHeaderUrlElement.classList.add('error');
+                        hasError = true;
+                    } else if (!backupHeaderUrlElement.value.endsWith('.b2header.json') && !backupHeaderUrlElement.value.endsWith('.header.json')) {
+                        showError(backupHeaderUrlElement, 'URL must end with .b2header.json or .header.json');
+                        backupHeaderUrlElement.classList.add('error');
+                        hasError = true;
+                    } else {
+                        try {
+                            new URL(backupHeaderUrlElement.value);
+                        } catch (e) {
+                            showError(backupHeaderUrlElement, 'Please enter a valid URL');
+                            backupHeaderUrlElement.classList.add('error');
+                            hasError = true;
+                        }
+                    }
+
+                    if (!backupMonikerElement.value.trim()) {
+                        showError(backupMonikerElement, 'Moniker is required');
+                        backupMonikerElement.classList.add('error');
+                        hasError = true;
+                    } else if (!/^[a-z0-9-]+$/.test(backupMonikerElement.value)) {
+                        showError(backupMonikerElement, 'Moniker must contain only lowercase letters, numbers, and hyphens');
+                        backupMonikerElement.classList.add('error');
+                        hasError = true;
                     }
                 }
 
@@ -496,45 +774,125 @@
 
                 try {
                     const cryptedPassword = btoa(rot13(privatePasswordElement.value));
-                    const result = await fetch('/setup-node', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            keyStoreNode: privateKeyStoreNodeElement.value,
-                            password: cryptedPassword,
-                            fromGenesisType: fromGenesisType,
-                            genesisURL: fromGenesisType === 'existingGenesis' ? genesisURLElement.value : '',
-                            moniker: monikerElement.value,
-                            chainId: chainIdElement.value,
-                            nodeIP: fromGenesisType === 'existingGenesis' ? nodeIPElement.value : '',
-                            nodeId: fromGenesisType === 'existingGenesis' ? nodeIdElement.value : '',
-                            nodeGRPCPort: fromGenesisType === 'existingGenesis' ? nodeGRPCPortElement.value : '',
-                            nodeRPCPort: fromGenesisType === 'existingGenesis' ? nodeRPCPortElement.value : '',
-                            nodeP2PPort: fromGenesisType === 'existingGenesis' ? nodeP2PPortElement.value : '',
-                            mode: modeElement.value,
-                        })
-                    });
+                    
+                    let result;
+                    
+                    if (fromGenesisType === 'fromBackup') {
+                        const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
+                        const backupMonikerElement = document.getElementById('backupMoniker');
+                        const backupChainIdElement = document.getElementById('backupChainId');
+                        const backupModeElement = document.getElementById('backupMode');
+                        
+                        console.log('Sending backup setup request:', {
+                            headerUrl: backupHeaderUrlElement.value,
+                            moniker: backupMonikerElement.value
+                        });
+
+                        showSetupProgress('Validating backup…', 'Checking header file');
+                        setProgressStep('validate');
+                        try {
+                            const infoRes = await fetch('/fetch-b2-backup-info', {
+                                method: 'POST',
+                                headers: {
+                                    'Access-Code': password,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ headerUrl: backupHeaderUrlElement.value })
+                            });
+                            const infoJson = await infoRes.json();
+                            if (infoRes.ok && infoJson.success) {
+                                const b = infoJson.backup || {};
+                                updateSetupProgress(
+                                    'Downloading backup…',
+                                    'This step may take several minutes depending on your connection.',
+                                    `<div class="progress-kv"><strong>Fichier:</strong> ${b.filename || 'inconnu'}</div>` +
+                                    `${b.blockId ? `<div class=\"progress-kv\"><strong>Block ID:</strong> ${b.blockId}</div>` : ''}` +
+                                    `${b.uploadedAt ? `<div class=\"progress-kv\"><strong>Uploaded at:</strong> ${b.uploadedAt}</div>` : ''}`
+                                );
+                                setProgressStep('download');
+                            } else {
+                                updateSetupProgress('Downloading backup…', 'Header validation failed, continuing anyway.');
+                                setProgressStep('download');
+                            }
+                        } catch (e) {
+                            updateSetupProgress('Downloading backup…', 'Unable to validate header, continuing anyway.');
+                            setProgressStep('download');
+                        }
+                        
+                        result = await fetch('/setup-node-from-backup', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Code': password,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                keyStoreNode: privateKeyStoreNodeElement.value,
+                                password: cryptedPassword,
+                                headerUrl: backupHeaderUrlElement.value,
+                                moniker: backupMonikerElement.value,
+                                chainId: backupChainIdElement.value,
+                                mode: backupModeElement.value,
+                            })
+                        });
+                        updateSetupProgress('Applying backup…', 'Node is being configured.');
+                        setProgressStep('apply');
+                    } else {
+                        // Use the existing endpoint for other setup types
+                        result = await fetch('/setup-node', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Code': password,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                keyStoreNode: privateKeyStoreNodeElement.value,
+                                password: cryptedPassword,
+                                fromGenesisType: fromGenesisType,
+                                genesisURL: fromGenesisType === 'existingGenesis' ? genesisURLElement.value : '',
+                                moniker: monikerElement.value,
+                                chainId: chainIdElement.value,
+                                nodeIP: fromGenesisType === 'existingGenesis' ? nodeIPElement.value : '',
+                                nodeId: fromGenesisType === 'existingGenesis' ? nodeIdElement.value : '',
+                                nodeGRPCPort: fromGenesisType === 'existingGenesis' ? nodeGRPCPortElement.value : '',
+                                nodeRPCPort: fromGenesisType === 'existingGenesis' ? nodeRPCPortElement.value : '',
+                                nodeP2PPort: fromGenesisType === 'existingGenesis' ? nodeP2PPortElement.value : '',
+                                mode: modeElement.value,
+                            })
+                        });
+                    }
+                    
                     const jsonResult = await result.json();
 
-                    if (jsonResult.status === 'ready') {
+                    if (jsonResult.success || jsonResult.status === 'ready') {
+                        if (fromGenesisType === 'fromBackup') {
+                            updateSetupProgress('Done ✔', 'Redirecting to node status…');
+                            setProgressStep('apply');
+                            // Let the user read the confirmation briefly
+                        }
                         window.location.href = `/status`;
-                    } else if (jsonResult.status === 'ko' && fromGenesisType === 'existingGenesis') {
-                        showError(genesisURLElement, 'Unable to fetch genesis from this URL');
-                        genesisURLElement.classList.add('error');
-                    } else {
-                        throw new Error('SETUP ERROR');
+                    } else if (jsonResult.status === 'ko') {
+                        if (fromGenesisType === 'existingGenesis') {
+                            showError(genesisURLElement, 'Unable to fetch genesis from this URL');
+                            genesisURLElement.classList.add('error');
+                        } else {
+                            throw new Error(jsonResult.error || 'SETUP ERROR');
+                        }
                     }
                 } catch (error) {
                     console.error('Setup failed:', error);
                     if (fromGenesisType === 'existingGenesis') {
                         showError(genesisURLElement, 'Failed to connect to genesis URL');
                         genesisURLElement.classList.add('error');
+                    } else if (fromGenesisType === 'fromBackup') {
+                        const errorMessage = (error && error.message) ? error.message : 'Failed to setup node from backup';
+                        hideSetupProgress();
+                        showNotification('error', 'Setup Failed', errorMessage);
                     }
                 } finally {
                     fireButton.disabled = false;
+                    if (fromGenesisType === 'fromBackup') {
+                        hideSetupProgress();
+                    }
                 }
             }
 
@@ -599,19 +957,13 @@
                     return ;
                 }
                 document.querySelectorAll('.setup-box')[0].style.display = '';
-                startWith('existingGenesis');
+                startWith('fromBackup');
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
-                document.getElementById('existingGenesisBtn').style.background = 'linear-gradient(135deg, #012dcb, #012dcb)';
-                document.getElementById('existingGenesisBtn').style.border = 'none';
-                document.getElementById('existingGenesisBtn').style.color = '#FFFFFF';
-                document.getElementById('newGenesisBtn').style.background = 'rgba(255, 255, 255, 0.05)';
-                document.getElementById('newGenesisBtn').style.border = '1px solid rgba(255, 255, 255, 0.1)';
-                document.getElementById('newGenesisBtn').style.color = '#A3A7AB';
-                document.getElementById('existingGenesisBtn').disabled = true;
-                document.getElementById('newGenesisBtn').disabled = false;
+                document.getElementById('fromBackupBtn').classList.add('selected');
+                document.getElementById('fromBackupBtn').setAttribute('aria-pressed', 'true');
                 
                 document.querySelectorAll('.step-dot')[0].classList.add('active');
                 document.querySelectorAll('.step-label')[0].classList.add('active');
@@ -644,9 +996,21 @@
                 if (chainId) {
                     chainId.addEventListener('input', validateGenesisFields);
                 }
+                
+                // Add event listeners for backup fields
+                const backupHeaderUrl = document.getElementById('backupHeaderUrl');
+                const backupMoniker = document.getElementById('backupMoniker');
+                
+                if (backupHeaderUrl) {
+                    backupHeaderUrl.addEventListener('input', validateGenesisFields);
+                }
+                if (backupMoniker) {
+                    backupMoniker.addEventListener('input', validateGenesisFields);
+                }
             });
         </script>
 
+        <script src="js/theme.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
     </body>

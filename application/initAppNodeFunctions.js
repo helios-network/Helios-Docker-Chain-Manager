@@ -68,6 +68,13 @@ const initAppNodeFunctions = async (app, environement) => {
         return app.node.heliosAddress;
     }
 
+    app.node.getMoniker = async () => {
+        if (fs.existsSync(path.join(homeDirectory, 'moniker'))) {
+            return fs.readFileSync(path.join(homeDirectory, 'moniker')).toString();
+        }
+        return undefined;
+    }
+
     app.node.getHeliosValAddress = async () => {
         if (app.node.heliosValAddress == undefined) {
             const data = await execWrapper(`heliades keys show user0 -a --bech=val --keyring-backend="local"`);
@@ -130,6 +137,20 @@ const initAppNodeFunctions = async (app, environement) => {
         const data = fs.readFileSync(path.join(homeDirectory, 'config/config.toml')).toString();
         const newData = data.replace(new RegExp(`persistent_peers \= "(.*)"`, 'gm'), `persistent_peers = "${peers.join(',')}"`);
         fs.writeFileSync(path.join(homeDirectory, 'config/config.toml'), newData);
+    }
+
+    app.node.restorePersistentPeersFromBackup = async (persistentPeersData) => {
+        try {
+            if (Array.isArray(persistentPeersData) && persistentPeersData.length > 0) {
+                await app.node.setPersistentPeers(persistentPeersData);
+                console.log(`Restored ${persistentPeersData.length} persistent peers from backup`);
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error restoring persistent peers from backup:', error);
+            return false;
+        }
     }
 
     app.node.addPeer = async (peerAddress) => {

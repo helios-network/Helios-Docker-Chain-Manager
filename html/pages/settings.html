@@ -77,7 +77,29 @@
                                             <p class="mode-description">Full blockchain storage with no pruning. Keeps all historical data. Uses <code>--pruning=nothing</code></p>
                                         </div>
                                     </label>
-                                    
+
+                                    <label class="mode-option">
+                                        <input type="radio" name="node-mode" id="mode-extra-large" value="extra-large" class="mode-radio">
+                                        <div class="mode-content">
+                                            <div class="mode-header">
+                                                <span class="material-icons">storage</span>
+                                                <span class="mode-title">Extra-Large</span>
+                                            </div>
+                                            <p class="mode-description">Balanced storage with moderate pruning. Keeps recent 181,440 blocks. Uses custom pruning settings.</p>
+                                        </div>
+                                    </label>
+
+                                    <label class="mode-option">
+                                        <input type="radio" name="node-mode" id="mode-large" value="large" class="mode-radio">
+                                        <div class="mode-content">
+                                            <div class="mode-header">
+                                                <span class="material-icons">storage</span>
+                                                <span class="mode-title">Large</span>
+                                            </div>
+                                        <p class="mode-description">Balanced storage with moderate pruning. Keeps recent 40,320 blocks. Uses custom pruning settings.</p>
+                                        </div>
+                                    </label>
+
                                     <label class="mode-option">
                                         <input type="radio" name="node-mode" id="mode-medium" value="medium" class="mode-radio">
                                         <div class="mode-content">
@@ -85,7 +107,7 @@
                                                 <span class="material-icons">storage</span>
                                                 <span class="mode-title">Medium</span>
                                             </div>
-                                            <p class="mode-description">Balanced storage with moderate pruning. Keeps recent 100,000 blocks and minimum 5,000 blocks. Uses custom pruning settings.</p>
+                                            <p class="mode-description">Balanced storage with moderate pruning. Keeps recent 10,000 blocks. Uses custom pruning settings.</p>
                                         </div>
                                     </label>
                                     
@@ -96,7 +118,7 @@
                                                 <span class="material-icons">lightbulb</span>
                                                 <span class="mode-title">Light</span>
                                             </div>
-                                            <p class="mode-description">Lightweight storage with aggressive pruning. Keeps recent 10,000 blocks and minimum 1,000 blocks. Uses custom pruning settings.</p>
+                                            <p class="mode-description">Lightweight storage with aggressive pruning. Keeps recent 1,000 blocks. Uses custom pruning settings.</p>
                                         </div>
                                     </label>
                                     
@@ -107,7 +129,7 @@
                                                 <span class="material-icons">light_mode</span>
                                                 <span class="mode-title">Very Light</span>
                                             </div>
-                                            <p class="mode-description">Minimal storage with maximum pruning. Keeps only recent 10 blocks and minimum 10 blocks. Uses custom pruning settings.</p>
+                                            <p class="mode-description">Minimal storage with maximum pruning. Keeps only recent 10 blocks. Uses custom pruning settings.</p>
                                         </div>
                                     </label>
                                 </div>
@@ -680,6 +702,7 @@
                 await main();
             });
         </script>
+        <script src="js/theme.js"></script>
         <script src="js/side-bar.js"></script>
         <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
