@@ -118,12 +118,14 @@
                     document.getElementById('validator-info-container').style.display = 'none';
                     document.getElementById('validator-commission-info-container').style.display = 'none';
                     document.getElementById('validator-delegation-info-container').style.display = 'none';
+                    document.getElementById('validator-assets-info-container').style.display = 'none';
                     displayCreateValidator();
                 } else {
                     document.getElementById('validator-form-container').style.display = 'none';
                     document.getElementById('validator-info-container').style.display = '';
                     document.getElementById('validator-commission-info-container').style.display = '';
                     document.getElementById('validator-delegation-info-container').style.display = '';
+                    document.getElementById('validator-assets-info-container').style.display = '';
                     displayValidatorInfo(validatorAndHisAssetsAndCommission.validator);
                     // displayDelegationInfo(validatorAndHisDelegation.delegation);
                     displayCommissionInfo(validatorAndHisAssetsAndCommission.commission, validatorAndHisAssetsAndCommission.validator);

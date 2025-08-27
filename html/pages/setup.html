@@ -65,8 +65,8 @@
                                 <div class="genesis-category-icon">
                                     <span class="material-icons">cloud_download</span>
                                 </div>
-                                <h3 class="genesis-category-title">From Backup</h3>
-                                <p class="genesis-category-description">Restore a node from a B2 backup file. Perfect for quickly setting up a node with existing blockchain data.</p>
+                                <h3 class="genesis-category-title">From Snapshot</h3>
+                                <p class="genesis-category-description">Restore a node from a snapshot file. Perfect for quickly setting up a node with existing blockchain data.</p>
                             </div>
                             <div id="existingGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('existingGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('existingGenesis')}">
                                 <div class="genesis-category-icon">
@@ -157,7 +157,7 @@
                     <div class="progress-spinner"></div>
                     <div class="progress-texts">
                         <div id="progressTitle" class="progress-title">Preparing…</div>
-                        <div id="progressDetails" class="progress-details">Please wait while the backup is being downloaded and applied.</div>
+                        <div id="progressDetails" class="progress-details">Please wait while the snapshot is being downloaded and applied.</div>
                     </div>
                 </div>
                 <div class="progress-stepper" aria-label="Étapes">
@@ -172,7 +172,7 @@
                         <div class="stepper-marker"><span class="check-icon">✔</span></div>
                         <div class="stepper-content">
                             <div class="stepper-title">Download</div>
-                            <div class="stepper-sub">Downloading backup</div>
+                            <div class="stepper-sub">Downloading snapshot</div>
                         </div>
                     </div>
                     <div id="step-apply" class="stepper-item" role="listitem">
@@ -783,12 +783,12 @@
                         const backupChainIdElement = document.getElementById('backupChainId');
                         const backupModeElement = document.getElementById('backupMode');
                         
-                        console.log('Sending backup setup request:', {
+                        console.log('Sending snapshot setup request:', {
                             headerUrl: backupHeaderUrlElement.value,
                             moniker: backupMonikerElement.value
                         });
 
-                        showSetupProgress('Validating backup…', 'Checking header file');
+                        showSetupProgress('Validating snapshot…', 'Checking header file');
                         setProgressStep('validate');
                         try {
                             const infoRes = await fetch('/fetch-b2-backup-info', {
@@ -803,7 +803,7 @@
                             if (infoRes.ok && infoJson.success) {
                                 const b = infoJson.backup || {};
                                 updateSetupProgress(
-                                    'Downloading backup…',
+                                    'Downloading snapshot…',
                                     'This step may take several minutes depending on your connection.',
                                     `<div class="progress-kv"><strong>Fichier:</strong> ${b.filename || 'inconnu'}</div>` +
                                     `${b.blockId ? `<div class=\"progress-kv\"><strong>Block ID:</strong> ${b.blockId}</div>` : ''}` +
@@ -811,11 +811,11 @@
                                 );
                                 setProgressStep('download');
                             } else {
-                                updateSetupProgress('Downloading backup…', 'Header validation failed, continuing anyway.');
+                                updateSetupProgress('Downloading snapshot…', 'Header validation failed, continuing anyway.');
                                 setProgressStep('download');
                             }
                         } catch (e) {
-                            updateSetupProgress('Downloading backup…', 'Unable to validate header, continuing anyway.');
+                            updateSetupProgress('Downloading snapshot…', 'Unable to validate header, continuing anyway.');
                             setProgressStep('download');
                         }
                         
@@ -834,7 +834,7 @@
                                 mode: backupModeElement.value,
                             })
                         });
-                        updateSetupProgress('Applying backup…', 'Node is being configured.');
+                        updateSetupProgress('Applying snapshot…', 'Node is being configured.');
                         setProgressStep('apply');
                     } else {
                         // Use the existing endpoint for other setup types
@@ -884,7 +884,7 @@
                         showError(genesisURLElement, 'Failed to connect to genesis URL');
                         genesisURLElement.classList.add('error');
                     } else if (fromGenesisType === 'fromBackup') {
-                        const errorMessage = (error && error.message) ? error.message : 'Failed to setup node from backup';
+                        const errorMessage = (error && error.message) ? error.message : 'Failed to setup node from snapshot';
                         hideSetupProgress();
                         showNotification('error', 'Setup Failed', errorMessage);
                     }
