@@ -14,7 +14,8 @@ const runMinerNode = async (app, environement) => {
 
     let settings = {
         dumpCommitDebugExecutionTrace: true,
-        nodeMode: "archive"
+        nodeMode: "archive",
+        logLevel: "info"
     };
     
     if (fs.existsSync(path.join(homeDirectory, 'settings.json'))) {
@@ -31,40 +32,48 @@ const runMinerNode = async (app, environement) => {
 
     switch (settings.nodeMode) {
         case "extra-large": // 1 month
+            configToml = configToml.replace(/indexer = \"null\"/gm, `indexer = \"kv\"`);
+            appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=181440`,
-                `--pruning-interval=10`,
+                `--pruning-interval=2000`,
                 `--min-retain-blocks=181440`,
                 `--skip-evidence-retention=true`,
                 `--archive-mode=false`,
             ];
             break;
         case "large": // 1 week
+            configToml = configToml.replace(/indexer = \"null\"/gm, `indexer = \"kv\"`);
+            appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=40320`,
-                `--pruning-interval=10`,
+                `--pruning-interval=1000`,
                 `--min-retain-blocks=40320`,
                 `--skip-evidence-retention=true`,
                 `--archive-mode=false`,
             ];
             break;
         case "medium":
+            configToml = configToml.replace(/indexer = \"null\"/gm, `indexer = \"kv\"`);
+            appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=10000`,
-                `--pruning-interval=10`,
+                `--pruning-interval=500`,
                 `--min-retain-blocks=10000`,
                 `--skip-evidence-retention=true`,
                 `--archive-mode=false`,
             ];
             break;
         case "light":
+            configToml = configToml.replace(/indexer = \"null\"/gm, `indexer = \"kv\"`);
+            appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=1000`,
-                `--pruning-interval=10`,
+                `--pruning-interval=500`,
                 `--min-retain-blocks=1000`,
                 `--skip-evidence-retention=true`,
                 `--archive-mode=false`,
@@ -72,24 +81,95 @@ const runMinerNode = async (app, environement) => {
             break;
         case "very-light":
             configToml = configToml.replace(/indexer = \"kv\"/gm, `indexer = \"null\"`);
+            appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
             pruningArgs = [
                 `--pruning=custom`,
                 `--pruning-keep-recent=10`,
-                `--pruning-interval=10`,
+                `--pruning-interval=500`,
                 `--min-retain-blocks=10`,
                 `--skip-evidence-retention=true`,
                 `--archive-mode=false`,
             ];
             break;
         default: // archive
+            configToml = configToml.replace(/indexer = \"null\"/gm, `indexer = \"kv\"`);
+            appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
             pruningArgs = [
-                `--pruning=custom`,
+                `--pruning=nothing`,
                 `--pruning-keep-recent=172800`, // 1 month
-                `--pruning-interval=10`,
+                `--pruning-interval=2000`,
                 `--min-retain-blocks=172800`,
                 `--archive-mode=true`
             ];
     }
+
+    // switch (settings.nodeMode) {
+    //     case "extra-large": // 1 month
+    //         appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
+    //         pruningArgs = [
+    //             `--pruning=custom`,
+    //             `--pruning-keep-recent=181440`,
+    //             `--pruning-interval=10`,
+    //             `--min-retain-blocks=181440`,
+    //             `--skip-evidence-retention=true`,
+    //             `--archive-mode=false`,
+    //         ];
+    //         break;
+    //     case "large": // 1 week
+    //         appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
+    //         pruningArgs = [
+    //             `--pruning=custom`,
+    //             `--pruning-keep-recent=40320`,
+    //             `--pruning-interval=10`,
+    //             `--min-retain-blocks=40320`,
+    //             `--skip-evidence-retention=true`,
+    //             `--archive-mode=false`,
+    //         ];
+    //         break;
+    //     case "medium":
+    //         appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
+    //         pruningArgs = [
+    //             `--pruning=custom`,
+    //             `--pruning-keep-recent=10000`,
+    //             `--pruning-interval=10`,
+    //             `--min-retain-blocks=10000`,
+    //             `--skip-evidence-retention=true`,
+    //             `--archive-mode=false`,
+    //         ];
+    //         break;
+    //     case "light":
+    //         appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
+    //         pruningArgs = [
+    //             `--pruning=custom`,
+    //             `--pruning-keep-recent=1000`,
+    //             `--pruning-interval=10`,
+    //             `--min-retain-blocks=1000`,
+    //             `--skip-evidence-retention=true`,
+    //             `--archive-mode=false`,
+    //         ];
+    //         break;
+    //     case "very-light":
+    //         configToml = configToml.replace(/indexer = \"kv\"/gm, `indexer = \"null\"`);
+    //         appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
+    //         pruningArgs = [
+    //             `--pruning=custom`,
+    //             `--pruning-keep-recent=10`,
+    //             `--pruning-interval=10`,
+    //             `--min-retain-blocks=10`,
+    //             `--skip-evidence-retention=true`,
+    //             `--archive-mode=false`,
+    //         ];
+    //         break;
+    //     default: // archive
+    //         appToml = appToml.replace(/iavl-disable-fastnode = false/gm, `iavl-disable-fastnode = true`);
+    //         pruningArgs = [
+    //             `--pruning=custom`,
+    //             `--pruning-keep-recent=172800`, // 1 month
+    //             `--pruning-interval=10`,
+    //             `--min-retain-blocks=172800`,
+    //             `--archive-mode=true`
+    //         ];
+    // }
 
     // write app.toml and config.toml
     fs.writeFileSync(configTomlPath, configToml);
@@ -117,7 +197,7 @@ const runMinerNode = async (app, environement) => {
         [
             'start',
             '--chain-id=42000',
-            '--log_level=info',
+            `--log_level=${settings.logLevel}`,
             `--rpc.laddr=${rpcLAddr}`,
             '--minimum-gas-prices=0.1helios',
             '--grpc.enable=true',
@@ -144,6 +224,7 @@ const runMinerNode = async (app, environement) => {
         { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-node.log'), 'w')]}
     );
     app.node.process = childProcess;
+    app.node.stopOrdonned = false;
 
     childProcess.stdout.on('data', (data) => {
         const regex = new RegExp(`${String.fromCharCode(27)}\\[[0-9]{1,2}m`, 'gm');// remove termcaps
@@ -178,13 +259,11 @@ const runMinerNode = async (app, environement) => {
                     app.node.start();
                 }
             }
-        } else {
-            app.node.stopOrdonned = false;
         }
     });
 
     app.node.status = async () => {
-        return childProcess.exitCode == undefined ? '1' : '0';
+        return childProcess.exitCode == undefined || (childProcess.exitCode != undefined && !app.node.stopOrdonned) ? '1' : '0';
     }
 
     app.node.stop = async () => {

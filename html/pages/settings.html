@@ -47,6 +47,18 @@
                                 </label>
                                 <p class="setting-description">Enable detailed execution trace logging for debugging purposes</p>
                             </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="log-level" class="setting-label">Log Level:</label>
+                                    <select id="log-level" class="setting-select">
+                                        <option value="info">Info</option>
+                                        <option value="error">Error</option>
+                                        <option value="warning">Warning</option>
+                                    </select>
+                                    <p class="setting-description">Set the logging level for the node. Info provides detailed logs, Error shows only errors, Warning shows warnings and errors.</p>
+                                </div>
+                            </div>
                             <button id="save-settings" class="button primary" onclick="saveSettings()">
                                 <span class="material-icons">save</span>
                                 Save Settings
@@ -292,6 +304,10 @@
                         if (data.success) {
                             document.getElementById('dump-commit-debug-execution-trace').checked = data.settings.dumpCommitDebugExecutionTrace;
                             
+                            // Load log level
+                            const logLevel = data.settings.logLevel || 'info';
+                            document.getElementById('log-level').value = logLevel;
+                            
                             // Load backup settings
                             document.getElementById('backup-enable').checked = data.settings.backupEnable || false;
                             document.getElementById('backup-block-interval').value = data.settings.backupBlockInterval || 100;
@@ -393,6 +409,7 @@
             const saveSettings = async () => {
                 try {
                     const dumpCommitDebugExecutionTrace = document.getElementById('dump-commit-debug-execution-trace').checked;
+                    const logLevel = document.getElementById('log-level').value;
                     
                     const response = await fetch('/post-settings', {
                         method: 'POST',
@@ -401,7 +418,8 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            dumpCommitDebugExecutionTrace: dumpCommitDebugExecutionTrace
+                            dumpCommitDebugExecutionTrace: dumpCommitDebugExecutionTrace,
+                            logLevel: logLevel
                         })
                     });
                     

@@ -18,6 +18,20 @@ const actionUnjailNode = async (app, environement, action) => {
 
 const actionAddPeer = async (app, environement, action) => {
     const success = await app.node.addPeer(action.peerAddress);
+    if (success) {
+        console.log(`Peer ${action.peerAddress} added successfully`);
+    } else {
+        console.error(`Failed to add peer ${action.peerAddress}`);
+    }
+}
+
+const actionRemovePeer = async (app, environement, action) => {
+    const success = await app.node.removePeer(action.peerAddress);
+    if (success) {
+        console.log(`Peer ${action.peerAddress} removed successfully`);
+    } else {
+        console.error(`Failed to remove peer ${action.peerAddress}`);
+    }
 }
 
 const actionStartHyperion = async (app, environement, action) => {
@@ -176,6 +190,9 @@ const doAction = async (app, environement, action) => {
             break ;
         case "addPeer":
             await actionAddPeer(app, environement, action);
+            break ;
+        case "removePeer":
+            await actionRemovePeer(app, environement, action);
             break ;
         case "wait": // nothing
             break ;

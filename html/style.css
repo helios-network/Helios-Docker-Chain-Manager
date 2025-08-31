@@ -438,6 +438,22 @@ body {
     color: var(--text-tertiary);
 }
 
+[data-theme="dark"] .setting-select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .setting-select:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+[data-theme="dark"] .setting-select option {
+    background: var(--bg-input);
+    color: var(--text-primary);
+}
+
 [data-theme="dark"] .mode-option {
     background: var(--bg-card);
     border: 1px solid var(--border-primary);
@@ -729,6 +745,22 @@ body {
 
 [data-theme="dark"] .setting-input::placeholder {
     color: var(--text-tertiary);
+}
+
+[data-theme="dark"] .setting-select {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .setting-select:focus {
+    background-color: var(--bg-input);
+    border-color: var(--border-input-focus);
+}
+
+[data-theme="dark"] .setting-select option {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
 }
 
 [data-theme="dark"] .input-group input {
@@ -1188,6 +1220,22 @@ body {
 
 [data-theme="dark"] .setting-input::placeholder {
     color: var(--text-tertiary);
+}
+
+[data-theme="dark"] .setting-select {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .setting-select:focus {
+    background: var(--bg-input);
+    border-color: var(--border-input-focus);
+}
+
+[data-theme="dark"] .setting-select option {
+    background: var(--bg-input);
+    color: var(--text-primary);
 }
 
 [data-theme="dark"] .mode-option {
@@ -4395,6 +4443,43 @@ button:disabled {
 .setting-input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+}
+
+.setting-select {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary) !important;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    width: 100%;
+    transition: all 0.3s ease;
+    -webkit-text-fill-color: var(--text-primary);
+    letter-spacing: 0.3px;
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    padding-right: 2.5rem;
+}
+
+.setting-select:focus {
+    background-color: var(--bg-card);
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(0, 45, 203, 0.10);
+    outline: none;
+}
+
+.setting-select option {
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    padding: 0.5rem;
 }
 
 /* Backups Table Styles */

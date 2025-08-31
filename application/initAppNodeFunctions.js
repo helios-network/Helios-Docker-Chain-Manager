@@ -164,6 +164,13 @@ const initAppNodeFunctions = async (app, environement) => {
         return true;
     }
 
+    app.node.removePeer = async (peerAddress) => {
+        const peers = await app.node.getPersistentPeers();
+        const filteredPeers = peers.filter(peer => peer !== peerAddress);
+        await app.node.setPersistentPeers(filteredPeers);
+        return true;
+    }
+
     app.node.getNodeId = async () => {
         try {
             const nodeKeyPath = path.join(homeDirectory, 'config/node_key.json');

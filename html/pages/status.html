@@ -516,10 +516,68 @@
                 return card;
             }
 
-            function removePeer(peer, type) {
+            // Simple notification function
+            function showNotification(type, title, message, duration = 5000) {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#2196F3'};
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    max-width: 300px;
+                    font-size: 0.9rem;
+                `;
+                
+                notification.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 0.5rem;">${title}</div>
+                    <div>${message}</div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Auto remove after duration
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, duration);
+            }
+
+            async function removePeer(peer, type) {
                 if (confirm(`Are you sure you want to remove this ${type} peer?\n\n${peer}`)) {
-                    // TODO: Implement peer removal API call
-                    console.log(`Removing ${type} peer:`, peer);
+                    try {
+                        const response = await fetch('/remove-peer', {
+                            method: 'POST',
+                            headers: {
+                                'Access-Code': password,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                peerAddress: peer
+                            })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            if (data.success) {
+                                showNotification('success', 'Success', `Peer removed successfully`);
+                            } else {
+                                showNotification('error', 'Error', `Failed to remove peer: ${data.error}`);
+                            }
+                        } else {
+                            showNotification('error', 'Error', 'Failed to remove peer');
+                        }
+                    } catch (error) {
+                        console.error('Error removing peer:', error);
+                        showNotification('error', 'Error', 'Error removing peer');
+                    }
                 }
             }
 
