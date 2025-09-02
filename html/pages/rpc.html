@@ -1,0 +1,751 @@
+<html>
+    <head>
+        <title>Helios Node - RPC Configuration</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="sidebar"></div>
+
+        <!-- Notification Container -->
+        <div class="notification-container" id="notification-container"></div>
+
+        <div class="main-content" style="display: none">
+            <div class="container">
+                <div id="rpc-content" class="grid-container-one">
+                    <!-- Section RPC Configuration -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">router</span>
+                                <h3>RPC Configuration</h3>
+                            </div>
+                        </div>
+                        <div class="section-content">
+                            <p class="setting-description">
+                                Configure the RPC rate limiting and connection settings. These settings will be applied to the node's app.toml file and take effect when the node starts.
+                            </p>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="rate-limit-requests-per-second" class="setting-label">Rate Limit Requests Per Second:</label>
+                                    <input type="number" id="rate-limit-requests-per-second" class="setting-input" min="1" max="1000" value="100">
+                                    <p class="setting-description">Maximum number of requests per second per IP address (1-1000)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="rate-limit-window" class="setting-label">Rate Limit Window:</label>
+                                    <select id="rate-limit-window" class="setting-select">
+                                        <option value="1s">1 second</option>
+                                        <option value="5s">5 seconds</option>
+                                        <option value="10s">10 seconds</option>
+                                        <option value="30s">30 seconds</option>
+                                        <option value="1m">1 minute</option>
+                                        <option value="5m">5 minutes</option>
+                                    </select>
+                                    <p class="setting-description">Time window for rate limiting calculations</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="max-concurrent-connections" class="setting-label">Max Concurrent Connections:</label>
+                                    <input type="number" id="max-concurrent-connections" class="setting-input" min="1" max="10000" value="100">
+                                    <p class="setting-description">Maximum number of concurrent connections allowed (1-10000)</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="max-request-duration" class="setting-label">Max Request Duration:</label>
+                                    <select id="max-request-duration" class="setting-select">
+                                        <option value="1s">1 second</option>
+                                        <option value="2s">2 seconds</option>
+                                        <option value="3s">3 seconds</option>
+                                        <option value="4s">4 seconds</option>
+                                        <option value="5s">5 seconds</option>
+                                        <option value="10s">10 seconds</option>
+                                        <option value="15s">15 seconds</option>
+                                        <option value="30s" selected>30 seconds</option>
+                                        <option value="60s">1 minute</option>
+                                        <option value="120s">2 minutes</option>
+                                        <option value="300s">5 minutes</option>
+                                    </select>
+                                    <p class="setting-description">Maximum duration allowed for RPC requests</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="compute-time-window" class="setting-label">Compute Time Window:</label>
+                                    <select id="compute-time-window" class="setting-select">
+                                        <option value="1s">1 second</option>
+                                        <option value="2s">2 seconds</option>
+                                        <option value="3s" selected>3 seconds</option>
+                                        <option value="4s">4 seconds</option>
+                                        <option value="5s">5 seconds</option>
+                                        <option value="6s">6 seconds</option>
+                                        <option value="7s">7 seconds</option>
+                                        <option value="8s">8 seconds</option>
+                                        <option value="9s">9 seconds</option>
+                                        <option value="10s">10 seconds</option>
+                                        <option value="30s">30 seconds</option>
+                                        <option value="1m">1 minute</option>
+                                        <option value="2m">2 minutes</option>
+                                        <option value="5m">5 minutes</option>
+                                        <option value="10m">10 minutes</option>
+                                        <option value="15m">15 minutes</option>
+                                        <option value="30m">30 minutes</option>
+                                        <option value="1h">1 hour</option>
+                                    </select>
+                                    <p class="setting-description">Time window for compute time limiting per IP</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="compute-time-limit-per-window-per-ip" class="setting-label">Compute Time Limit Per Window Per IP:</label>
+                                    <select id="compute-time-limit-per-window-per-ip" class="setting-select">
+                                        <option value="1s">1 second</option>
+                                        <option value="2s">2 seconds</option>
+                                        <option value="3s">3 seconds</option>
+                                        <option value="4s">4 seconds</option>
+                                        <option value="5s" selected>5 seconds</option>
+                                        <option value="10s">10 seconds</option>
+                                        <option value="15s">15 seconds</option>
+                                        <option value="30s">30 seconds</option>
+                                        <option value="1m">1 minute</option>
+                                        <option value="2m">2 minutes</option>
+                                        <option value="5m">5 minutes</option>
+                                        <option value="10m">10 minutes</option>
+                                        <option value="15m">15 minutes</option>
+                                        <option value="30m">30 minutes</option>
+                                        <option value="1h">1 hour</option>
+                                    </select>
+                                    <p class="setting-description">Maximum compute time allowed per IP within the time window</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="gas-cap" class="setting-label">Gas Cap:</label>
+                                    <input type="number" id="gas-cap" class="setting-input" min="100000" max="10000000" value="2000000">
+                                    <p class="setting-description">Maximum gas allowed for eth_call and eth_estimateGas simulations</p>
+                                </div>
+                            </div>
+                            
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label for="evm-timeout" class="setting-label">EVM Timeout:</label>
+                                    <select id="evm-timeout" class="setting-select">
+                                        <option value="1s">1 second</option>
+                                        <option value="2s" selected>2 seconds</option>
+                                        <option value="3s">3 seconds</option>
+                                        <option value="4s">4 seconds</option>
+                                        <option value="5s">5 seconds</option>
+                                        <option value="10s">10 seconds</option>
+                                        <option value="15s">15 seconds</option>
+                                        <option value="30s">30 seconds</option>
+                                        <option value="1m">1 minute</option>
+                                        <option value="2m">2 minutes</option>
+                                        <option value="5m">5 minutes</option>
+                                    </select>
+                                    <p class="setting-description">Timeout for EVM execution (eth_call, eth_estimateGas)</p>
+                                </div>
+                            </div>
+                            
+                            <!-- RPC HTTP Configuration -->
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label class="setting-label">RPC HTTP Configuration:</label>
+                                    <div class="rpc-http-config">
+                                        <div class="rpc-option">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="rpc-http-enabled" class="setting-checkbox">
+                                                <span class="checkbox-text">Enable HTTP RPC</span>
+                                            </label>
+                                        </div>
+                                        <div class="rpc-port-config">
+                                            <label for="rpc-http-port" class="setting-label">HTTP Port:</label>
+                                            <input type="number" id="rpc-http-port" class="setting-input" min="0" max="65535" value="8545">
+                                            <p class="setting-description">Port for HTTP RPC (0 to disable)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RPC WebSocket Configuration -->
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label class="setting-label">RPC WebSocket Configuration:</label>
+                                    <div class="rpc-ws-config">
+                                        <div class="rpc-option">
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" id="rpc-ws-enabled" class="setting-checkbox">
+                                                <span class="checkbox-text">Enable WebSocket RPC</span>
+                                            </label>
+                                        </div>
+                                        <div class="rpc-port-config">
+                                            <label for="rpc-ws-port" class="setting-label">WebSocket Port:</label>
+                                            <input type="number" id="rpc-ws-port" class="setting-input" min="0" max="65535" value="8546">
+                                            <p class="setting-description">Port for WebSocket RPC (0 to disable)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Method Rate Limits -->
+                            <div class="setting-item">
+                                <div class="setting-group">
+                                    <label class="setting-label">Method Rate Limits:</label>
+                                    <p class="setting-description">Configure rate limits for specific RPC methods. Set to 0 to remove the limit.</p>
+                                    
+                                    <div class="method-rate-limits-container">
+                                        <div class="method-rate-limits-header">
+                                            <span>Method</span>
+                                            <span>Rate Limit (per window)</span>
+                                            <span>Actions</span>
+                                        </div>
+                                        <div id="method-rate-limits-list">
+                                            <!-- Method rate limits will be populated here -->
+                                        </div>
+                                        <div class="add-method-rate-limit">
+                                            <input type="text" id="new-method-name" placeholder="Method name (e.g., eth_call)" class="setting-input">
+                                            <input type="number" id="new-method-limit" placeholder="Rate limit" min="0" max="1000" class="setting-input">
+                                            <button type="button" onclick="addMethodRateLimit()" class="button secondary">
+                                                <span class="material-icons">add</span>
+                                                Add Method
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button id="save-rpc-config" class="button primary" onclick="saveRpcConfig()">
+                                <span class="material-icons">save</span>
+                                Save RPC Configuration
+                            </button>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                    <!-- Section RPC Metrics -->
+                    <div class="section">
+                        <div class="section-header">
+                            <div class="section-title">
+                                <span class="material-icons">analytics</span>
+                                <h3>RPC Metrics</h3>
+                            </div>
+                            <button class="button secondary" onclick="refreshMetrics()">
+                                <span class="material-icons">refresh</span>
+                                Refresh
+                            </button>
+                        </div>
+                        <div class="section-content">
+                            <div id="metrics-loading" class="metrics-loading" style="display: none;">
+                                <div class="loading-spinner"></div>
+                                <span>Loading metrics...</span>
+                            </div>
+                            
+                            <div id="metrics-error" class="metrics-error" style="display: none;">
+                                <span class="material-icons">error</span>
+                                <span>Failed to load metrics. Make sure the RPC proxy is running.</span>
+                            </div>
+                            
+                            <div id="metrics-content" style="display: none;">
+                                <!-- Connection Limiter Metrics -->
+                                <div class="metrics-section">
+                                    <h4 class="metrics-section-title">
+                                        <span class="material-icons">hub</span>
+                                        Connection Limiter
+                                    </h4>
+                                    <div class="metrics-grid">
+                                        <div class="metric-item">
+                                            <div class="metric-label">Available Slots:</div>
+                                            <div class="metric-value" id="available-slots">-</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Current Connections:</div>
+                                            <div class="metric-value" id="current-connections-metric">-</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Max Connections:</div>
+                                            <div class="metric-value" id="max-connections-metric">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rate Limiter Metrics -->
+                                <div class="metrics-section">
+                                    <h4 class="metrics-section-title">
+                                        <span class="material-icons">speed</span>
+                                        Rate Limiter
+                                    </h4>
+                                    <div class="metrics-grid">
+                                        <div class="metric-item">
+                                            <div class="metric-label">Requests Per Second:</div>
+                                            <div class="metric-value" id="requests-per-second">-</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Window Duration:</div>
+                                            <div class="metric-value" id="window-duration">-</div>
+                                        </div>
+                                        <div class="metric-item">
+                                            <div class="metric-label">Total IPs Tracked:</div>
+                                            <div class="metric-value" id="total-ips-tracked">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Method Tracker Metrics -->
+                                <div class="metrics-section">
+                                    <h4 class="metrics-section-title">
+                                        <span class="material-icons">list</span>
+                                        Method Tracker
+                                    </h4>
+                                    <div class="metrics-table-container">
+                                        <table class="metrics-table" id="method-metrics-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Method</th>
+                                                    <th>Total Calls</th>
+                                                    <th>Avg Time (ms)</th>
+                                                    <th>Min Time (ms)</th>
+                                                    <th>Max Time (ms)</th>
+                                                    <th>Error Count</th>
+                                                    <th>Last Call</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="method-metrics-body">
+                                                <!-- Method metrics will be populated here -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- Last Updated -->
+                                <div class="metrics-timestamp">
+                                    <span class="material-icons">schedule</span>
+                                    <span>Last updated: <span id="metrics-timestamp">-</span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let password = window.localStorage.getItem("access-code");
+
+            const loadRpcConfig = async () => {
+                try {
+                    const response = await fetch('/get-settings', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            // Load RPC configuration
+                            document.getElementById('rate-limit-requests-per-second').value = data.settings.rateLimitRequestsPerSecond || 100;
+                            document.getElementById('rate-limit-window').value = data.settings.rateLimitWindow || '1s';
+                            document.getElementById('max-concurrent-connections').value = data.settings.maxConcurrentConnections || 100;
+                            document.getElementById('max-request-duration').value = data.settings.maxRequestDuration || '30s';
+                            document.getElementById('compute-time-window').value = data.settings.computeTimeWindow || '5m';
+                            document.getElementById('compute-time-limit-per-window-per-ip').value = data.settings.computeTimeLimitPerWindowPerIp || '5s';
+                            document.getElementById('gas-cap').value = data.settings.gasCap || 2000000;
+                            document.getElementById('evm-timeout').value = data.settings.evmTimeout || '2s';
+                            
+                            // Load RPC HTTP configuration
+                            const httpPort = data.settings.rpcHttpPort || 8545;
+                            const httpEnabled = httpPort !== 85000;
+                            document.getElementById('rpc-http-enabled').checked = httpEnabled;
+                            document.getElementById('rpc-http-port').value = httpEnabled ? httpPort : 8545;
+                            document.getElementById('rpc-http-port').disabled = !httpEnabled;
+                            
+                            // Load RPC WebSocket configuration
+                            const wsPort = data.settings.rpcWsPort || 8546;
+                            const wsEnabled = wsPort !== 85001;
+                            document.getElementById('rpc-ws-enabled').checked = wsEnabled;
+                            document.getElementById('rpc-ws-port').value = wsEnabled ? wsPort : 8546;
+                            document.getElementById('rpc-ws-port').disabled = !wsEnabled;
+                            
+                            // Load method rate limits
+                            loadMethodRateLimits(data.settings.methodRateLimits || {});
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading RPC configuration:', error);
+                }
+            };
+
+
+
+
+
+            const saveRpcConfig = async () => {
+                try {
+                    const rateLimitRequestsPerSecond = parseInt(document.getElementById('rate-limit-requests-per-second').value) || 100;
+                    const rateLimitWindow = document.getElementById('rate-limit-window').value;
+                    const maxConcurrentConnections = parseInt(document.getElementById('max-concurrent-connections').value) || 100;
+                    const maxRequestDuration = document.getElementById('max-request-duration').value;
+                    const computeTimeWindow = document.getElementById('compute-time-window').value;
+                    const computeTimeLimitPerWindowPerIp = document.getElementById('compute-time-limit-per-window-per-ip').value;
+                    const gasCap = parseInt(document.getElementById('gas-cap').value) || 2000000;
+                    const evmTimeout = document.getElementById('evm-timeout').value;
+                    
+                    // Get RPC HTTP configuration
+                    const rpcHttpEnabled = document.getElementById('rpc-http-enabled').checked;
+                    const rpcHttpPort = rpcHttpEnabled ? parseInt(document.getElementById('rpc-http-port').value) || 8545 : 85000;
+                    
+                    // Get RPC WebSocket configuration
+                    const rpcWsEnabled = document.getElementById('rpc-ws-enabled').checked;
+                    const rpcWsPort = rpcWsEnabled ? parseInt(document.getElementById('rpc-ws-port').value) || 8546 : 85001;
+                    
+                    // Get method rate limits
+                    const methodRateLimits = getMethodRateLimits();
+                    
+                    // Validate inputs
+                    if (rateLimitRequestsPerSecond < 1 || rateLimitRequestsPerSecond > 1000) {
+                        showNotification('error', 'Error', 'Rate limit requests per second must be between 1 and 1000');
+                        return;
+                    }
+                    
+                    if (maxConcurrentConnections < 1 || maxConcurrentConnections > 10000) {
+                        showNotification('error', 'Error', 'Max concurrent connections must be between 1 and 10000');
+                        return;
+                    }
+                    
+                    const response = await fetch('/post-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            rateLimitRequestsPerSecond: rateLimitRequestsPerSecond,
+                            rateLimitWindow: rateLimitWindow,
+                            maxConcurrentConnections: maxConcurrentConnections,
+                            maxRequestDuration: maxRequestDuration,
+                            computeTimeWindow: computeTimeWindow,
+                            computeTimeLimitPerWindowPerIp: computeTimeLimitPerWindowPerIp,
+                            gasCap: gasCap,
+                            evmTimeout: evmTimeout,
+                            rpcHttpPort: rpcHttpPort,
+                            rpcWsPort: rpcWsPort,
+                            methodRateLimits: methodRateLimits
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            showNotification('success', 'Success', 'RPC configuration saved successfully!');
+                        } else {
+                            showNotification('error', 'Error', 'Error saving RPC configuration: ' + data.error);
+                        }
+                    } else {
+                        showNotification('error', 'Error', 'Error saving RPC configuration');
+                    }
+                } catch (error) {
+                    console.error('Error saving RPC configuration:', error);
+                    showNotification('error', 'Error', 'Error saving RPC configuration');
+                }
+            };
+
+            const loadMethodRateLimits = (methodRateLimits) => {
+                const container = document.getElementById('method-rate-limits-list');
+                container.innerHTML = '';
+                
+                Object.entries(methodRateLimits).forEach(([methodName, rateLimit]) => {
+                    if (rateLimit > 0) {
+                        addMethodRateLimitRow(methodName, rateLimit);
+                    }
+                });
+            };
+
+            const addMethodRateLimit = () => {
+                const methodName = document.getElementById('new-method-name').value.trim();
+                const rateLimit = parseInt(document.getElementById('new-method-limit').value) || 0;
+                
+                if (!methodName) {
+                    showNotification('error', 'Error', 'Method name is required');
+                    return;
+                }
+                
+                if (rateLimit < 0) {
+                    showNotification('error', 'Error', 'Rate limit must be 0 or positive');
+                    return;
+                }
+                
+                addMethodRateLimitRow(methodName, rateLimit);
+                
+                // Clear inputs
+                document.getElementById('new-method-name').value = '';
+                document.getElementById('new-method-limit').value = '';
+            };
+
+            const addMethodRateLimitRow = (methodName, rateLimit) => {
+                const container = document.getElementById('method-rate-limits-list');
+                const item = document.createElement('div');
+                item.className = 'method-rate-limit-item';
+                item.dataset.method = methodName;
+                
+                item.innerHTML = `
+                    <div class="method-name">${methodName}</div>
+                    <input type="number" class="rate-limit-input" value="${rateLimit}" min="0" max="1000" onchange="updateMethodRateLimit('${methodName}', this.value)">
+                    <div class="actions">
+                        <button type="button" onclick="removeMethodRateLimit('${methodName}')" class="button danger">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            };
+
+            const updateMethodRateLimit = (methodName, newRateLimit) => {
+                const rateLimit = parseInt(newRateLimit) || 0;
+                if (rateLimit === 0) {
+                    removeMethodRateLimit(methodName);
+                }
+            };
+
+            const removeMethodRateLimit = (methodName) => {
+                const item = document.querySelector(`[data-method="${methodName}"]`);
+                if (item) {
+                    item.remove();
+                }
+            };
+
+            const getMethodRateLimits = () => {
+                const methodRateLimits = {};
+                const items = document.querySelectorAll('.method-rate-limit-item');
+                
+                items.forEach(item => {
+                    const methodName = item.dataset.method;
+                    const rateLimit = parseInt(item.querySelector('.rate-limit-input').value) || 0;
+                    
+                    if (rateLimit === 0) {
+                        removeMethodRateLimit(methodName);
+                    } else {
+                        methodRateLimits[methodName] = rateLimit;
+                    }
+                });
+                
+                return methodRateLimits;
+            };
+
+            const loadMetrics = async () => {
+                try {
+                    showMetricsLoading(true);
+                    showMetricsError(false);
+                    
+                    const response = await fetch('/rpc-metrics', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success && data.metrics) {
+                            displayMetrics(data.metrics);
+                            showMetricsContent(true);
+                        } else {
+                            throw new Error(data.error || 'Failed to load metrics');
+                        }
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    console.error('Error loading metrics:', error);
+                    showMetricsError(true);
+                    showMetricsContent(false);
+                } finally {
+                    showMetricsLoading(false);
+                }
+            };
+
+            const refreshMetrics = async () => {
+                await loadMetrics();
+            };
+
+            const showMetricsLoading = (show) => {
+                document.getElementById('metrics-loading').style.display = show ? 'flex' : 'none';
+            };
+
+            const showMetricsError = (show) => {
+                document.getElementById('metrics-error').style.display = show ? 'flex' : 'none';
+            };
+
+            const showMetricsContent = (show) => {
+                document.getElementById('metrics-content').style.display = show ? 'block' : 'none';
+            };
+
+            const displayMetrics = (metrics) => {
+                // Display Connection Limiter metrics
+                if (metrics.connection_limiter) {
+                    document.getElementById('available-slots').textContent = metrics.connection_limiter.available_slots || '-';
+                    document.getElementById('current-connections-metric').textContent = metrics.connection_limiter.current_connections || '-';
+                    document.getElementById('max-connections-metric').textContent = metrics.connection_limiter.max_connections || '-';
+                }
+
+                // Display Rate Limiter metrics
+                if (metrics.rate_limiter) {
+                    document.getElementById('requests-per-second').textContent = metrics.rate_limiter.limit || '-';
+                    document.getElementById('window-duration').textContent = metrics.rate_limiter.window_duration || '-';
+                    document.getElementById('total-ips-tracked').textContent = metrics.rate_limiter.total_ips_tracked || '-';
+                }
+
+                // Display Method Tracker metrics
+                if (metrics.method_tracker) {
+                    displayMethodMetrics(metrics.method_tracker);
+                }
+
+                // Display timestamp
+                if (metrics.timestamp) {
+                    const timestamp = new Date(metrics.timestamp);
+                    document.getElementById('metrics-timestamp').textContent = timestamp.toLocaleString();
+                }
+            };
+
+            const displayMethodMetrics = (methodTracker) => {
+                const tbody = document.getElementById('method-metrics-body');
+                tbody.innerHTML = '';
+
+                Object.entries(methodTracker).forEach(([methodName, methodData]) => {
+                    const row = document.createElement('tr');
+                    
+                    const lastCallTime = new Date(methodData.last_call_time);
+                    const formattedLastCall = lastCallTime.toLocaleString();
+                    
+                    row.innerHTML = `
+                        <td class="method-name">${methodName}</td>
+                        <td class="method-count">${methodData.total_calls}</td>
+                        <td class="method-avg-time">${(methodData.average_time / 1000000).toFixed(2)}</td>
+                        <td class="method-min-time">${(methodData.min_time / 1000000).toFixed(2)}</td>
+                        <td class="method-max-time">${(methodData.max_time / 1000000).toFixed(2)}</td>
+                        <td class="method-error-count">${methodData.error_count}</td>
+                        <td class="method-last-call">${formattedLastCall}</td>
+                    `;
+                    
+                    tbody.appendChild(row);
+                });
+            };
+
+            const showNotification = (type, title, message, duration = 5000) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const iconMap = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="material-icons">${iconMap[type] || 'info'}</span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                    <div class="notification-progress" style="width: 100%"></div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('hide');
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 400);
+                    }, duration);
+                    
+                    const progress = notification.querySelector('.notification-progress');
+                    progress.style.transition = `width ${duration}ms linear`;
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 10);
+                }
+            };
+
+            const main = async () => {
+                if (password == undefined) {
+                    window.location = '/';
+                    return;
+                }
+                if (!(await isSetup())) {
+                    window.location = '/setup';
+                    return;
+                }
+                displaySideBar();
+                document.querySelectorAll('.main-content')[0].style.display = '';
+                await loadRpcConfig();
+                await loadMetrics();
+                
+                // Add event listeners for real-time updates
+                // Removed updateConfigPreview calls as the preview section was removed
+                
+                // Add RPC HTTP/WS event listeners
+                document.getElementById('rpc-http-enabled').addEventListener('change', function() {
+                    const portInput = document.getElementById('rpc-http-port');
+                    portInput.disabled = !this.checked;
+                    if (!this.checked) {
+                        portInput.value = '85000';
+                    } else if (portInput.value === '85000') {
+                        portInput.value = '8545';
+                    }
+                });
+                
+                document.getElementById('rpc-ws-enabled').addEventListener('change', function() {
+                    const portInput = document.getElementById('rpc-ws-port');
+                    portInput.disabled = !this.checked;
+                    if (!this.checked) {
+                        portInput.value = '85001';
+                    } else if (portInput.value === '85001') {
+                        portInput.value = '8546';
+                    }
+                });
+            };
+
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
+            });
+        </script>
+        <script src="js/theme.js"></script>
+        <script src="js/side-bar.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
+    </body>
+</html> 

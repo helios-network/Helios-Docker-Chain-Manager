@@ -8,8 +8,8 @@ const runMinerNode = async (app, environement) => {
 
     const rpcLAddr = environement.env['rpc.laddr'] ?? 'tcp://0.0.0.0:26657';
     const grpcAddress = environement.env['grpc.address'] ?? '0.0.0.0:9090';
-    const jsonRpcAddress = environement.env['json-rpc.address'] ?? '0.0.0.0:8545';
-    const jsonRpcWsAddress = environement.env['json-rpc.ws-address'] ?? '0.0.0.0:8546';
+    let jsonRpcAddress = environement.env['json-rpc.address'] ?? '0.0.0.0:8545';
+    let jsonRpcWsAddress = environement.env['json-rpc.ws-address'] ?? '0.0.0.0:8546';
     const p2plAddr = environement.env['p2p.laddr'] ?? 'tcp://0.0.0.0:26656';
 
     let settings = {
@@ -21,6 +21,15 @@ const runMinerNode = async (app, environement) => {
     if (fs.existsSync(path.join(homeDirectory, 'settings.json'))) {
         const savedSettings = JSON.parse(fs.readFileSync(path.join(homeDirectory, 'settings.json'), 'utf8'));
         settings = { ...settings, ...savedSettings };
+    }
+    
+    // Override RPC addresses with settings if available
+    if (settings.rpcHttpPort) {
+        jsonRpcAddress = `0.0.0.0:${settings.rpcHttpPort}`;
+    }
+    
+    if (settings.rpcWsPort) {
+        jsonRpcWsAddress = `0.0.0.0:${settings.rpcWsPort}`;
     }
 
     let appTomlPath = path.join(homeDirectory, 'config/app.toml');
@@ -170,6 +179,156 @@ const runMinerNode = async (app, environement) => {
     //             `--archive-mode=true`
     //         ];
     // }
+
+    // Apply RPC configuration from settings to app.toml
+    if (settings.rateLimitRequestsPerSecond) {
+        appToml = appToml.replace(
+            /rate-limit-requests-per-second = \d+/gm,
+            `rate-limit-requests-per-second = ${settings.rateLimitRequestsPerSecond}`
+        );
+        if (!appToml.includes('rate-limit-requests-per-second')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\nrate-limit-requests-per-second = ${settings.rateLimitRequestsPerSecond}`
+            );
+        }
+    }
+    
+    if (settings.rateLimitWindow) {
+        appToml = appToml.replace(
+            /rate-limit-window = "[^"]*"/gm,
+            `rate-limit-window = "${settings.rateLimitWindow}"`
+        );
+        if (!appToml.includes('rate-limit-window')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\nrate-limit-window = "${settings.rateLimitWindow}"`
+            );
+        }
+    }
+    
+    if (settings.maxConcurrentConnections) {
+        appToml = appToml.replace(
+            /max-concurrent-connections = \d+/gm,
+            `max-concurrent-connections = ${settings.maxConcurrentConnections}`
+        );
+
+        if (!appToml.includes('max-concurrent-connections')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\nmax-concurrent-connections = ${settings.maxConcurrentConnections}`
+            );
+        }
+    }
+
+    // Apply max-request-duration configuration from settings to app.toml
+    if (settings.maxRequestDuration) {
+        appToml = appToml.replace(
+            /max-request-duration = "[^"]*"/gm,
+            `max-request-duration = "${settings.maxRequestDuration}"`
+        );
+
+        if (!appToml.includes('max-request-duration')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\nmax-request-duration = "${settings.maxRequestDuration}"`
+            );
+        }
+    }
+
+    // Apply compute-time-window configuration from settings to app.toml
+    if (settings.computeTimeWindow) {
+        appToml = appToml.replace(
+            /compute-time-window = "[^"]*"/gm,
+            `compute-time-window = "${settings.computeTimeWindow}"`
+        );
+
+        if (!appToml.includes('compute-time-window')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\ncompute-time-window = "${settings.computeTimeWindow}"`
+            );
+        }
+    }
+
+    // Apply compute-time-limit-per-window-per-ip configuration from settings to app.toml
+    if (settings.computeTimeLimitPerWindowPerIp) {
+        appToml = appToml.replace(
+            /compute-time-limit-per-window-per-ip = "[^"]*"/gm,
+            `compute-time-limit-per-window-per-ip = "${settings.computeTimeLimitPerWindowPerIp}"`
+        );
+
+        if (!appToml.includes('compute-time-limit-per-window-per-ip')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\ncompute-time-limit-per-window-per-ip = "${settings.computeTimeLimitPerWindowPerIp}"`
+            );
+        }
+    }
+
+    // Apply gas-cap configuration from settings to app.toml
+    if (settings.gasCap) {
+        appToml = appToml.replace(
+            /gas-cap = \d+/gm,
+            `gas-cap = ${settings.gasCap}`
+        );
+
+        if (!appToml.includes('gas-cap')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\ngas-cap = ${settings.gasCap}`
+            );
+        }
+    }
+
+    // Apply evm-timeout configuration from settings to app.toml
+    if (settings.evmTimeout) {
+        appToml = appToml.replace(
+            /evm-timeout = "[^"]*"/gm,
+            `evm-timeout = "${settings.evmTimeout}"`
+        );
+
+        if (!appToml.includes('evm-timeout')) {
+            // placer dans la section [json-rpc]
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\nevm-timeout = "${settings.evmTimeout}"`
+            );
+        }
+    }
+
+    // Apply method-rate-limits configuration from settings to app.toml
+    if (settings.methodRateLimits && Object.keys(settings.methodRateLimits).length > 0) {
+        
+        // Build new method-rate-limits configuration
+        let methods = [];
+        Object.entries(settings.methodRateLimits).forEach(([methodName, rateLimit]) => {
+            if (rateLimit > 0) {
+                methods.push(`${methodName}:${rateLimit}`);
+            }
+        });
+        let methodRateLimitsConfig = `method-rate-limits = "${methods.join(',')}"`;
+
+        // Replace the existing method-rate-limits section
+        appToml = appToml.replace(/method-rate-limits = "[^"]*"/gm, methodRateLimitsConfig);
+        
+        // Add to [json-rpc] section
+        if (!appToml.includes('method-rate-limits')) {
+            appToml = appToml.replace(
+                /\[json-rpc\]/gm,
+                `[json-rpc]\n${methodRateLimitsConfig}`
+            );
+        }
+    }
+
+
 
     // write app.toml and config.toml
     fs.writeFileSync(configTomlPath, configToml);

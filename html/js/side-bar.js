@@ -39,6 +39,11 @@ const displaySideBar = () => {
             icon: '<i class="material-icons">settings</i>'
         },
         {
+            name: 'RPC Config',
+            path: '/rpc',
+            icon: '<i class="material-icons">router</i>'
+        },
+        {
             name: 'EthStats',
             path: '/eth-stats',
             icon: '<i class="material-icons">analytics</i>'

@@ -6681,3 +6681,541 @@ button.btn {
         border-radius: 0 !important;
     }
 }
+
+/* RPC Configuration Page Styles */
+.config-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.config-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.config-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.config-value {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.config-note {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.config-note p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.config-preview {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.config-preview pre {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Dark theme adjustments for RPC config page */
+[data-theme="dark"] .config-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+}
+
+[data-theme="dark"] .config-note {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+}
+
+[data-theme="dark"] .config-preview {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+}
+
+[data-theme="dark"] .config-preview pre {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+}
+
+/* RPC Metrics Styles */
+.metrics-loading {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-primary);
+    border-top: 2px solid var(--accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.metrics-error {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    justify-content: center;
+    color: var(--accent-error);
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.2);
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.metrics-section {
+    margin-bottom: 2rem;
+}
+
+.metrics-section:last-child {
+    margin-bottom: 0;
+}
+
+.metrics-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+    margin-bottom: 1rem;
+}
+
+.metrics-section-title .material-icons {
+    color: var(--accent-primary);
+    font-size: 1.25rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.metric-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.metric-value {
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+}
+
+.metrics-table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid var(--border-primary);
+    margin-bottom: 1rem;
+}
+
+.metrics-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--bg-card);
+    font-size: 0.9rem;
+}
+
+.metrics-table th {
+    background: var(--bg-button-secondary);
+    color: var(--accent-primary);
+    font-weight: 700;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid rgba(0, 45, 203, 0.10);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.metrics-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-secondary);
+    vertical-align: middle;
+}
+
+.metrics-table tr:last-child td {
+    border-bottom: none;
+}
+
+.metrics-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.method-name {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+}
+
+.method-count {
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.method-avg-time,
+.method-min-time,
+.method-max-time {
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+    font-family: 'Courier New', monospace;
+}
+
+.method-error-count {
+    font-weight: 600;
+    color: var(--accent-error);
+    text-align: center;
+}
+
+.method-last-call {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.metrics-timestamp {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+}
+
+.metrics-timestamp .material-icons {
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Dark theme adjustments for metrics */
+[data-theme="dark"] .metric-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+}
+
+[data-theme="dark"] .metrics-table {
+    background: var(--bg-card);
+}
+
+[data-theme="dark"] .metrics-table th {
+    background: var(--bg-button-secondary);
+    border-bottom: 1px solid rgba(0, 45, 203, 0.10);
+}
+
+[data-theme="dark"] .metrics-table td {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .metrics-timestamp {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+}
+
+/* Responsive adjustments for metrics */
+@media (max-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .metrics-table-container {
+        font-size: 0.8rem;
+    }
+    
+    .metrics-table th,
+    .metrics-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    .method-last-call {
+        font-size: 0.75rem;
+    }
+}
+
+/* Method Rate Limits Styles */
+.method-rate-limits-container {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.method-rate-limits-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.method-rate-limit-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.method-rate-limit-item:last-child {
+    margin-bottom: 0;
+}
+
+.method-rate-limit-item input {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+.method-rate-limit-item input:focus {
+    border-color: var(--accent-primary);
+    outline: none;
+}
+
+.method-rate-limit-item .method-name {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+}
+
+.method-rate-limit-item .rate-limit-value {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.method-rate-limit-item .actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.method-rate-limit-item .button {
+    padding: 0.4rem 0.6rem;
+    min-width: auto;
+    height: auto;
+    font-size: 0.8rem;
+}
+
+.method-rate-limit-item .button .material-icons {
+    font-size: 0.9rem;
+}
+
+.add-method-rate-limit {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 1rem;
+    align-items: end;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-primary);
+}
+
+.add-method-rate-limit input {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.add-method-rate-limit input:focus {
+    border-color: var(--accent-primary);
+    outline: none;
+}
+
+.add-method-rate-limit .button {
+    padding: 0.5rem 0.75rem;
+    min-width: auto;
+    height: auto;
+    font-size: 0.8rem;
+}
+
+.add-method-rate-limit .button .material-icons {
+    font-size: 0.9rem;
+}
+
+/* Dark theme adjustments for method rate limits */
+[data-theme="dark"] .method-rate-limits-container {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+}
+
+[data-theme="dark"] .method-rate-limits-header,
+[data-theme="dark"] .method-rate-limit-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+}
+
+/* Responsive adjustments for method rate limits */
+@media (max-width: 768px) {
+    .method-rate-limits-header,
+    .method-rate-limit-item,
+    .add-method-rate-limit {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .method-rate-limits-header span {
+        text-align: center;
+        font-size: 0.8rem;
+    }
+    
+    .method-rate-limit-item .actions {
+        justify-content: center;
+    }
+    
+    .add-method-rate-limit .button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* RPC HTTP/WS Configuration Styles */
+.rpc-http-config,
+.rpc-ws-config {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.rpc-option {
+    margin-bottom: 1rem;
+}
+
+.rpc-option:last-child {
+    margin-bottom: 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.setting-checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent-primary);
+    cursor: pointer;
+}
+
+.checkbox-text {
+    font-weight: 500;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.rpc-port-config {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.rpc-port-config .setting-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.rpc-port-config .setting-input {
+    max-width: 150px;
+}
+
+.rpc-port-config .setting-description {
+    font-size: 0.85rem;
+    color: var(--text-tertiary);
+    margin: 0;
+}
+
+/* Dark theme adjustments for RPC config */
+[data-theme="dark"] .rpc-http-config,
+[data-theme="dark"] .rpc-ws-config {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-primary);
+}
+
+/* Responsive adjustments for RPC config */
+@media (max-width: 768px) {
+    .rpc-port-config .setting-input {
+        max-width: 100%;
+    }
+}
