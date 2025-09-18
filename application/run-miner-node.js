@@ -5,6 +5,7 @@ const path = require('path');
 
 const runMinerNode = async (app, environement) => {
     const homeDirectory = await app.actions.getHomeDirectory.use();
+    const nodeMoniker = fs.readFileSync(path.join(homeDirectory, 'moniker')).toString();
 
     const rpcLAddr = environement.env['rpc.laddr'] ?? 'tcp://0.0.0.0:26657';
     const grpcAddress = environement.env['grpc.address'] ?? '0.0.0.0:9090';
@@ -372,6 +373,10 @@ const runMinerNode = async (app, environement) => {
 
             `--state-sync.snapshot-interval=0`, // disable state sync snapshot (piece of shit)
             `--state-sync.snapshot-keep-recent=0`, // disable state sync snapshot (piece of shit)
+
+            `--enable-notifier=true`,
+            `--moniker=${nodeMoniker}`,
+            `--notifier-url=https://network.helioschainlabs.org/subscribe`,
 
             ...(settings.dumpCommitDebugExecutionTrace ? [`--dump-commit-debug-execution-trace=true`] : []),
             
