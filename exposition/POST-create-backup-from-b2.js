@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execWrapper } = require('../utils/exec-wrapper');
+const { pipeline } = require('stream/promises');
 
 const createBackupFromB2 = (app, environement) => {
     app.post('/create-backup-from-b2', async (req, res) => {
@@ -66,8 +67,8 @@ const createBackupFromB2 = (app, environement) => {
             
             // Step 3: Save the backup file locally
             const backupPath = path.join(backupsDir, headerData.filename);
-            const backupBuffer = await backupResponse.arrayBuffer();
-            fs.writeFileSync(backupPath, Buffer.from(backupBuffer));
+            const fileStream = fs.createWriteStream(backupPath);
+            await pipeline(backupResponse.body, fileStream);
             
             console.log(`Backup file saved to: ${backupPath}`);
             
