@@ -20,55 +20,79 @@
             </div>
             
             <div class="login-container">
-                <div class="logo-container">
-                    <div class="logo-wrapper">
-                        <img src="./logo_black.png" alt="Helios Node Logo"/>
-                        <div class="logo-glow"></div>
-                    </div>
-                </div>
-                
-                <div class="login-box">
-                    <div class="login-header">
-                        <h1 class="login-title">Welcome to Helios Node</h1>
-                        <p class="login-subtitle">Please set up your access password to continue</p>
-                    </div>
-                    
-                    <form id="login-form" novalidate>
-                        <div class="form-group">
-                            <div class="input-wrapper">
-                                <label class="form-label">
-                                    <span class="material-icons">lock</span>
-                                    Access Password
-                                </label>
-                                <div class="input-container">
-                                    <input 
-                                        id="access-password" 
-                                        type="password" 
-                                        class="form-control"
-                                        placeholder="Enter your password" 
-                                        required
-                                        minlength="4"
-                                    />
-                                    <div class="input-border"></div>
-                                    <div class="input-focus-border"></div>
+                <div class="login-layout">
+                    <div class="login-showcase">
+                        <div class="login-showcase-content">
+                            <div class="logo-container">
+                                <div class="logo-wrapper">
+                                    <img src="./logo.png" alt="Helios Node Logo"/>
+                                    <div class="logo-glow"></div>
                                 </div>
-                                <div id="password-feedback" class="invalid-feedback"></div>
                             </div>
+                            <h2 class="showcase-title">Manage your infrastructure with confidence</h2>
+                            <p class="showcase-text">
+                                A modern dashboard to simplify the onboarding of your validators, track your metrics and maintain control over security.
+                            </p>
+                            <ul class="login-highlights">
+                                <li>
+                                    <span class="material-icons">security</span>
+                                    Reinforced access for your node
+                                </li>
+                                <li>
+                                    <span class="material-icons">insights</span>
+                                    Central view of the status of your networks
+                                </li>
+                                <li>
+                                    <span class="material-icons">bolt</span>
+                                    Guided start in minutes
+                                </li>
+                            </ul>
                         </div>
+                    </div>
 
-                        <button 
-                            id="login-btn" 
-                            type="submit"
-                            class="btn w-100" 
-                            onclick="setupPassword()"
-                        >
-                            <span class="btn-content">
-                                <span class="material-icons">shield</span>
-                                <span class="btn-text">Create Secure Access</span>
-                            </span>
-                            <div class="btn-ripple"></div>
-                        </button>
-                    </form>
+                    <div class="login-box login-panel">
+                        <div class="login-header">
+                            <h1 class="login-title">Welcome to Helios Node</h1>
+                            <p class="login-subtitle">Please set up your access password to continue</p>
+                        </div>
+                        
+                        <form id="login-form" novalidate>
+                            <div class="form-group">
+                                <div class="input-wrapper">
+                                    <label class="form-label">
+                                        <span class="material-icons">lock</span>
+                                        Access Password
+                                    </label>
+                                    <div class="input-container">
+                                        <input 
+                                            id="access-password" 
+                                            type="password" 
+                                            class="form-control"
+                                            placeholder="Enter your password" 
+                                            required
+                                            minlength="4"
+                                        />
+                                        <div class="input-border"></div>
+                                        <div class="input-focus-border"></div>
+                                    </div>
+                                    <div id="password-feedback" class="invalid-feedback"></div>
+                                </div>
+                            </div>
+
+                            <button 
+                                id="login-btn" 
+                                type="submit"
+                                class="btn w-100" 
+                                onclick="setupPassword()"
+                            >
+                                <span class="btn-content">
+                                    <span class="material-icons">shield</span>
+                                    <span class="btn-text">Create Secure Access</span>
+                                </span>
+                                <div class="btn-ripple"></div>
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -185,18 +209,13 @@
                 window.location.href = `/setup`;
             }
 
+            const passwordField = document.getElementById('access-password');
+            const submitButton = document.getElementById('login-btn');
+            
             // Validation en temps réel
-            document.getElementById('access-password').addEventListener('input', function(e) {
-
-                if (e.key === 'Enter') {
-                    e.preventDefault(); // Empêche le comportement par défaut du formulaire
-                    setupPassword(); // Appelle la fonction setupPassword
-                    return ;
-                }
-
+            passwordField.addEventListener('input', function(e) {
                 const password = e.target.value;
                 const feedbackElement = document.getElementById('password-feedback');
-                const submitButton = document.getElementById('login-btn');
                 
                 e.target.classList.remove('is-invalid', 'is-valid');
                 feedbackElement.textContent = '';
@@ -213,6 +232,15 @@
                 } else {
                     e.target.classList.add('is-valid');
                     submitButton.disabled = false;
+                }
+            });
+
+            passwordField.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!submitButton.disabled) {
+                        setupPassword();
+                    }
                 }
             });
 
