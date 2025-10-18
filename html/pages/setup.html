@@ -7,150 +7,428 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div class="setup-container">
-            <div class="logo-container">
-                <img height="50px" src="./logo_black.png" alt="Logo"/>
+        <div class="setup-background">
+            <div class="setup-floating-shapes">
+                <div class="setup-shape setup-shape-1"></div>
+                <div class="setup-shape setup-shape-2"></div>
+                <div class="setup-shape setup-shape-3"></div>
             </div>
 
-            <div class="setup-box" style="display: none">
-                <div class="step-indicator">
-                    <div class="step-line">
-                        <div class="step-line-progress" id="stepProgress"></div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-dot active"></div>
-                        <div class="step-label active">Node Wallet</div>
-                    </div>
-                    <div class="step-item">
-                        <div class="step-dot"></div>
-                        <div class="step-label">Genesis Config</div>
-                    </div>
-                </div>
-
-                <div id="step1" class="setup-step active">
-                    <h1 class="setup-title">Node Wallet Configuration</h1>
-                    <div class="setup-section">
-                        <div class="input-group-container">
-                            <div class="input-row">
-                                <input id="nodePrivateKeyInput" type="text" class="form-control" placeholder="Private Key" />
-                                <input id="nodePasswordInput" type="password" class="form-control" placeholder="New Password" />
-                            </div>
-                            <button onclick="generateKeyStore(1)" class="action-button">Generate KeyStore</button>
-                        </div>
-
-                        <div class="section-divider">
-                            <span>OR</span>
-                        </div>
-
-                        <div class="input-group-container">
-                            <textarea 
-                                id="nodeKeyStoreInput" 
-                                class="form-control textarea" 
-                                placeholder="Keystore for Miner"
-                                spellcheck="false"
-                                onchange="formatJsonKeystore(this)"
-                            ></textarea>
-                        </div>
-                        <p class="info-text">Please save your password on another device for more security. You will be asked for it every time you start a node.</p>
-                    </div>
-
-                    <button onclick="nextStep()" class="primary-button">Next</button>
-                </div>
-
-                <div id="step2" class="setup-step">
-                    <h1 class="setup-title">Genesis Configuration</h1>
-                    <div class="setup-section">
-                        <div class="genesis-categories">
-                            <div id="fromBackupBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('fromBackup')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('fromBackup')}">
-                                <div class="genesis-category-icon">
-                                    <span class="material-icons">cloud_download</span>
+            <div class="setup-container">
+                <div class="setup-box" style="display: none">
+                    <div class="setup-layout">
+                        <aside class="setup-sidebar">
+                            <div class="setup-sidebar-inner">
+                                <div class="setup-sidebar-top">
+                                    <div class="logo-container">
+                                        <img height="46px" src="./logo_black.png" alt="Helios Node Logo"/>
+                                    </div>
+                                    <h2 class="setup-sidebar-title">Launch your node with confidence</h2>
+                                    <p class="setup-sidebar-subtitle">
+                                        Two guided steps to secure your wallet and choose how your node joins the Helios network.
+                                    </p>
                                 </div>
-                                <h3 class="genesis-category-title">From Snapshot</h3>
-                                <p class="genesis-category-description">Restore a node from a snapshot file. Perfect for quickly setting up a node with existing blockchain data.</p>
-                            </div>
-                            <div id="existingGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('existingGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('existingGenesis')}">
-                                <div class="genesis-category-icon">
-                                    <span class="material-icons">download</span>
+
+                                <div class="setup-sidebar-checklist">
+                                    <h3 class="sidebar-checklist-title">
+                                        <span class="material-icons">check_circle</span>
+                                        Quick Checklist
+                                    </h3>
+                                    <ul class="sidebar-checklist-list">
+                                        <li>Private key and password at hand</li>
+                                        <li>P2P / RPC / gRPC ports configured on your infrastructure</li>
+                                        <li>Startup choice (snapshot, existing genesis, new)</li>
+                                    </ul>
                                 </div>
-                                <h3 class="genesis-category-title">From Existing Genesis</h3>
-                                <p class="genesis-category-description">Connect to an existing network using a genesis file from an official node. Perfect for joining established networks.</p>
-                            </div>
-                            <div id="newGenesisBtn" class="genesis-category" role="button" tabindex="0" aria-pressed="false" onclick="startWith('newGenesis')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();startWith('newGenesis')}">
-                                <div class="genesis-category-icon">
-                                    <span class="material-icons">add_circle</span>
+
+                                <div class="setup-sidebar-tips">
+                                    <span class="tips-label">Tip</span>
+                                    <p>You can return to previous steps at any time, changes are saved locally.</p>
                                 </div>
-                                <h3 class="genesis-category-title">New Genesis</h3>
-                                <p class="genesis-category-description">Create a completely new blockchain network with your own genesis configuration. For experienced users.</p>
                             </div>
-                        </div>
+                        </aside>
 
-                        <div id="fromExistingGenesisTr" class="input-group-container">
-                            <label for="nodeIP">Node IP Address</label>
-                            <input id="nodeIP" onchange="updateNodeIP()" type="text" class="form-control" placeholder="0.0.0.0" />
-                            <label for="nodeId">Node Id</label>
-                            <input id="nodeId" onchange="updateNodeIP()" type="text" class="form-control" />
-                            <label for="nodeP2PPort">Node P2P Port</label>
-                            <input id="nodeP2PPort" onchange="updateNodeP2PPort()" type="text" class="form-control" value="26656" />
-                            <label for="nodeGRPCPort">Node GRPC Port</label>
-                            <input id="nodeGRPCPort" onchange="updateNodeGRPCPort()" type="text" class="form-control" value="26657" />
-                            <label for="nodeRPCPort">Node RPC Port</label>
-                            <input id="nodeRPCPort" onchange="updateNodeRPCPort()" type="text" class="form-control" value="8545" />
-                            <label for="genesisURL">Genesis URL</label>
-                            <input id="genesisURL" onchange="updateGenesisURL()" type="text" class="form-control" placeholder="http://localhost:26657/genesis-raw" />
-                            <label for="moniker">Name of your Validator</label>
-                            <input id="moniker" onchange="updateNodeMoniker()" type="text" class="form-control" placeholder="name-of-your-node (moniker)" />
-                            <label for="chainId">Chain Id</label>
-                            <input id="chainId" type="text" class="form-control" placeholder="42000 (chainId)" />
-                            <select id="mode" class="form-control">
-                                <option value="archive" selected>Archive Node (default)</option>
-                                <option value="extra-large">Extra Large Node</option>
-                                <option value="large">Large Node</option>
-                                <option value="medium">Medium Node</option>
-                                <option value="light">Light Node</option>
-                                <option value="very-light">Very Light Node</option>
-                            </select>
-                        </div>
-
-                        <div id="fromBackupTr" class="input-group-container" style="display: none;">                            
-                            <label for="backupHeaderUrl">Header File URL:</label>
-                            <div style="display: flex; gap: 0.5rem; align-items: flex-end;">
-                                <input id="backupHeaderUrl" type="url" class="form-control" 
-                                       placeholder="https://snapshots.helioschainlabs.org/snapshots/snapshot_227000_2025-08-25_22-14-39.tar.gz.header.json" 
-                                       style="flex: 1;" 
-                                       onchange="validateGenesisFields()" 
-                                       oninput="validateGenesisFields()" />
+                        <section class="setup-panel">
+                            <div class="setup-progress">
+                                <div class="step-indicator" role="list">
+                                    <div class="step-item is-active" role="listitem">
+                                        <div class="step-card">
+                                            <div class="step-badge">
+                                                <div class="step-dot active">1</div>
+                                            </div>
+                                            <div class="step-text">
+                                                <div class="step-label active">Node Wallet</div>
+                                                <div class="step-description">Importez ou générez votre keystore</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="step-item" role="listitem">
+                                        <div class="step-card">
+                                            <div class="step-badge">
+                                                <div class="step-dot">2</div>
+                                            </div>
+                                            <div class="step-text">
+                                                <div class="step-label">Genesis Config</div>
+                                                <div class="step-description">Prepare network configuration</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            
-                            <label for="backupMoniker">Name of your Validator</label>
-                            <input id="backupMoniker" type="text" class="form-control" placeholder="name-of-your-node (moniker)" 
-                                   onchange="validateGenesisFields()" 
-                                   oninput="validateGenesisFields()" />
-                            <label for="backupChainId">Chain Id</label>
-                            <input id="backupChainId" type="text" class="form-control" placeholder="42000 (chainId)" 
-                                   onchange="validateGenesisFields()" 
-                                   oninput="validateGenesisFields()" />
-                            <label for="backupMode">Node Mode</label>
-                            <select id="backupMode" class="form-control" onchange="validateGenesisFields()">
-                                <option value="archive" selected>Archive Node (default)</option>
-                                <option value="extra-large">Extra Large Node</option>
-                                <option value="large">Large Node</option>
-                                <option value="medium">Medium Node</option>
-                                <option value="light">Light Node</option>
-                                <option value="very-light">Very Light Node</option>
-                            </select>
-                        </div>
-                        
-                        <p class="info-text">Select an official node for the existing genesis option.</p>
-                    </div>
 
-                    <div class="navigation-buttons">
-                        <button onclick="previousStep()" class="secondary-button">Previous</button>
-                        <button onclick="fire()" class="primary-button">Fire!</button>
+                            <div class="steps-container">
+                                <div id="step1" class="setup-step active">
+                                    <div class="step-header">
+                                        <h1 class="setup-title">Node Wallet Configuration</h1>
+                                        <p class="setup-subtitle">
+                                            Import an existing keystore or generate a new one to secure your node. This step remains local to your machine.
+                                        </p>
+                                    </div>
+
+                                    <div class="step-content">
+                                        <div class="wallet-setup-container">
+                                            <!-- Option Selection -->
+                                            <div class="wallet-options">
+                                                <div class="option-tabs">
+                                                    <button class="option-tab active" onclick="switchWalletOption('generate')" id="generateTab">
+                                                        <span class="material-icons">add_circle</span>
+                                                        <span>Generate New</span>
+                                                    </button>
+                                                    <button class="option-tab" onclick="switchWalletOption('import')" id="importTab">
+                                                        <span class="material-icons">upload</span>
+                                                        <span>Import Existing</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Generate New Keystore Section -->
+                                            <div id="generateSection" class="wallet-section active">
+                                                <div class="section-header">
+                                                    <h3>Create a New Keystore</h3>
+                                                    <p>Generate a secure keystore with your private key and a strong password.</p>
+                                                </div>
+                                                
+                                                <div class="form-grid">
+                                                    <div class="form-group">
+                                                        <label for="nodePrivateKeyInput">Private Key</label>
+                                                        <input 
+                                                            id="nodePrivateKeyInput" 
+                                                            type="text" 
+                                                            class="form-control" 
+                                                            placeholder="Enter your private key"
+                                                            autocomplete="off"
+                                                        />
+                                                        <small class="form-hint">Your private key will be used to sign transactions</small>
+                                                    </div>
+                                                    
+                                                    <div class="form-group">
+                                                        <label for="nodePasswordInput">Password</label>
+                                                        <input 
+                                                            id="nodePasswordInput" 
+                                                            type="password" 
+                                                            class="form-control" 
+                                                            placeholder="Create a strong password"
+                                                            autocomplete="new-password"
+                                                        />
+                                                        <small class="form-hint">Choose a secure password</small>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+
+                                            <!-- Import Existing Keystore Section -->
+                                            <div id="importSection" class="wallet-section">
+                                                <div class="section-header">
+                                                    <h3>Import Existing Keystore</h3>
+                                                    <p>Paste the JSON content of your existing keystore.</p>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <label for="nodeKeyStoreInput">Keystore JSON</label>
+                                                    <textarea 
+                                                        id="nodeKeyStoreInput" 
+                                                        class="form-control textarea" 
+                                                        placeholder="Paste your keystore JSON content here..."
+                                                        spellcheck="false"
+                                                        onchange="formatJsonKeystore(this)"
+                                                        rows="8"
+                                                    ></textarea>
+                                                    <small class="form-hint">The keystore will remain only on your machine</small>
+                                                </div>
+                                                
+                                                <div class="info-box">
+                                                    <span class="material-icons">info</span>
+                                                    <div>
+                                                        <strong>Important:</strong> Save your password on a secure medium. 
+                                                        It will be required every time you start your node.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="step2" class="setup-step">
+                                    <div class="step-header">
+                                        <h1 class="setup-title">Genesis Configuration</h1>
+                                        <p class="setup-subtitle">
+                                            Choose how your node joins the network: via a snapshot, existing genesis, or a brand new configuration.
+                                        </p>
+                                    </div>
+
+                                    <div class="step-content">
+                                        <div class="genesis-setup-container">
+                                            <!-- Network Type Selection -->
+                                            <div class="network-type-selector">
+                                                <h3>Choose your startup mode</h3>
+                                                <p>Select how your node will join the Helios network.</p>
+                                                
+                                                <div class="network-options">
+                                                    <div class="option-tabs">
+                                                        <button class="option-tab active" onclick="startWith('fromBackup')" id="fromBackupBtn">
+                                                            <span class="material-icons">cloud_download</span>
+                                                            <span>From Snapshot</span>
+                                                            <span class="option-badge recommended">Recommended</span>
+                                                        </button>
+                                                        <button class="option-tab" onclick="startWith('existingGenesis')" id="existingGenesisBtn">
+                                                            <span class="material-icons">download</span>
+                                                            <span>Existing Genesis</span>
+                                                        </button>
+                                                        <button class="option-tab" onclick="startWith('newGenesis')" id="newGenesisBtn">
+                                                            <span class="material-icons">add_circle</span>
+                                                            <span>New Genesis</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Configuration Forms -->
+                                            <div class="configuration-forms">
+                                                <!-- Snapshot Configuration -->
+                                                <div id="snapshotConfig" class="config-section active">
+                                                    <div class="section-header">
+                                                        <h3>Snapshot Configuration</h3>
+                                                        <p>Configure your node to start from a snapshot.</p>
+                                                    </div>
+                                                    
+                                                <div class="form-grid">
+                                                    <div class="form-group">
+                                                        <label>Latest Snapshot</label>
+                                                        <div class="snapshot-auto-load">
+                                                            <div class="snapshot-info-display">
+                                                                <span class="material-icons">cloud_download</span>
+                                                                <span class="snapshot-status">Loading latest snapshot...</span>
+                                                            </div>
+                                                        </div>
+                                                        <small class="form-hint">The latest snapshot will be automatically selected</small>
+                                                    </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="backupMoniker">Node Name</label>
+                                                            <input 
+                                                                id="backupMoniker" 
+                                                                type="text" 
+                                                                class="form-control" 
+                                                                placeholder="my-helios-node"
+                                                                onchange="validateGenesisFields()" 
+                                                                oninput="validateGenesisFields()"
+                                                            />
+                                                            <small class="form-hint">Unique name to identify your node</small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="backupChainId">Chain ID</label>
+                                                            <input 
+                                                                id="backupChainId" 
+                                                                type="text" 
+                                                                class="form-control" 
+                                                                placeholder="42000"
+                                                                onchange="validateGenesisFields()" 
+                                                                oninput="validateGenesisFields()"
+                                                            />
+                                                            <small class="form-hint">Chain identifier</small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="backupMode">Node Mode</label>
+                                                            <select id="backupMode" class="form-control" onchange="validateGenesisFields()">
+                                                                <option value="archive">Archive Node (recommended)</option>
+                                                                <option value="extra-large">Extra Large Node</option>
+                                                                <option value="large">Large Node</option>
+                                                                <option value="medium">Medium Node</option>
+                                                                <option value="light">Light Node</option>
+                                                                <option value="very-light">Very Light Node</option>
+                                                            </select>
+                                                            <small class="form-hint">Node size according to your needs</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Existing Genesis Configuration -->
+                                                <div id="existingGenesisConfig" class="config-section">
+                                                    <div class="section-header">
+                                                        <h3>Existing Genesis Configuration</h3>
+                                                        <p>Connect to an existing network via a reference node.</p>
+                                                    </div>
+                                                    
+                                                    <div class="form-grid">
+                                                        <div class="form-group">
+                                                            <label for="nodeIP">Node IP Address</label>
+                                                            <input 
+                                                                id="nodeIP" 
+                                                                type="text" 
+                                                                class="form-control" 
+                                                                placeholder="127.0.0.1"
+                                                                onchange="updateNodeIP()" 
+                                                                oninput="updateNodeIP()"
+                                                            />
+                                                            <small class="form-hint">IP of the reference node</small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="nodeId">Node ID</label>
+                                                            <input 
+                                                                id="nodeId" 
+                                                                type="text" 
+                                                                class="form-control" 
+                                                                placeholder="Node ID (auto-filled)"
+                                                                disabled
+                                                            />
+                                                            <small class="form-hint">Node identifier (retrieved automatically)</small>
+                                                        </div>
+                                                        
+                                                        <div class="ports-grid">
+                                                            <div class="form-group">
+                                                                <label for="nodeP2PPort">P2P Port</label>
+                                                                <input 
+                                                                    id="nodeP2PPort" 
+                                                                    type="number" 
+                                                                    class="form-control" 
+                                                                    placeholder="26656"
+                                                                    onchange="updateNodeP2PPort()" 
+                                                                    oninput="updateNodeP2PPort()"
+                                                                />
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="nodeRPCPort">RPC Port</label>
+                                                                <input 
+                                                                    id="nodeRPCPort" 
+                                                                    type="number" 
+                                                                    class="form-control" 
+                                                                    placeholder="26657"
+                                                                    onchange="updateNodeRPCPort()" 
+                                                                    oninput="updateNodeRPCPort()"
+                                                                />
+                                                            </div>
+                                                            
+                                                            <div class="form-group">
+                                                                <label for="nodeGRPCPort">gRPC Port</label>
+                                                                <input 
+                                                                    id="nodeGRPCPort" 
+                                                                    type="number" 
+                                                                    class="form-control" 
+                                                                    placeholder="9090"
+                                                                    onchange="updateNodeGRPCPort()" 
+                                                                    oninput="updateNodeGRPCPort()"
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="genesisURL">Genesis URL</label>
+                                                            <input 
+                                                                id="genesisURL" 
+                                                                type="url" 
+                                                                class="form-control" 
+                                                                placeholder="http://127.0.0.1:9090/genesis-raw"
+                                                                onchange="updateGenesisURL()" 
+                                                                oninput="updateGenesisURL()"
+                                                            />
+                                                            <small class="form-hint">URL to the network genesis file</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- New Genesis Configuration -->
+                                                <div id="newGenesisConfig" class="config-section">
+                                                    <div class="section-header">
+                                                        <h3>New Genesis Configuration</h3>
+                                                        <p>Create a new network with your own configuration.</p>
+                                                    </div>
+                                                    
+                                                    <div class="form-grid">
+                                                        <div class="form-group">
+                                                            <label for="moniker">Node Name</label>
+                                                            <input 
+                                                                id="moniker" 
+                                                                type="text" 
+                                                                class="form-control" 
+                                                                placeholder="my-helios-node"
+                                                                onchange="updateNodeMoniker()" 
+                                                                oninput="updateNodeMoniker()"
+                                                            />
+                                                            <small class="form-hint">Unique name to identify your node</small>
+                                                        </div>
+                                                        
+                                                        <div class="form-group">
+                                                            <label for="chainId">Chain ID</label>
+                                                            <input 
+                                                                id="chainId" 
+                                                                type="text" 
+                                                                class="form-control" 
+                                                                placeholder="kylix-1"
+                                                                onchange="validateGenesisFields()" 
+                                                                oninput="validateGenesisFields()"
+                                                            />
+                                                            <small class="form-hint">Unique identifier for your chain</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Advanced Options -->
+                                            <div class="advanced-section">
+                                                <div class="section-header">
+                                                    <h3>Advanced Options</h3>
+                                                    <p>Optional configuration for specific use cases.</p>
+                                                </div>
+                                                
+                                                <div class="advanced-options">
+                                                    <div class="option-item">
+                                                        <div class="option-control">
+                                                            <label class="switch">
+                                                                <input type="checkbox" id="traceDBToggle" onchange="toggleTraceDB(this)">
+                                                                <span class="slider round"></span>
+                                                            </label>
+                                                            <div class="option-info">
+                                                                <h4>Enable Trace DB</h4>
+                                                                <p>Stores every transaction for debugging and auditing. Recommended for validators.</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-actions sticky-actions">
+                                <div id="actions-step1" class="panel-action single active">
+                                    <button onclick="nextStep()" class="primary-button">Continue</button>
+                                </div>
+                                <div id="actions-step2" class="panel-action dual">
+                                    <button onclick="previousStep()" class="secondary-button">Back</button>
+                                    <button onclick="fire()" class="primary-button">Fire!</button>
+                                </div>
+                            </div>
+                        </section>
+
                     </div>
                 </div>
             </div>
         </div>
-
         <div id="progressOverlay" class="progress-overlay" style="display:none;">
             <div class="progress-card" role="dialog" aria-live="polite" aria-atomic="true">
                 <div class="progress-header">
@@ -160,7 +438,7 @@
                         <div id="progressDetails" class="progress-details">Please wait while the snapshot is being downloaded and applied.</div>
                     </div>
                 </div>
-                <div class="progress-stepper" aria-label="Étapes">
+                <div class="progress-stepper" aria-label="Steps">
                     <div id="step-validate" class="stepper-item active" role="listitem">
                         <div class="stepper-marker"><span class="check-icon">✔</span></div>
                         <div class="stepper-content">
@@ -191,11 +469,144 @@
             let password = window.localStorage.getItem("access-code");
             let fromGenesisType = 'fromBackup';
             let traceDB = false;
+            let latestSnapshot = null;
             
             // Initialize validation on page load
             document.addEventListener('DOMContentLoaded', function() {
                 validateGenesisFields();
             });
+
+            // Function to fetch the latest snapshot
+            async function fetchLatestSnapshot() {
+                const snapshotStatus = document.querySelector('.snapshot-status');
+                const refreshButton = document.querySelector('.snapshot-refresh-button');
+                
+                // Show loading state
+                if (snapshotStatus) {
+                    snapshotStatus.textContent = 'Loading latest snapshot...';
+                }
+                
+                if (refreshButton) {
+                    refreshButton.disabled = true;
+                    refreshButton.innerHTML = '<span class="material-icons">hourglass_empty</span>';
+                }
+                
+                try {
+                    const response = await fetch('/fetch-snapshots', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Server error: ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    if (data.success && data.snapshots && data.snapshots.length > 0) {
+                        latestSnapshot = data.snapshots[0]; // First snapshot is the latest
+                        updateSnapshotUI();
+                        showNotification('success', 'Snapshot Loaded', `Latest snapshot loaded (Block ${latestSnapshot.blockId.toLocaleString()})`);
+                        return latestSnapshot;
+                    } else {
+                        throw new Error(data.error || 'No snapshots available');
+                    }
+                } catch (error) {
+                    console.error('Failed to fetch latest snapshot:', error);
+                    showNotification('warning', 'Snapshot Info', 'Unable to fetch latest snapshot info.');
+                    
+                    // Show error state
+                    if (snapshotStatus) {
+                        snapshotStatus.textContent = 'Failed to load snapshot';
+                    }
+                } finally {
+                    // Re-enable button
+                    if (refreshButton) {
+                        refreshButton.disabled = false;
+                        refreshButton.innerHTML = '<span class="material-icons">refresh</span>';
+                    }
+                }
+                return null;
+            }
+
+            // Function to update the snapshot UI with fetched data
+            function updateSnapshotUI() {
+                if (!latestSnapshot) return;
+
+                const snapshotStatus = document.querySelector('.snapshot-status');
+                const backupMoniker = document.getElementById('backupMoniker');
+                const backupChainId = document.getElementById('backupChainId');
+
+                // Update the status display
+                if (snapshotStatus) {
+                    snapshotStatus.textContent = `Latest snapshot (Block ${latestSnapshot.blockId.toLocaleString()})`;
+                }
+
+                // Set a default moniker if empty
+                if (backupMoniker && !backupMoniker.value) {
+                    backupMoniker.value = 'helios-node';
+                }
+
+                // Set a default chain ID if empty
+                if (backupChainId && !backupChainId.value) {
+                    backupChainId.value = '42000';
+                }
+
+                // Update the snapshot info display
+                updateSnapshotInfoDisplay();
+                
+                // Validate fields after setting values
+                validateGenesisFields();
+            }
+
+            // Function to update the snapshot info display
+            function updateSnapshotInfoDisplay() {
+                if (!latestSnapshot) return;
+
+                // Create or update snapshot info display
+                let infoContainer = document.getElementById('snapshotInfoContainer');
+                if (!infoContainer) {
+                    infoContainer = document.createElement('div');
+                    infoContainer.id = 'snapshotInfoContainer';
+                    infoContainer.className = 'snapshot-info-container';
+                    
+                    const snapshotConfig = document.getElementById('snapshotConfig');
+                    if (snapshotConfig) {
+                        snapshotConfig.appendChild(infoContainer);
+                    }
+                }
+
+                const fileSizeMB = Math.round(latestSnapshot.fileSize / (1024 * 1024));
+                const uploadDate = new Date(latestSnapshot.uploadedAt).toLocaleString();
+
+                infoContainer.innerHTML = `
+                    <div class="snapshot-info-header">
+                        <span class="material-icons">cloud_download</span>
+                        <h4>Latest Snapshot Selected</h4>
+                    </div>
+                    <div class="snapshot-info-grid">
+                        <div class="snapshot-info-item">
+                            <div class="snapshot-info-label">Block ID</div>
+                            <div class="snapshot-info-value large">${latestSnapshot.blockId.toLocaleString()}</div>
+                        </div>
+                        <div class="snapshot-info-item">
+                            <div class="snapshot-info-label">File Size</div>
+                            <div class="snapshot-info-value">${fileSizeMB} MB</div>
+                        </div>
+                        <div class="snapshot-info-item">
+                            <div class="snapshot-info-label">Uploaded</div>
+                            <div class="snapshot-info-value">${uploadDate}</div>
+                        </div>
+                        <div class="snapshot-info-item">
+                            <div class="snapshot-info-label">Filename</div>
+                            <div class="snapshot-info-value">${latestSnapshot.filename}</div>
+                        </div>
+                    </div>
+                `;
+            }
 
             function showError(inputElement, message) {
                 inputElement.classList.add('error');
@@ -229,7 +640,7 @@
                 const backupHeaderUrl = document.getElementById('backupHeaderUrl');
                 const backupMoniker = document.getElementById('backupMoniker');
                 const backupChainId = document.getElementById('backupChainId');
-                const fireButton = document.querySelector('.navigation-buttons .primary-button');
+                const fireButton = document.querySelector('#actions-step2 .primary-button');
 
                 let isValid = true;
 
@@ -246,23 +657,6 @@
                         hideError(backupMoniker);
                     }
 
-                    if (backupHeaderUrl && backupHeaderUrl.value) {
-                        if (!backupHeaderUrl.value.endsWith('.b2header.json') && !backupHeaderUrl.value.endsWith('.header.json')) {
-                            showError(backupHeaderUrl, 'URL must end with .b2header.json or .header.json');
-                            isValid = false;
-                        } else {
-                            try {
-                                new URL(backupHeaderUrl.value);
-                                hideError(backupHeaderUrl);
-                            } catch (e) {
-                                showError(backupHeaderUrl, 'Please enter a valid URL');
-                                isValid = false;
-                            }
-                        }
-                    } else {
-                        hideError(backupHeaderUrl);
-                    }
-
                     if (backupChainId && backupChainId.value) {
                         if (isNaN(backupChainId.value)) {
                             showError(backupChainId, 'Chain ID must be a number');
@@ -274,8 +668,8 @@
                         hideError(backupChainId);
                     }
 
-                    // Enable button for backup if all fields are valid and filled
-                    fireButton.disabled = !isValid || !backupMoniker.value || !backupHeaderUrl.value || !backupChainId.value;
+                    // Enable button for backup if all fields are valid and filled, and snapshot is loaded
+                    fireButton.disabled = !isValid || !backupMoniker.value || !backupChainId.value || !latestSnapshot;
                 } else {
                     // Validate regular genesis fields
                     if (moniker.value) {
@@ -412,6 +806,36 @@
                 validateGenesisFields();
             }
 
+            // Wallet option switching
+            function switchWalletOption(option) {
+                const generateTab = document.getElementById('generateTab');
+                const importTab = document.getElementById('importTab');
+                const generateSection = document.getElementById('generateSection');
+                const importSection = document.getElementById('importSection');
+                
+                // Remove active classes
+                generateTab.classList.remove('active');
+                importTab.classList.remove('active');
+                generateSection.classList.remove('active');
+                importSection.classList.remove('active');
+                
+                if (option === 'generate') {
+                    generateTab.classList.add('active');
+                    generateSection.classList.add('active');
+                    // Trigger auto-generation if fields are filled
+                    handleAutoGeneration();
+                } else {
+                    importTab.classList.add('active');
+                    importSection.classList.add('active');
+                    // Clear the keystore when switching to import mode
+                    const privateKeyStoreElement = document.getElementById('nodeKeyStoreInput');
+                    if (privateKeyStoreElement) {
+                        privateKeyStoreElement.value = '';
+                        validateKeystore();
+                    }
+                }
+            }
+
             function startWith(value) {
                 // Reset all categories
                 const existingBtn = document.getElementById('existingGenesisBtn');
@@ -425,46 +849,32 @@
                     return;
                 }
 
-                existingBtn.classList.remove('selected');
-                newBtn.classList.remove('selected');
-                backupBtn.classList.remove('selected');
-                existingBtn.setAttribute('aria-pressed', 'false');
-                newBtn.setAttribute('aria-pressed', 'false');
-                backupBtn.setAttribute('aria-pressed', 'false');
+                // Remove active class from all tabs
+                existingBtn.classList.remove('active');
+                newBtn.classList.remove('active');
+                backupBtn.classList.remove('active');
                 
-                // Hide all sections
-                document.getElementById('fromExistingGenesisTr').style.display = 'none';
-                document.getElementById('fromBackupTr').style.display = 'none';
+                // Hide all config sections
+                document.getElementById('snapshotConfig').classList.remove('active');
+                document.getElementById('existingGenesisConfig').classList.remove('active');
+                document.getElementById('newGenesisConfig').classList.remove('active');
                 
                 if (value === 'existingGenesis') {
-                    existingBtn.classList.add('selected');
-                    existingBtn.setAttribute('aria-pressed', 'true');
-                    document.getElementById('fromExistingGenesisTr').style.display = '';
-                    document.getElementById('genesisURL').style.display = '';
-                    document.getElementById('nodeIP').style.display = '';
-                    ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
-                        document.getElementById(x).style.display = '';
-                        document.querySelectorAll(`label[for="${x}"]`)[0].style.display = '';
-                    });
+                    existingBtn.classList.add('active');
+                    document.getElementById('existingGenesisConfig').classList.add('active');
                     document.getElementById('nodeId').disabled = true;
                     document.getElementById('chainId').disabled = true;
                     document.getElementById('genesisURL').disabled = true;
                     fromGenesisType = value;
                 } else if (value === 'fromBackup') {
-                    backupBtn.classList.add('selected');
-                    backupBtn.setAttribute('aria-pressed', 'true');
-                    document.getElementById('fromBackupTr').style.display = '';
+                    backupBtn.classList.add('active');
+                    document.getElementById('snapshotConfig').classList.add('active');
                     fromGenesisType = value;
+                    // Fetch latest snapshot when backup option is selected
+                    fetchLatestSnapshot();
                 } else {
-                    newBtn.classList.add('selected');
-                    newBtn.setAttribute('aria-pressed', 'true');
-                    existingBtn.classList.remove('selected');
-                    document.getElementById('fromExistingGenesisTr').style.display = '';
-                    document.getElementById('genesisURL').style.display = 'none';
-                    ['nodeIP', 'nodeId', 'nodeP2PPort', 'nodeRPCPort', 'nodeGRPCPort', 'genesisURL'].forEach(x => {
-                        document.getElementById(x).style.display = 'none';
-                        document.querySelectorAll(`label[for="${x}"]`)[0].style.display = 'none';
-                    });
+                    newBtn.classList.add('active');
+                    document.getElementById('newGenesisConfig').classList.add('active');
                     document.getElementById('nodeId').disabled = true;
                     document.getElementById('chainId').disabled = false;
                     document.getElementById('genesisURL').disabled = true;
@@ -509,37 +919,179 @@
                 const privateKeyElement = document.getElementById('nodePrivateKeyInput');
                 const privatePasswordElement = document.getElementById('nodePasswordInput');
                 const privateKeyStoreElement = document.getElementById('nodeKeyStoreInput');
-                const generateButton = document.getElementById('generateKeystoreBtn');
 
                 if (!privateKeyElement.value || !privatePasswordElement.value) {
-                    if (generateButton) {
-                        generateButton.disabled = true;
-                    }
                     return;
                 }
 
-                if (generateButton) {
-                    generateButton.disabled = false;
-                }
+                // Clear previous errors
+                hideError(privateKeyElement);
+                hideError(privatePasswordElement);
+                
+                // Show loading indicator in keystore textarea only
+                privateKeyStoreElement.value = 'Generating keystore...';
+                privateKeyStoreElement.disabled = true;
 
                 const cryptedPrivateKey = btoa(rot13(privateKeyElement.value));
                 const cryptedPassword = btoa(rot13(privatePasswordElement.value));
 
-                const result = await fetch('/generate-json-keystore', {
-                    method: 'POST',
-                    headers: {
-                        'Access-Code': password,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        privateKey: cryptedPrivateKey,
-                        password: cryptedPassword
-                    })
-                });
-                const jsonResult = await result.json();
-                privateKeyStoreElement.value = JSON.stringify(jsonResult, null, 2);
+                try {
+                    const result = await fetch('/generate-json-keystore', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            privateKey: cryptedPrivateKey,
+                            password: cryptedPassword
+                        })
+                    });
+                    
+                    const jsonResult = await result.json();
+                    
+                    if (result.ok && jsonResult) {
+                        // Success - populate keystore
+                        privateKeyStoreElement.value = JSON.stringify(jsonResult, null, 2);
+                        validateKeystore();
+                        
+                        // Show success notification
+                        showNotification('success', 'Keystore Generated', 'Your keystore has been generated successfully');
+                    } else {
+                        // Server returned an error
+                        const errorMessage = jsonResult.error || jsonResult.message || 'Failed to generate keystore';
+                        showError(privateKeyElement, errorMessage);
+                        privateKeyStoreElement.value = '';
+                        validateKeystore();
+                        
+                        // Show error notification
+                        showNotification('error', 'Generation Failed', errorMessage);
+                    }
+                } catch (error) {
+                    console.error('Failed to generate keystore:', error);
+                    
+                    // Network or parsing error
+                    const errorMessage = 'Network error: Unable to generate keystore. Please check your connection and try again.';
+                    showError(privateKeyElement, errorMessage);
+                    privateKeyStoreElement.value = '';
+                    validateKeystore();
+                    
+                    // Show error notification
+                    showNotification('error', 'Network Error', errorMessage);
+                } finally {
+                    // Re-enable keystore textarea only
+                    privateKeyStoreElement.disabled = false;
+                }
+            }
+
+            // Function to validate private key format
+            function validatePrivateKey(privateKey) {
+                // Remove any whitespace
+                const cleanKey = privateKey.trim();
                 
-                validateKeystore();
+                if (!cleanKey) {
+                    return { valid: false, error: 'Private key is required' };
+                }
+                
+                // Check if it's a hex string (64 characters for 32 bytes)
+                if (/^[0-9a-fA-F]{64}$/.test(cleanKey)) {
+                    return { valid: true, key: cleanKey };
+                }
+                
+                // Check if it's a hex string with 0x prefix
+                if (/^0x[0-9a-fA-F]{64}$/.test(cleanKey)) {
+                    return { valid: true, key: cleanKey.substring(2) };
+                }
+                
+                // Check if it's too short
+                if (cleanKey.length < 64) {
+                    return { valid: false, error: 'Private key is too short. Must be 64 hexadecimal characters.' };
+                }
+                
+                // Check if it's too long
+                if (cleanKey.length > 66) {
+                    return { valid: false, error: 'Private key is too long. Must be 64 hexadecimal characters.' };
+                }
+                
+                // Check if it contains invalid characters
+                if (!/^[0-9a-fA-Fx]+$/.test(cleanKey)) {
+                    return { valid: false, error: 'Private key contains invalid characters. Only hexadecimal characters (0-9, a-f, A-F) are allowed.' };
+                }
+                
+                return { valid: false, error: 'Private key must be a 64-character hexadecimal string (with or without 0x prefix)' };
+            }
+
+            // Function to validate password
+            function validatePassword(password) {
+                if (!password) {
+                    return { valid: false, error: 'Password is required' };
+                }
+                
+                return { valid: true };
+            }
+
+            // Debounce timer for auto generation
+            let autoGenerationTimer = null;
+
+            // Function to handle automatic keystore generation
+            function handleAutoGeneration() {
+                const privateKeyElement = document.getElementById('nodePrivateKeyInput');
+                const privatePasswordElement = document.getElementById('nodePasswordInput');
+                const privateKeyStoreElement = document.getElementById('nodeKeyStoreInput');
+                
+                // Clear previous timer
+                if (autoGenerationTimer) {
+                    clearTimeout(autoGenerationTimer);
+                }
+                
+                // Clear previous errors
+                hideError(privateKeyElement);
+                hideError(privatePasswordElement);
+                
+                // Only generate if both fields are filled and we're in generate mode
+                if (privateKeyElement.value.trim() && privatePasswordElement.value.trim()) {
+                    // Check if we're in the generate section
+                    const generateSection = document.getElementById('generateSection');
+                    if (generateSection && generateSection.classList.contains('active')) {
+                        // Validate private key format first
+                        const keyValidation = validatePrivateKey(privateKeyElement.value);
+                        if (!keyValidation.valid) {
+                            showError(privateKeyElement, keyValidation.error);
+                            if (privateKeyStoreElement) {
+                                privateKeyStoreElement.value = '';
+                                validateKeystore();
+                            }
+                            return;
+                        }
+                        
+                        // Validate password
+                        const passwordValidation = validatePassword(privatePasswordElement.value);
+                        if (!passwordValidation.valid) {
+                            showError(privatePasswordElement, passwordValidation.error);
+                            if (privateKeyStoreElement) {
+                                privateKeyStoreElement.value = '';
+                                validateKeystore();
+                            }
+                            return;
+                        }
+                        
+                        // Update the input with the cleaned key if needed
+                        if (keyValidation.key !== privateKeyElement.value.trim()) {
+                            privateKeyElement.value = keyValidation.key;
+                        }
+                        
+                        // Use debounced generation to avoid too many calls
+                        autoGenerationTimer = setTimeout(() => {
+                            generateKeyStore();
+                        }, 500);
+                    }
+                } else {
+                    // Clear keystore if fields are empty
+                    if (privateKeyStoreElement) {
+                        privateKeyStoreElement.value = '';
+                        validateKeystore();
+                    }
+                }
             }
 
             // Simple notification function for setup page
@@ -641,7 +1193,7 @@
                 const nodeGRPCPortElement = document.getElementById('nodeGRPCPort');
                 const modeElement = document.getElementById('mode');
 
-                const fireButton = document.querySelector('.navigation-buttons .primary-button');
+                const fireButton = document.querySelector('#actions-step2 .primary-button');
 
 
                 fireButton.disabled = true;
@@ -651,9 +1203,7 @@
                     hideError(monikerElement);
                     hideError(chainIdElement);
                 } else if (fromGenesisType === 'fromBackup') {
-                    const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
                     const backupMonikerElement = document.getElementById('backupMoniker');
-                    hideError(backupHeaderUrlElement);
                     hideError(backupMonikerElement);
                 } else {
                     hideError(monikerElement);
@@ -733,25 +1283,11 @@
                         }
                     }
                 } else if (fromGenesisType === 'fromBackup') {
-                    const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
                     const backupMonikerElement = document.getElementById('backupMoniker');
 
-                    if (!backupHeaderUrlElement.value.trim()) {
-                        showError(backupHeaderUrlElement, 'Backup header URL is required');
-                        backupHeaderUrlElement.classList.add('error');
+                    if (!latestSnapshot) {
+                        showNotification('error', 'Snapshot Required', 'Please wait for the latest snapshot to load or refresh the page.');
                         hasError = true;
-                    } else if (!backupHeaderUrlElement.value.endsWith('.b2header.json') && !backupHeaderUrlElement.value.endsWith('.header.json')) {
-                        showError(backupHeaderUrlElement, 'URL must end with .b2header.json or .header.json');
-                        backupHeaderUrlElement.classList.add('error');
-                        hasError = true;
-                    } else {
-                        try {
-                            new URL(backupHeaderUrlElement.value);
-                        } catch (e) {
-                            showError(backupHeaderUrlElement, 'Please enter a valid URL');
-                            backupHeaderUrlElement.classList.add('error');
-                            hasError = true;
-                        }
                     }
 
                     if (!backupMonikerElement.value.trim()) {
@@ -777,14 +1313,15 @@
                     
                     let result;
                     
+                    // Define backup mode element for all cases
+                    const backupModeElement = document.getElementById('backupMode');
+                    
                     if (fromGenesisType === 'fromBackup') {
-                        const backupHeaderUrlElement = document.getElementById('backupHeaderUrl');
                         const backupMonikerElement = document.getElementById('backupMoniker');
                         const backupChainIdElement = document.getElementById('backupChainId');
-                        const backupModeElement = document.getElementById('backupMode');
                         
                         console.log('Sending snapshot setup request:', {
-                            headerUrl: backupHeaderUrlElement.value,
+                            headerUrl: latestSnapshot.headerUrl,
                             moniker: backupMonikerElement.value
                         });
 
@@ -797,7 +1334,7 @@
                                     'Access-Code': password,
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({ headerUrl: backupHeaderUrlElement.value })
+                                body: JSON.stringify({ headerUrl: latestSnapshot.headerUrl })
                             });
                             const infoJson = await infoRes.json();
                             if (infoRes.ok && infoJson.success) {
@@ -828,7 +1365,7 @@
                             body: JSON.stringify({
                                 keyStoreNode: privateKeyStoreNodeElement.value,
                                 password: cryptedPassword,
-                                headerUrl: backupHeaderUrlElement.value,
+                                headerUrl: latestSnapshot.headerUrl,
                                 moniker: backupMonikerElement.value,
                                 chainId: backupChainIdElement.value,
                                 mode: backupModeElement.value,
@@ -856,7 +1393,7 @@
                                 nodeGRPCPort: fromGenesisType === 'existingGenesis' ? nodeGRPCPortElement.value : '',
                                 nodeRPCPort: fromGenesisType === 'existingGenesis' ? nodeRPCPortElement.value : '',
                                 nodeP2PPort: fromGenesisType === 'existingGenesis' ? nodeP2PPortElement.value : '',
-                                mode: modeElement.value,
+                                mode: fromGenesisType === 'fromBackup' ? (backupModeElement ? backupModeElement.value : 'archive') : 'archive',
                             })
                         });
                     }
@@ -897,22 +1434,59 @@
             }
 
             function updateStepProgress(step) {
-                const progress = document.getElementById('stepProgress');
-                if (step === 1) {
-                    progress.style.width = '0%';
-                    progress.classList.remove('completed', 'active');
-                } else if (step === 2) {
-                    progress.style.width = '50%';
-                    progress.classList.add('completed');
-                    progress.classList.remove('active');
+                const stepItems = document.querySelectorAll('.step-indicator .step-item');
+                const stepDots = document.querySelectorAll('.step-dot');
+                const stepLabels = document.querySelectorAll('.step-label');
                 
-                    document.querySelectorAll('.step-dot')[0].classList.add('completed');
-                    document.querySelectorAll('.step-dot')[0].classList.remove('active');
-                    document.querySelectorAll('.step-dot')[1].classList.add('active');
-                    
-                    document.querySelectorAll('.step-label')[0].classList.add('completed');
-                    document.querySelectorAll('.step-label')[0].classList.remove('active');
-                    document.querySelectorAll('.step-label')[1].classList.add('active');
+                // Reset all states
+                stepItems.forEach(item => {
+                    item.classList.remove('is-active', 'is-completed');
+                });
+                stepDots.forEach(dot => {
+                    dot.classList.remove('active', 'completed');
+                });
+                stepLabels.forEach(label => {
+                    label.classList.remove('active', 'completed');
+                });
+
+                const actionStep1 = document.getElementById('actions-step1');
+                const actionStep2 = document.getElementById('actions-step2');
+                if (actionStep1 && actionStep2) {
+                    actionStep1.classList.remove('active');
+                    actionStep2.classList.remove('active');
+                }
+
+                if (step === 2) {
+                    // Step 2 is active
+                    if (stepItems.length > 0) {
+                        stepItems[0].classList.add('is-completed');
+                        stepItems[1].classList.add('is-active');
+                    }
+                    if (stepDots.length > 0) {
+                        stepDots[0].classList.add('completed');
+                        stepDots[1].classList.add('active');
+                    }
+                    if (stepLabels.length > 0) {
+                        stepLabels[0].classList.add('completed');
+                        stepLabels[1].classList.add('active');
+                    }
+                    if (actionStep2) {
+                        actionStep2.classList.add('active');
+                    }
+                } else {
+                    // Step 1 is active
+                    if (stepItems.length > 0) {
+                        stepItems[0].classList.add('is-active');
+                    }
+                    if (stepDots.length > 0) {
+                        stepDots[0].classList.add('active');
+                    }
+                    if (stepLabels.length > 0) {
+                        stepLabels[0].classList.add('active');
+                    }
+                    if (actionStep1) {
+                        actionStep1.classList.add('active');
+                    }
                 }
             }
 
@@ -925,18 +1499,6 @@
             function previousStep() {
                 document.getElementById('step2').classList.remove('active');
                 document.getElementById('step1').classList.add('active');
-                
-                document.querySelectorAll('.step-dot').forEach(dot => {
-                    dot.classList.remove('completed', 'active', 'next');
-                });
-                document.querySelectorAll('.step-label').forEach(label => {
-                    label.classList.remove('completed', 'active');
-                });
-                
-                // Set initial state
-                document.querySelectorAll('.step-dot')[0].classList.add('active');
-                document.querySelectorAll('.step-label')[0].classList.add('active');
-                
                 updateStepProgress(1);
             }
 
@@ -962,26 +1524,35 @@
 
             window.addEventListener('DOMContentLoaded', async (event) => {
                 await main();
-                document.getElementById('fromBackupBtn').classList.add('selected');
-                document.getElementById('fromBackupBtn').setAttribute('aria-pressed', 'true');
+                document.getElementById('fromBackupBtn').classList.add('active');
                 
-                document.querySelectorAll('.step-dot')[0].classList.add('active');
-                document.querySelectorAll('.step-label')[0].classList.add('active');
+                // Initialize step progress to step 1
+                updateStepProgress(1);
+
+                // Initialize wallet options
+                switchWalletOption('generate');
 
                 const privateKeyInput = document.getElementById('nodePrivateKeyInput');
                 const privatePasswordInput = document.getElementById('nodePasswordInput');
                 const keystoreInput = document.getElementById('nodeKeyStoreInput');
-                const generateButton = document.querySelector('button[onclick="generateKeyStore()"]');
                 const nextButton = document.querySelector('button[onclick="nextStep()"]');
 
                 nextButton.disabled = true;
 
                 keystoreInput.addEventListener('input', validateKeystore);
+                
+                // Add event listeners for automatic generation
+                if (privateKeyInput) {
+                    privateKeyInput.addEventListener('input', handleAutoGeneration);
+                }
+                if (privatePasswordInput) {
+                    privatePasswordInput.addEventListener('input', handleAutoGeneration);
+                }
 
                 const genesisURL = document.getElementById('genesisURL');
                 const moniker = document.getElementById('moniker');
                 const chainId = document.getElementById('chainId');
-                const fireButton = document.querySelector('.navigation-buttons .primary-button');
+                const fireButton = document.querySelector('#actions-step2 .primary-button');
 
                 if (fireButton) {
                     fireButton.disabled = true;
@@ -998,17 +1569,66 @@
                 }
                 
                 // Add event listeners for backup fields
-                const backupHeaderUrl = document.getElementById('backupHeaderUrl');
                 const backupMoniker = document.getElementById('backupMoniker');
                 
-                if (backupHeaderUrl) {
-                    backupHeaderUrl.addEventListener('input', validateGenesisFields);
-                }
                 if (backupMoniker) {
                     backupMoniker.addEventListener('input', validateGenesisFields);
                 }
             });
         </script>
+
+        <style>
+            .snapshot-auto-load {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 12px;
+                background: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                margin-bottom: 8px;
+            }
+            
+            .snapshot-info-display {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex: 1;
+            }
+            
+            .snapshot-info-display .material-icons {
+                color: #28a745;
+                font-size: 20px;
+            }
+            
+            .snapshot-status {
+                font-weight: 500;
+                color: #495057;
+            }
+            
+            .snapshot-refresh-button {
+                background: #007bff;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 12px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                transition: background-color 0.2s;
+            }
+            
+            .snapshot-refresh-button:hover:not(:disabled) {
+                background: #0056b3;
+            }
+            
+            .snapshot-refresh-button:disabled {
+                background: #6c757d;
+                cursor: not-allowed;
+            }
+        </style>
 
         <script src="js/theme.js"></script>
         <script src="js/utils.js"></script>

@@ -34,10 +34,13 @@ const setupNodeFromBackupEndpoint = (app, environment) => {
                     throw new Error('Invalid backup header file - missing downloadUrl');
                 }
 
+                // Clean up URL that might have double https:// protocol
+                const cleanDownloadUrl = headerData.downloadUrl.replace(/^https:\/\/https:\/\//, 'https://');
+
                 const backupFileName = `backup-${Date.now()}.tar.gz`;
                 const backupFilePath = path.join(tempDir, backupFileName);
 
-                await execWrapper(`curl -L -o "${backupFilePath}" "${headerData.downloadUrl}"`);
+                await execWrapper(`curl -L -o "${backupFilePath}" "${cleanDownloadUrl}"`);
                 
                 if (!fs.existsSync(backupFilePath)) {
                     throw new Error('Failed to download backup file');
