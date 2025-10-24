@@ -9,70 +9,152 @@
     <body>
         <div class="sidebar"></div>
 
+        <!-- Notification Container -->
+        <div class="notification-container" id="notification-container"></div>
+
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="validator-form-container"></div>
-                
-                <div id="validator-info-container" class="validator-grid">
-                    <div class="validator-card">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">how_to_reg</i>
-                                <span>Validator Information</span>
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Hero Header -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Validator Management</span>
+                                <h1>Validator Dashboard</h1>
+                                <p>Manage your validator, monitor delegations, claim rewards, and track commission earnings.</p>
                             </div>
                         </div>
-                        <div id="validator-info">
-                            <!-- Les informations du validator seront affichées ici -->
-                        </div>
-                    </div>
-                </div>
-    
-                <div id="validator-commission-info-container" class="validator-grid">
-                    <div class="validator-card">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">account_balance_wallet</i>
-                                <span>My Commissions</span>
-                            </div>
-                        </div>
-                        <div id="commissions-info">
-                            <!-- Les informations de commission seront affichées ici -->
-                        </div>
-                    </div>
-                </div>
+                    </article>
 
-                <div id="validator-assets-info-container" class="validator-grid">
-                    <div class="validator-card">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">account_balance</i>
-                                <span>My Delegated Assets</span>
+                    <!-- Create Validator Form (shown when no validator exists) -->
+                    <div id="validator-form-container" style="display: none;"></div>
+
+                    <!-- Validator Information Card -->
+                    <article class="status-card" id="validator-info-container" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">how_to_reg</span>
+                                <div>
+                                    <h2>Validator Information</h2>
+                                    <p>Your validator status and configuration details.</p>
+                                </div>
                             </div>
                         </div>
-                        <div id="assets-info">
-                            <!-- Les informations de délégation seront affichées ici -->
-                        </div>
-                    </div>
-                </div>
-    
-                <div id="validator-delegation-info-container" class="validator-grid">
-                    <div class="validator-card">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">trending_up</i>
-                                <span>My Delegations</span>
+                        <div class="settings-body">
+                            <div id="validator-info">
+                                <!-- Les informations du validator seront affichées ici -->
                             </div>
                         </div>
-                        <div id="delegations-info">
-                            <!-- Les informations de délégation seront affichées ici -->
+                    </article>
+
+                    <!-- Commission Card -->
+                    <article class="status-card" id="validator-commission-info-container" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">account_balance_wallet</span>
+                                <div>
+                                    <h2>My Commissions</h2>
+                                    <p>Earnings from validator commissions available to claim.</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="settings-body">
+                            <div id="commissions-info">
+                                <!-- Les informations de commission seront affichées ici -->
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Delegated Assets Card -->
+                    <article class="status-card" id="validator-assets-info-container" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">account_balance</span>
+                                <div>
+                                    <h2>My Delegated Assets</h2>
+                                    <p>Overview of all assets delegated to your validator.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div id="assets-info">
+                                <!-- Les informations de délégation seront affichées ici -->
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Delegations Card -->
+                    <article class="status-card" id="validator-delegation-info-container" style="display: none;">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">trending_up</span>
+                                <div>
+                                    <h2>My Delegations</h2>
+                                    <p>Active delegations and available rewards to claim.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div id="delegations-info">
+                                <!-- Les informations de délégation seront affichées ici -->
+                            </div>
+                        </div>
+                    </article>
+                </section>
             </div>
-
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
+
+            const showNotification = (type, title, message, duration = 5000) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const iconMap = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="material-icons">${iconMap[type] || 'info'}</span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                    <div class="notification-progress" style="width: 100%"></div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('hide');
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 400);
+                    }, duration);
+                    
+                    const progress = notification.querySelector('.notification-progress');
+                    progress.style.transition = `width ${duration}ms linear`;
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 10);
+                }
+            };
 
             const formatLargeNumber = (value) => {
                 if (!value || value === 'N/A') return 'N/A';
@@ -157,8 +239,21 @@
                         resolve('');
                     }
                 })
-                await apiValidatorClaim(walletPassword)
-                window.location.reload();
+                
+                if (!walletPassword) {
+                    showNotification('error', 'Password Required', 'Password is required to claim rewards');
+                    return;
+                }
+                
+                showNotification('info', 'Processing', 'Claiming rewards...');
+                const result = await apiValidatorClaim(walletPassword);
+                
+                if (result && !result.error) {
+                    showNotification('success', 'Success!', 'Rewards claimed successfully');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    showNotification('error', 'Error', result?.error || 'Failed to claim rewards');
+                }
             }
 
             const claimCommission = async () => {
@@ -174,8 +269,21 @@
                         resolve('');
                     }
                 })
-                await apiValidatorClaimCommission(walletPassword)
-                window.location.reload();
+                
+                if (!walletPassword) {
+                    showNotification('error', 'Password Required', 'Password is required to claim commission');
+                    return;
+                }
+                
+                showNotification('info', 'Processing', 'Claiming commission...');
+                const result = await apiValidatorClaimCommission(walletPassword);
+                
+                if (result && !result.error) {
+                    showNotification('success', 'Success!', 'Commission claimed successfully');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    showNotification('error', 'Error', result?.error || 'Failed to claim commission');
+                }
             }
 
             const createValidator = async (displayedValidator) => {
@@ -191,8 +299,21 @@
                         resolve('');
                     }
                 })
-                await apiValidatorCreate(walletPassword)
-                window.location.reload();
+                
+                if (!walletPassword) {
+                    showNotification('error', 'Password Required', 'Password is required to create validator');
+                    return;
+                }
+                
+                showNotification('info', 'Processing', 'Creating validator...');
+                const result = await apiValidatorCreate(walletPassword);
+                
+                if (result && !result.error) {
+                    showNotification('success', 'Success!', 'Validator created successfully');
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    showNotification('error', 'Error', result?.error || 'Failed to create validator');
+                }
             }
 
             const unjailNode = async (validatorAddress) => {
@@ -208,93 +329,115 @@
                         resolve('');
                     }
                 })
-                const result = await apiValidatorUnjail(walletPassword);
-                if (result === undefined) {
-                    alert("Error unjailing node");
+                
+                if (!walletPassword) {
+                    showNotification('error', 'Password Required', 'Password is required to unjail node');
                     return;
                 }
-                window.location.reload();
+                
+                showNotification('info', 'Processing', 'Unjailing node...');
+                const result = await apiValidatorUnjail(walletPassword);
+                
+                if (result === undefined) {
+                    showNotification('error', 'Error', 'Failed to unjail node');
+                    return;
+                }
+                
+                showNotification('success', 'Success!', 'Node unjailed successfully');
+                setTimeout(() => window.location.reload(), 2000);
             }
 
             const displayCreateValidator = () => {
                 const formHtml = `
-                    <div class="form-section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">how_to_reg</i>
-                                <span>Create Validator</span>
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">how_to_reg</span>
+                                <div>
+                                    <h2>Create Validator</h2>
+                                    <p>Configure your validator settings and commission rates.</p>
+                                </div>
                             </div>
                         </div>
+                        <div class="settings-body">
                             <form id="validator-form">
-                                <div class="form-group">
-                                    <h3>Commission Rates</h3>
-                                    <div class="input-group">
-                                        <label for="commission-rate">Rate * (0-1)</label>
-                                        <input type="number" 
-                                               id="commission-rate" 
-                                               name="commission-rate" 
-                                               placeholder="Ex: 0.05 for 5%"
-                                               min="0"
-                                               max="1"
-                                               step="0.01"
-                                               required>
-                                    <small>Initial commission rate (ex: 0.05 for 5%)</small>
-                                    </div>
-
-                                    <div class="input-group">
-                                        <label for="commission-max-rate">Max Rate * (0-1)</label>
-                                        <input type="number" 
-                                               id="commission-max-rate" 
-                                               name="commission-max-rate" 
-                                               placeholder="Ex: 0.20 for 20%"
-                                               min="0"
-                                               max="1"
-                                               step="0.01"
-                                               required>
-                                    <small>Max rate possible</small>
-                                    </div>
-
-                                    <div class="input-group">
-                                        <label for="commission-max-change-rate">Max Change Rate * (0-1)</label>
-                                        <input type="number" 
-                                               id="commission-max-change-rate" 
-                                               name="commission-max-change-rate" 
-                                               placeholder="Ex: 0.01 for 1%"
-                                               min="0"
-                                               max="1"
-                                               step="0.01"
-                                               required>
-                                    <small>Max change per update</small>
-                                    </div>
+                                <h3 style="margin-bottom: 1rem; color: var(--text-primary);">
+                                    <span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem;">percent</span>
+                                    Commission Rates
+                                </h3>
+                                
+                                <div class="settings-group">
+                                    <label for="commission-rate">Rate * (0-1)</label>
+                                    <input type="number" 
+                                           id="commission-rate" 
+                                           name="commission-rate"
+                                           class="form-input"
+                                           placeholder="Ex: 0.05 for 5%"
+                                           min="0"
+                                           max="1"
+                                           step="0.01"
+                                           required>
+                                    <p class="help-text">Initial commission rate (ex: 0.05 for 5%)</p>
                                 </div>
 
-                                <div class="form-group">
-                                    <h3>Validator Settings</h3>
-                                    <div class="input-group">
-                                        <label for="min-self-delegation">Min Self Delegation * (1 = 1 share)</label>
-                                        <input type="number" 
-                                               id="min-self-delegation" 
-                                               name="min-self-delegation" 
-                                               placeholder="Minimum self delegation amount"
-                                               min="1"
-                                               step="1"
-                                               required>
-                                    <small>Minimum self delegation amount</small>
-                                    </div>
+                                <div class="settings-group">
+                                    <label for="commission-max-rate">Max Rate * (0-1)</label>
+                                    <input type="number" 
+                                           id="commission-max-rate" 
+                                           name="commission-max-rate"
+                                           class="form-input"
+                                           placeholder="Ex: 0.20 for 20%"
+                                           min="0"
+                                           max="1"
+                                           step="0.01"
+                                           required>
+                                    <p class="help-text">Maximum rate possible</p>
                                 </div>
 
-                                <div class="form-group">
-                                <button type="submit" class="form-submit">
-                                        <i class="material-icons">check</i>
-                                        <span>Create Validator</span>
-                                    </button>
+                                <div class="settings-group">
+                                    <label for="commission-max-change-rate">Max Change Rate * (0-1)</label>
+                                    <input type="number" 
+                                           id="commission-max-change-rate" 
+                                           name="commission-max-change-rate"
+                                           class="form-input"
+                                           placeholder="Ex: 0.01 for 1%"
+                                           min="0"
+                                           max="1"
+                                           step="0.01"
+                                           required>
+                                    <p class="help-text">Maximum change per update</p>
                                 </div>
+
+                                <h3 style="margin: 2rem 0 1rem; color: var(--text-primary);">
+                                    <span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem;">settings</span>
+                                    Validator Settings
+                                </h3>
+
+                                <div class="settings-group">
+                                    <label for="min-self-delegation">Min Self Delegation * (1 = 1 share)</label>
+                                    <input type="number" 
+                                           id="min-self-delegation" 
+                                           name="min-self-delegation"
+                                           class="form-input"
+                                           placeholder="Minimum self delegation amount"
+                                           min="1"
+                                           step="1"
+                                           required>
+                                    <p class="help-text">Minimum self delegation amount</p>
+                                </div>
+
+                                <button type="submit" class="button primary">
+                                    <span class="material-icons">check</span>
+                                    Create Validator
+                                </button>
                             </form>
-                    </div>
+                        </div>
+                    </article>
                 `;
 
                 const container = document.getElementById('validator-form-container');
                 container.innerHTML = formHtml;
+                container.style.display = '';
 
                 document.getElementById('validator-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
@@ -311,25 +454,24 @@
                         };
 
                         // Validation des données
-
                         const rate = parseFloat(formData.commission.rate);
                         const maxRate = parseFloat(formData.commission.maxRate);
                         const maxChangeRate = parseFloat(formData.commission.maxChangeRate);
 
                         if (isNaN(rate) || rate < 0 || rate > 1) {
-                            alert("Le taux de commission doit être entre 0 et 1");
+                            showNotification('error', 'Validation Error', 'Commission rate must be between 0 and 1');
                             return;
                         }
                         if (isNaN(maxRate) || maxRate < 0 || maxRate > 1) {
-                            alert("Le taux maximum de commission doit être entre 0 et 1");
+                            showNotification('error', 'Validation Error', 'Max commission rate must be between 0 and 1');
                             return;
                         }
                         if (isNaN(maxChangeRate) || maxChangeRate < 0 || maxChangeRate > 1) {
-                            alert("Le taux de changement maximum doit être entre 0 et 1");
+                            showNotification('error', 'Validation Error', 'Max change rate must be between 0 and 1');
                             return;
                         }
                         if (rate > maxRate) {
-                            alert("Le taux de commission ne peut pas être supérieur au taux maximum");
+                            showNotification('error', 'Validation Error', 'Commission rate cannot be greater than max rate');
                             return;
                         }
 
@@ -347,19 +489,23 @@
                         });
 
                         if (!walletPassword) {
-                            alert("Le mot de passe est requis");
+                            showNotification('error', 'Password Required', 'Password is required to create validator');
                             return;
                         }
 
+                        showNotification('info', 'Processing', 'Creating validator...');
                         const result = await apiValidatorCreate(walletPassword, formData);
+                        
                         if (result === undefined) {
-                            alert("Erreur lors de la création du validateur");
+                            showNotification('error', 'Error', 'Failed to create validator');
                             return;
                         }
-                        window.location.reload();
+                        
+                        showNotification('success', 'Success!', 'Validator created successfully');
+                        setTimeout(() => window.location.reload(), 2000);
                     } catch (error) {
-                        console.error("Erreur:", error);
-                        alert("Une erreur est survenue lors de la création du validateur: " + error.message);
+                        console.error("Error:", error);
+                        showNotification('error', 'Error', 'An error occurred while creating the validator: ' + error.message);
                     }
                 });
             }
@@ -367,49 +513,79 @@
             const displayValidatorInfo = (validator) => {
                 const validatorInfoDiv = document.getElementById('validator-info');
                 
-                const statusClass = validator.jailed ? 'danger' : 'highlight';
+                const statusClass = validator.jailed ? 'status-pill is-error' : 'status-pill is-success';
                 const statusText = validator.jailed ? 'Jailed' : 'Active';
                 
                 validatorInfoDiv.innerHTML = `
                     <div class="validator-stats">
                         <div class="stat-item">
-                            <div class="stat-label">APR</div>
+                            <div class="stat-label">
+                                <span class="material-icons">trending_up</span>
+                                APR
+                            </div>
                             <div class="stat-value">${validator.apr || 'N/A'}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Moniker</div>
+                            <div class="stat-label">
+                                <span class="material-icons">label</span>
+                                Moniker
+                            </div>
                             <div class="stat-value">${validator.moniker || 'N/A'}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Status</div>
-                            <div class="stat-value ${statusClass}" style="color: ${statusClass == 'highlight' ? '#2ECC71' : '#FFF'}">${statusText}</div>
+                            <div class="stat-label">
+                                <span class="material-icons">info</span>
+                                Status
+                            </div>
+                            <div class="${statusClass}">${statusText}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Min Self Delegation</div>
+                            <div class="stat-label">
+                                <span class="material-icons">account_balance</span>
+                                Min Self Delegation
+                            </div>
                             <div class="stat-value">${validator.minSelfDelegation || 'N/A'}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Shares</div>
+                            <div class="stat-label">
+                                <span class="material-icons">donut_large</span>
+                                Shares
+                            </div>
                             <div class="stat-value">${Web3.utils.fromWei(validator.shares.split('.')[0], 'ether')}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Rate</div>
+                            <div class="stat-label">
+                                <span class="material-icons">percent</span>
+                                Rate
+                            </div>
                             <div class="stat-value">${validator.commission?.commission_rates?.rate || 'N/A'}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Max Rate</div>
+                            <div class="stat-label">
+                                <span class="material-icons">analytics</span>
+                                Max Rate
+                            </div>
                             <div class="stat-value">${validator.commission?.commission_rates?.max_rate || 'N/A'}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Max Change Rate</div>
+                            <div class="stat-label">
+                                <span class="material-icons">speed</span>
+                                Max Change Rate
+                            </div>
                             <div class="stat-value">${validator.commission?.commission_rates?.max_change_rate || 'N/A'}</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-label">Update Time</div>
+                            <div class="stat-label">
+                                <span class="material-icons">schedule</span>
+                                Update Time
+                            </div>
                             <div class="stat-value" style="font-size: 0.875rem;">${validator.commission?.update_time || 'N/A'}</div>
                         </div>
                         <div class="stat-item" style="grid-column: 1 / -1;">
-                            <div class="stat-label">Validator Address</div>
+                            <div class="stat-label">
+                                <span class="material-icons">fingerprint</span>
+                                Validator Address
+                            </div>
                             <div class="stat-value" style="font-size: 0.875rem; word-break: break-all;">${validator.validatorAddress || 'N/A'}</div>
                         </div>
                     </div>
@@ -418,10 +594,11 @@
                 if (validator.jailed) {
                     const actionButtons = document.createElement('div');
                     actionButtons.className = 'action-buttons';
+                    actionButtons.style.marginTop = '1.5rem';
                     actionButtons.innerHTML = `
-                        <button class="unjail-button" onclick="unjailNode('${validator.validatorAddress}')">
-                            <i class="material-icons">restore</i>
-                            <span>Unjail Node</span>
+                        <button class="button danger" onclick="unjailNode('${validator.validatorAddress}')">
+                            <span class="material-icons">restore</span>
+                            Unjail Node
                         </button>
                     `;
                     validatorInfoDiv.appendChild(actionButtons);
@@ -669,21 +846,28 @@
                 
                 let html = `
                     <div class="commission-section">
-                        <div class="commission-title">
-                            <i class="material-icons">account_balance_wallet</i>
-                            Available Commission
+                        <div class="wallet-info-grid">
+                            <div class="wallet-info-item">
+                                <div class="info-label">
+                                    <span class="material-icons">redeem</span>
+                                    <span>Available Commission</span>
+                                </div>
+                                <div class="info-value balance-large">
+                                    <span>${amount}</span>
+                                    <span class="currency">${commission.denom}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="commission-amount">${amount} ${commission.denom}</div>
-                        <div class="action-buttons">
+                        <div class="action-buttons" style="margin-top: 1.5rem;">
                             <button id="claim-commission-btn" class="button primary">
-                                <i class="material-icons">redeem</i>
-                                <span>Claim Commission</span>
+                                <span class="material-icons">redeem</span>
+                                Claim Commission
                             </button>
                             <button id="delegate-btn" class="button secondary">
-                                <i class="material-icons">open_in_new</i>
-                                <span>View on Portal</span>
+                                <span class="material-icons">open_in_new</span>
+                                View on Portal
                             </button>
-                    </div>
+                        </div>
                     </div>
                 `;
                 

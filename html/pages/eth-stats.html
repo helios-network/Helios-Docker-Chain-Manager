@@ -9,73 +9,98 @@
     <body>
         <div class="sidebar"></div>
 
+        <!-- Notification Container -->
+        <div class="notification-container" id="notification-container"></div>
+
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="eth-stats" class="grid-container-one">
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">analytics</i>
-                                EthStats Configuration
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Hero Header -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Network Monitoring</span>
+                                <h1>EthStats Configuration</h1>
+                                <p>Connect your node to an EthStats server to monitor network statistics and node performance in real-time.</p>
                             </div>
-                            <div class="status-badge" id="ethstats-status-badge">Inactive</div>
+                            <div class="status-hero-meta overview-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Status</span>
+                                    <div class="status-badge" id="ethstats-status-badge">Inactive</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="section-content">
+                    </article>
+
+                    <!-- Configuration Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">settings</span>
+                                <div>
+                                    <h2>EthStats Configuration</h2>
+                                    <p>Configure your EthStats server connection and node identity.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
                             <form id="ethstats-form">
-                                <div class="form-group">
+                                <div class="settings-group">
                                     <label for="server-url">Server URL</label>
                                     <input 
                                         type="text" 
                                         id="server-url" 
                                         name="server-url" 
                                         placeholder="Enter EthStats server URL"
-                                        class="form-control"
+                                        class="form-input"
                                     >
+                                    <p class="help-text">The URL of the EthStats server to connect to</p>
                                 </div>
-                                <div class="form-group">
+                                
+                                <div class="settings-group">
                                     <label for="node-name">Node Name</label>
                                     <input 
                                         type="text" 
                                         id="node-name" 
                                         name="node-name" 
                                         placeholder="Enter node name"
-                                        class="form-control"
+                                        class="form-input"
                                         minlength="4"
                                     >
-                                    <small class="form-text">Minimum 4 characters required</small>
+                                    <p class="help-text">Your node's display name (minimum 4 characters required)</p>
                                 </div>
+                                
                                 <div class="button-group">
                                     <button type="button" id="btnStart" class="button primary" onclick="startEthStats()">
-                                        <i class="material-icons">play_arrow</i>
-                                        Start
+                                        <span class="material-icons">play_arrow</span>
+                                        Start EthStats
                                     </button>
                                     <button type="button" id="btnStop" class="button secondary" onclick="stopEthStats()" disabled>
-                                        <i class="material-icons">stop</i>
-                                        Stop
+                                        <span class="material-icons">stop</span>
+                                        Stop EthStats
                                     </button>
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </article>
 
-                    <!-- EthStats Logs Card -->
-                    <div class="section logs-section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">terminal</i>
-                                <span>EthStats Logs</span>
-                            </div>
-                        </div>
-                        <div class="section-content">
-                            <div class="control-logs">
-                                <button class="button secondary" id="pause-ethstats-logs">Pause</button>
-                                <div class="logs-container" id="ethstats-logs">
-                                    <pre></pre>
+                    <!-- Logs Card -->
+                    <article class="status-card logs-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">terminal</span>
+                                <div>
+                                    <h2>EthStats Logs</h2>
+                                    <p>Monitor the real-time output from the EthStats client.</p>
                                 </div>
                             </div>
+                            <button class="button tertiary" id="pause-ethstats-logs">Pause</button>
                         </div>
-                    </div>
-                </div>
+                        <div class="logs-container" id="ethstats-logs">
+                            <pre></pre>
+                        </div>
+                    </article>
+                </section>
             </div>
         </div>
         <script>
@@ -86,46 +111,102 @@
             let lastEthStatsNodeName = '';
             let lastEthStatsLogs = '';
 
+            const showNotification = (type, title, message, duration = 5000) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                
+                const iconMap = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="material-icons">${iconMap[type] || 'info'}</span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                    <div class="notification-progress" style="width: 100%"></div>
+                `;
+                
+                container.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('hide');
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 400);
+                    }, duration);
+                    
+                    const progress = notification.querySelector('.notification-progress');
+                    progress.style.transition = `width ${duration}ms linear`;
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 10);
+                }
+            };
+
             const startEthStats = async () => {
                 const serverUrl = document.getElementById('server-url').value;
                 const nodeName = document.getElementById('node-name').value;
                 
                 if (!serverUrl.trim()) {
-                    alert('Please enter a server URL');
+                    showNotification('error', 'Invalid Input', 'Please enter a server URL');
                     return;
                 }
                 
                 if (!nodeName.trim() || nodeName.trim().length < 4) {
-                    alert('Please enter a node name with at least 4 characters');
+                    showNotification('error', 'Invalid Input', 'Please enter a node name with at least 4 characters');
                     return;
                 }
                 
                 const btnStart = document.getElementById('btnStart');
                 btnStart.disabled = true;
-                btnStart.innerHTML = '<i class="material-icons">hourglass_empty</i> Starting...';
+                btnStart.innerHTML = '<span class="material-icons">hourglass_empty</span> Starting...';
                 
                 try {
+                    showNotification('info', 'Starting EthStats', 'Connecting to EthStats server...');
                     await apiPost('/run-ethstats', { ethStatsServerUrl: serverUrl, ethStatsNodeName: nodeName });
+                    showNotification('success', 'EthStats Started', 'Successfully connected to EthStats server');
                 } catch (error) {
                     console.error('Error starting EthStats:', error);
+                    showNotification('error', 'Error', 'Failed to start EthStats: ' + error.message);
                 } finally {
                     btnStart.disabled = false;
-                    btnStart.innerHTML = '<i class="material-icons">play_arrow</i> Start';
+                    btnStart.innerHTML = '<span class="material-icons">play_arrow</span> Start EthStats';
                 }
             }
             
             const stopEthStats = async () => {
                 const btnStop = document.getElementById('btnStop');
                 btnStop.disabled = true;
-                btnStop.innerHTML = '<i class="material-icons">hourglass_empty</i> Stopping...';
+                btnStop.innerHTML = '<span class="material-icons">hourglass_empty</span> Stopping...';
                 
                 try {
+                    showNotification('info', 'Stopping EthStats', 'Disconnecting from EthStats server...');
                     await apiPost('/ethstats-kill', {}, "boolean");
+                    showNotification('success', 'EthStats Stopped', 'Successfully disconnected from EthStats server');
                 } catch (error) {
                     console.error('Error stopping EthStats:', error);
+                    showNotification('error', 'Error', 'Failed to stop EthStats: ' + error.message);
                 } finally {
                     btnStop.disabled = false;
-                    btnStop.innerHTML = '<i class="material-icons">stop</i> Stop';
+                    btnStop.innerHTML = '<span class="material-icons">stop</span> Stop EthStats';
                 }
             }
 
@@ -237,6 +318,7 @@
         </script>
         <script src="js/theme.js"></script>
         <script src="js/side-bar.js"></script>
+        <script src="js/utils.js"></script>
         <script src="js/api.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     </body>
