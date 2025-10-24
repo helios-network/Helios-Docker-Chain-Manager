@@ -49,6 +49,11 @@ const displaySideBar = () => {
                     name: 'Backups',
                     path: '/backups',
                     icon: '<i class="material-icons">backup</i>'
+                },
+                {
+                    name: 'Versions',
+                    path: '/versions',
+                    icon: '<i class="material-icons">update</i>'
                 }
             ]
         },

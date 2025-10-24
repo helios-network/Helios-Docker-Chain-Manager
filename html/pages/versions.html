@@ -1,0 +1,471 @@
+<html>
+    <head>
+        <title>Helios Node - Version Management</title>
+        <link rel="icon" type="image/png" href="favicon.png">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="sidebar"></div>
+
+        <div class="main-content" style="display: none">
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Overview Card -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Version Control</span>
+                                <h1>Helios Chain Updates</h1>
+                                <p>Track current version, monitor upgrade proposals, and stay informed about upcoming network changes.</p>
+                            </div>
+                            <div class="status-hero-meta overview-summary" id="current-version-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Current Version</span>
+                                    <div class="status-badge active" id="current-version-badge">Loading...</div>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Chain ID</span>
+                                    <div class="node-address-chip" id="chain-id-display">
+                                        <span id="chain-id-text">---</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="node-actions overview-body">
+                            <div class="node-overview" id="version-details">
+                                <div class="node-detail">
+                                    <span class="detail-label">Current Block</span>
+                                    <span class="detail-value" id="current-block-display">---</span>
+                                </div>
+                                <div class="node-detail">
+                                    <span class="detail-label">Last Updated</span>
+                                    <span class="detail-value" id="last-updated-display">---</span>
+                                </div>
+                                <div class="node-detail">
+                                    <span class="detail-label">Status</span>
+                                    <span class="detail-value status-pill is-success" id="version-status">Up to date</span>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Upgrade Proposals Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">how_to_vote</span>
+                                <div>
+                                    <h2>Upgrade Proposals</h2>
+                                    <p>Review and vote on proposed network upgrades</p>
+                                </div>
+                            </div>
+                            <div class="status-badge" id="proposals-badge">0 Active</div>
+                        </div>
+                        <div class="section-content">
+                            <div id="proposals-container">
+                                <div class="no-peers">
+                                    <span class="material-icons">ballot</span>
+                                    <p>No active proposals</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Pending Upgrades Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">update</span>
+                                <div>
+                                    <h2>Pending Upgrades</h2>
+                                    <p>Scheduled network upgrades awaiting activation</p>
+                                </div>
+                            </div>
+                            <div class="status-badge" id="upgrades-badge">0 Pending</div>
+                        </div>
+                        <div class="section-content">
+                            <div id="upgrades-container">
+                                <div class="no-peers">
+                                    <span class="material-icons">schedule</span>
+                                    <p>No pending upgrades</p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+            </div>
+        </div>
+
+        <style>
+            /* Version-specific styles */
+            .version-card {
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 12px;
+                transition: all 0.3s ease;
+            }
+
+            .version-card:hover {
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                border-color: var(--primary-color);
+            }
+
+            .version-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 12px;
+            }
+
+            .version-card-title {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .version-name {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            .version-badge {
+                display: inline-flex;
+                align-items: center;
+                padding: 4px 12px;
+                border-radius: 12px;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+
+            .version-badge.proposal {
+                background: rgba(33, 150, 243, 0.1);
+                color: #2196F3;
+            }
+
+            .version-badge.upgrade {
+                background: rgba(255, 152, 0, 0.1);
+                color: #ff9800;
+            }
+
+            .version-badge.history {
+                background: rgba(158, 158, 158, 0.1);
+                color: #9e9e9e;
+            }
+
+            .version-card-body {
+                color: var(--text-secondary);
+                font-size: 0.9375rem;
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+
+            .version-card-meta {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                flex-wrap: wrap;
+                padding-top: 12px;
+                border-top: 1px solid var(--border-color);
+            }
+
+            .version-meta-item {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+
+            .version-meta-item .material-icons {
+                font-size: 18px;
+            }
+
+            .vote-stats {
+                display: flex;
+                gap: 16px;
+                align-items: center;
+            }
+
+            .vote-stat {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 0.875rem;
+                font-weight: 600;
+            }
+
+            .vote-stat.yes {
+                color: #4CAF50;
+            }
+
+            .vote-stat.no {
+                color: #f44336;
+            }
+
+            .vote-stat.abstain {
+                color: #9e9e9e;
+            }
+
+            .vote-stat .material-icons {
+                font-size: 16px;
+            }
+
+
+
+            .upgrade-info {
+                background: rgba(255, 152, 0, 0.05);
+                border-left: 3px solid #ff9800;
+                padding: 12px;
+                border-radius: 4px;
+                margin-top: 8px;
+            }
+
+            .upgrade-info-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 4px;
+            }
+
+            .upgrade-info-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .upgrade-info-label {
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+
+            .upgrade-info-value {
+                font-size: 0.875rem;
+                font-weight: 600;
+                color: var(--text-primary);
+            }
+
+            /* Status pill colors */
+            .status-pill.is-success {
+                background: rgba(34, 197, 94, 0.1);
+                color: #16a34a;
+                border: 1px solid rgba(34, 197, 94, 0.2);
+            }
+
+            .status-pill.is-warning {
+                background: rgba(251, 146, 60, 0.1);
+                color: #ea580c;
+                border: 1px solid rgba(251, 146, 60, 0.2);
+            }
+
+            .status-pill.is-danger {
+                background: rgba(239, 68, 68, 0.1);
+                color: #dc2626;
+                border: 1px solid rgba(239, 68, 68, 0.2);
+                font-weight: 600;
+            }
+
+            @media (max-width: 768px) {
+                .version-card-header {
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                .version-card-meta {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                }
+
+                .vote-stats {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 8px;
+                }
+            }
+        </style>
+
+        <script>
+            let password = window.localStorage.getItem("access-code");
+
+            const loadVersionInfo = async () => {
+                try {
+                    const response = await fetch('/get-versions', {
+                        method: 'GET',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            displayCurrentVersion(data);
+                            displayProposals(data.upgradeProposals || []);
+                            displayPendingUpgrades(data.pendingUpgrades || []);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading version info:', error);
+                }
+            };
+
+            const displayCurrentVersion = (data) => {
+                const versionBadge = document.getElementById('current-version-badge');
+                const chainIdText = document.getElementById('chain-id-text');
+                const currentBlockDisplay = document.getElementById('current-block-display');
+                const lastUpdatedDisplay = document.getElementById('last-updated-display');
+                const versionStatus = document.getElementById('version-status');
+
+                if (versionBadge) versionBadge.textContent = data.currentVersion || 'N/A';
+                if (chainIdText) chainIdText.textContent = data.chainId || 'N/A';
+                if (currentBlockDisplay) currentBlockDisplay.textContent = data.currentBlock || 'N/A';
+                if (lastUpdatedDisplay) lastUpdatedDisplay.textContent = data.lastUpdated || 'N/A';
+                
+                // Mettre à jour le statut en fonction du nodeStatus
+                if (versionStatus) {
+                    versionStatus.textContent = data.statusMessage || 'Up to date';
+                    
+                    // Changer la classe selon le statut
+                    versionStatus.classList.remove('is-success', 'is-warning', 'is-danger');
+                    
+                    if (data.nodeStatus === 'upgrade-missed') {
+                        versionStatus.classList.add('is-danger');
+                    } else if (data.nodeStatus === 'upgrade-required') {
+                        versionStatus.classList.add('is-warning');
+                    } else {
+                        versionStatus.classList.add('is-success');
+                    }
+                }
+            };
+
+            const displayProposals = (proposals) => {
+                const container = document.getElementById('proposals-container');
+                const badge = document.getElementById('proposals-badge');
+
+                if (badge) badge.textContent = `${proposals.length} Active`;
+
+                if (proposals.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-peers">
+                            <span class="material-icons">ballot</span>
+                            <p>No active proposals</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = proposals.map(proposal => `
+                    <div class="version-card">
+                        <div class="version-card-header">
+                            <div class="version-card-title">
+                                <span class="version-name">${proposal.targetVersion || proposal.title}</span>
+                                <span class="version-badge proposal">PROPOSAL</span>
+                            </div>
+                            <a href="https://portal.helioschain.network/governance/proposals/${proposal.id}" 
+                               target="_blank" 
+                               class="button primary">
+                                <span class="material-icons">how_to_vote</span>
+                                Vote Now
+                            </a>
+                        </div>
+                        <div class="version-card-body">
+                            ${proposal.description || 'No description available'}
+                        </div>
+                        <div class="version-card-meta">
+                            <div class="version-meta-item">
+                                <span class="material-icons">event</span>
+                                <span>Voting ends: ${proposal.votingEnd || 'N/A'}</span>
+                            </div>
+                            <div class="vote-stats">
+                                <div class="vote-stat yes">
+                                    <span class="material-icons">thumb_up</span>
+                                    <span>${proposal.votesYes || 0}</span>
+                                </div>
+                                <div class="vote-stat no">
+                                    <span class="material-icons">thumb_down</span>
+                                    <span>${proposal.votesNo || 0}</span>
+                                </div>
+                                <div class="vote-stat abstain">
+                                    <span class="material-icons">remove</span>
+                                    <span>${proposal.votesAbstain || 0}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            const displayPendingUpgrades = (upgrades) => {
+                const container = document.getElementById('upgrades-container');
+                const badge = document.getElementById('upgrades-badge');
+
+                if (badge) badge.textContent = `${upgrades.length} Pending`;
+
+                if (upgrades.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-peers">
+                            <span class="material-icons">schedule</span>
+                            <p>No pending upgrades</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = upgrades.map(upgrade => `
+                    <div class="version-card">
+                        <div class="version-card-header">
+                            <div class="version-card-title">
+                                <span class="version-name">${upgrade.version || upgrade.name}</span>
+                                <span class="version-badge upgrade">PENDING</span>
+                            </div>
+                        </div>
+                        <div class="version-card-body">
+                            ${upgrade.description || 'No description available'}
+                        </div>
+                        <div class="upgrade-info">
+                            <div class="upgrade-info-row">
+                                <span class="upgrade-info-label">Upgrade Block:</span>
+                                <span class="upgrade-info-value">#${upgrade.upgradeBlock || 'N/A'}</span>
+                            </div>
+                            <div class="upgrade-info-row">
+                                <span class="upgrade-info-label">Blocks Remaining:</span>
+                                <span class="upgrade-info-value">${upgrade.blocksRemaining || 'N/A'}</span>
+                            </div>
+                            <div class="upgrade-info-row">
+                                <span class="upgrade-info-label">Estimated Time:</span>
+                                <span class="upgrade-info-value">${upgrade.estimatedTime || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            };
+
+            const main = async () => {
+                if (password == undefined) {
+                    window.location = '/';
+                    return;
+                }
+                if (!(await isSetup())) {
+                    window.location = '/setup';
+                    return;
+                }
+                displaySideBar();
+                document.querySelectorAll('.main-content')[0].style.display = '';
+                await loadVersionInfo();
+            }
+
+            window.addEventListener('DOMContentLoaded', async (event) => {
+                await main();
+            });
+        </script>
+        <script src="js/theme.js"></script>
+        <script src="js/side-bar.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/api.js"></script>
+    </body>
+</html>
