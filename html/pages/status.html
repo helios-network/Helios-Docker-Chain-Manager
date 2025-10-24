@@ -61,130 +61,160 @@
         <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="testdisplay" class="grid-container-one">
-                    <!-- Node Status Card -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">account_tree</i>
-                                <span>Node Status</span>
+            <div class="status-page">
+                <section class="status-panels">
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Monitoring Center</span>
+                                <h1>Helios Node Status</h1>
+                                <p>Monitor node health, review live logs, and manage peers from a single control surface.</p>
                             </div>
-                            <div class="status-badge" id="node-status-badge">Inactive</div>
-                        </div>
-                        <div class="section-content">
-                            <div class="button-group grp4">
-                                <button id="btnStart" class="button primary" onclick="startNode1(this)" disabled>
-                                    <i class="material-icons">play_arrow</i>
-                                    <span>Start</span>
-                                </button>
-                                <button id="btnStop" class="button secondary" onclick="stopNode1(this)" disabled>
-                                    <i class="material-icons">stop</i>
-                                    <span>Stop</span>
-                                </button>
-                                <div class="address-container id="node-address" style="border-radius: 5px; border: 1px solid #ccc; padding-right: 10px; padding-left: 10px; display: flex; align-items: center; justify-content: space-between;">
-                                    <span id="address-text"></span>
-                                    <i class="material-icons" style="cursor: pointer;" onclick="copyAddress()">content_copy</i>
+                            <div class="status-hero-meta overview-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Status</span>
+                                    <div class="status-badge" id="node-status-badge">Inactive</div>
                                 </div>
-                                <button id="btnMore" class="button tertiary" onclick="showMoreOptions()">
-                                    <i class="material-icons">more_vert</i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Node Logs Card -->
-                    <div class="section logs-section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">terminal</i>
-                                <span>Node Logs</span>
-                            </div>
-                        </div>
-                        <div class="section-content">
-                            <div class="control-logs">
-                                <button class="button secondary" id="pause-logs">Pause</button>
-                                <div class="logs-container" id="node1-logs">
-                                    <pre></pre>
+                                <div class="summary-item">
+                                    <span class="summary-label">Node Address</span>
+                                    <div class="node-address-chip" id="node-address">
+                                        <span id="address-text">---</span>
+                                        <button class="icon-button" type="button" onclick="copyAddress()" aria-label="Copy node address">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="node-actions overview-body">
+                            <div class="node-overview">
+                                <div class="node-detail">
+                                    <span class="detail-label">Mode</span>
+                                    <span class="detail-value" id="node-mode">---</span>
+                                </div>
+                                <div class="node-detail">
+                                    <span class="detail-label">Latest Block</span>
+                                    <span class="detail-value" id="node-height">---</span>
+                                </div>
+                                <div class="node-detail">
+                                    <span class="detail-label">Sync Status</span>
+                                    <span class="detail-value status-pill" id="node-sync">---</span>
+                                </div>
+                            </div>
+                            <div class="node-controls">
+                                <div class="controls-header">
+                                    <span class="material-icons">account_tree</span>
+                                    <div>
+                                        <h3>Node Controls</h3>
+                                        <p>Start or stop your node and run advanced commands when you need them.</p>
+                                    </div>
+                                </div>
+                                <div class="node-action-buttons">
+                                    <button id="btnStart" class="button primary" onclick="startNode1(this)" disabled>
+                                        <span class="material-icons">play_arrow</span>
+                                        Start
+                                    </button>
+                                    <button id="btnStop" class="button secondary" onclick="stopNode1(this)" disabled>
+                                        <span class="material-icons">stop</span>
+                                        Stop
+                                    </button>
+                                    <button id="btnMore" class="button tertiary" onclick="showMoreOptions()">
+                                        <span class="material-icons">tune</span>
+                                        Commands
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
 
-                    <!-- Peers Card -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">people</i>
-                                <span>Peers</span>
+                    <article class="status-card logs-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">terminal</span>
+                                <div>
+                                    <h2>Node Logs</h2>
+                                    <p>Watch live output to detect anomalies before they become incidents.</p>
+                                </div>
+                            </div>
+                            <button class="button tertiary" id="pause-logs">Pause</button>
+                        </div>
+                        <div class="logs-container" id="node1-logs">
+                            <pre></pre>
+                        </div>
+                    </article>
+
+                    <article class="status-card peers-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">people</span>
+                                <div>
+                                    <h2>Peers</h2>
+                                    <p>Review network connections and adjust persistent peers as needed.</p>
+                                </div>
                             </div>
                             <div class="status-badge" id="peers-badge"></div>
                         </div>
-                        <div class="section-content">
-                            <!-- My Node Info -->
-                            <div class="peer-section">
-                                <h4 class="peer-section-title">
-                                    <span class="material-icons">account_circle</span>
-                                    My Node
-                                </h4>
-                                <div class="my-node-info" id="my-node-info">
-                                    <div class="peer-card my-node">
-                                        <div class="peer-copy">
-                                            <button class="button tertiary small" onclick="copyMyPeerId()" title="Copy Peer ID">
-                                                <span class="material-icons">content_copy</span>
-                                            </button>
-                                        </div>
-                                        <div class="peer-info">
-                                            <div class="peer-id" id="my-peer-id">Loading...</div>
-                                        </div>
-                                        <div class="peer-actions">
-                                            <button class="button tertiary small" onclick="copyMyPeerId()" title="Copy Peer ID">
-                                                <span class="material-icons">content_copy</span>
-                                            </button>
-                                        </div>
+
+                        <div class="peer-section">
+                            <h3 class="peer-section-title">
+                                <span class="material-icons">account_circle</span>
+                                My Node
+                            </h3>
+                            <div class="my-node-info" id="my-node-info">
+                                <div class="peer-card my-node">
+                                    <div class="peer-copy">
+                                        <button class="button tertiary small" onclick="copyMyPeerId()" title="Copy Peer ID">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
+                                    <div class="peer-info">
+                                        <div class="peer-id" id="my-peer-id">Loading...</div>
+                                    </div>
+                                    <div class="peer-actions">
+                                        <button class="button tertiary small" onclick="copyMyPeerId()" title="Copy Peer ID">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-
-                            <!-- AddrBook Peers -->
-                            <div class="peer-section">
-                                <h4 class="peer-section-title">
-                                    <span class="material-icons">group</span>
-                                    AddrBook Peers
-                                    <span class="peer-count" id="addrbook-count">(0)</span>
-                                </h4>
-                                <div class="peers-grid" id="addrbook-peers">
-                                    <div class="no-peers">
-                                        <span class="material-icons">group_off</span>
-                                        <p>No AddrBook peers connected</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Persistent Peers -->
-                            <div class="peer-section">
-                                <h4 class="peer-section-title">
-                                    <span class="material-icons">link</span>
-                                    Persistent Peers
-                                    <span class="peer-count" id="persistent-count">(0)</span>
-                                </h4>
-                                <div class="peers-grid" id="persistent-peers">
-                                    <div class="no-peers">
-                                        <span class="material-icons">link_off</span>
-                                        <p>No persistent peers configured</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="button-group">
-                                <button id="add-new-peer" class="button primary" onclick="addNewPeer(this)">
-                                    <i class="material-icons">add</i>
-                                    <span>Add New Peer</span>
-                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
+
+                        <div class="peer-section">
+                            <h3 class="peer-section-title">
+                                <span class="material-icons">group</span>
+                                AddrBook Peers
+                                <span class="peer-count" id="addrbook-count">(0)</span>
+                            </h3>
+                            <div class="peers-grid" id="addrbook-peers">
+                                <div class="no-peers">
+                                    <span class="material-icons">group_off</span>
+                                    <p>No AddrBook peers connected</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="peer-section">
+                            <h3 class="peer-section-title">
+                                <span class="material-icons">link</span>
+                                Persistent Peers
+                                <span class="peer-count" id="persistent-count">(0)</span>
+                            </h3>
+                            <div class="peers-grid" id="persistent-peers">
+                                <div class="no-peers">
+                                    <span class="material-icons">link_off</span>
+                                    <p>No persistent peers configured</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="peer-actions-footer">
+                            <button id="add-new-peer" class="button primary" onclick="addNewPeer(this)">
+                                <span class="material-icons">add</span>
+                                Add New Peer
+                            </button>
+                        </div>
+                    </article>
+                </section>
             </div>
         </div>
 
@@ -356,7 +386,7 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error("Erreur lors du redémarrage !");
+                            throw new Error("Error while attempting to restart!");
                         }
                         return response.text();
                     })
@@ -364,7 +394,7 @@
                         button.querySelector("span").innerText = "Restart";
                     })
                     .catch(error => {
-                        console.error("Erreur :", error);
+                        console.error("Restart error:", error);
                         button.querySelector("span").innerText = "Restart";
                     })
                     .finally(() => {
@@ -784,7 +814,7 @@
                 }
             }
 
-            // Variables pour mémoriser l'état précédent
+            // Cache previous state to avoid unnecessary DOM work
             let lastAddrbookPeers = '';
             let lastPersistentPeers = '';
 
@@ -847,20 +877,34 @@
                         if (btnStop) btnStop.disabled = jsonResult.node.status == '0';
 
                         const active = jsonResult.node.status == '1' ? 'Active' : 'Inactive';
+                        const syncing = jsonResult.node.infos?.sync_info?.catching_up == true;
                         const statusBadge = document.getElementById('node-status-badge');
                         if (statusBadge) {
-                            let syncing = false;
-                            if (jsonResult.node.infos?.sync_info?.catching_up == true) {
-                                syncing = true;
-                            }
                             const statusText = `${active} - ${jsonResult.node?.infos?.mode ?? ''} - Block ${jsonResult.node?.infos?.metadata?.height ?? ''}` + (syncing ? ' (Syncing)' : '');
                             statusBadge.textContent = statusText;
                             statusBadge.className = `status-badge ${active.toLowerCase()}`;
                         }
 
+                        const nodeMode = document.getElementById('node-mode');
+                        if (nodeMode) {
+                            nodeMode.textContent = jsonResult.node?.infos?.mode ?? 'N/A';
+                        }
+
+                        const nodeHeight = document.getElementById('node-height');
+                        if (nodeHeight) {
+                            nodeHeight.textContent = jsonResult.node?.infos?.metadata?.height ?? 'N/A';
+                        }
+
+                        const nodeSync = document.getElementById('node-sync');
+                        if (nodeSync) {
+                            nodeSync.textContent = syncing ? 'Syncing' : 'Up to date';
+                            nodeSync.classList.remove('is-warning', 'is-success');
+                            nodeSync.classList.add(syncing ? 'is-warning' : 'is-success');
+                        }
+
                         const addressText = document.getElementById('address-text');
                         if (addressText) {
-                            addressText.textContent = jsonResult.node?.infos?.address ?? '';
+                            addressText.textContent = jsonResult.node?.infos?.address || 'N/A';
                         }
 
                         // Update My Node Info

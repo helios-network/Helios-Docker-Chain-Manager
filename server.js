@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const corsUtils = require('./utils/cors.js');
 const environementLoader = require('./environements/environement.js');
 const fs = require('fs');
