@@ -2,9 +2,15 @@ const fetchSnapshots = (app, environement) => {
     app.get('/fetch-snapshots', async (req, res) => {
         try {
             console.log('Fetching snapshots from Helios Chain Labs...');
-            
+            // Determine snapshots URL from environment or configuration
+            const snapshotsUrl = (environement && environement.snapshotsUrl)
+                || process.env.SNAPSHOTS_URL
+                || 'https://snapshots.helioschainlabs.org/snapshots/';
+
+            console.log(`Using snapshots URL: ${snapshotsUrl}`);
+
             // Fetch snapshots from the external API
-            const response = await fetch('https://snapshots.helioschainlabs.org/snapshots/');
+            const response = await fetch(snapshotsUrl);
             
             if (!response.ok) {
                 return res.status(400).json({ 
