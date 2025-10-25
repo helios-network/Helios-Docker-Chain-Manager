@@ -210,7 +210,8 @@ module.exports = {
 
         if (fs.existsSync(path.join(homeDirectory, '.automation-done'))) {
             console.log('[Helios Node - API] - RUN Automation Already done');
-            await runMinerNode(app, environement);
+            // todo change to be configurable
+            // await runMinerNode(app, environement);
             return ;
         }
         
