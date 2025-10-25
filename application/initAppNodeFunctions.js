@@ -173,6 +173,11 @@ const initAppNodeFunctions = async (app, environement) => {
 
     app.node.getNodeId = async () => {
         try {
+
+            if (!fs.existsSync(path.join(homeDirectory, 'config/node_key.json'))) {
+                return "not_found";
+            }
+
             const nodeKeyPath = path.join(homeDirectory, 'config/node_key.json');
             // Charger node_key.json
             const nodeKey = JSON.parse(fs.readFileSync(nodeKeyPath, 'utf-8'));
