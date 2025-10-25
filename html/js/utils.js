@@ -129,3 +129,33 @@ window.btn_prompt = function(options) {
 
     document.body.appendChild(prompt);
 };
+
+function truncateMiddle(fullStr, strLen) {
+    if (fullStr.length <= strLen) return fullStr;
+    
+    const separator = '...';
+    
+    const charsToShow = strLen - separator.length;
+    const frontChars = Math.ceil(charsToShow / 2);
+    const backChars = Math.floor(charsToShow / 2);
+    
+    return (
+        fullStr.substring(0, frontChars) +
+        separator +
+        fullStr.substring(fullStr.length - backChars)
+    );
+}
+
+    // Listen for clicks on elements with the .address-text class to copy the full address
+    document.addEventListener('click', async (event) => {
+        const addressTextElement = event.target.closest('.address-text');
+        if (addressTextElement && addressTextElement.dataset.fullAddress) {
+            try {
+                await navigator.clipboard.writeText(addressTextElement.dataset.fullAddress);
+                showNotification('Address copied to clipboard!', 'success');
+            } catch (err) {
+                console.error('Failed to copy address: ', err);
+                showNotification('Failed to copy address.', 'error');
+            }
+        }
+    });

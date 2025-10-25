@@ -472,7 +472,7 @@
             }
 
             function copyAddress() {
-                const addressText = document.getElementById('address-text').textContent;
+                const addressText = document.getElementById('address-text').dataset.fullAddress;
                 navigator.clipboard.writeText(addressText).then(() => {
                     const addressContainer = document.getElementById('node-address');
                     addressContainer.style.backgroundColor = '#e0f7fa';
@@ -912,7 +912,9 @@
 
                         const addressText = document.getElementById('address-text');
                         if (addressText) {
-                            addressText.textContent = jsonResult.node?.infos?.address || 'N/A';
+                            const fullAddress = jsonResult.node?.infos?.address || 'N/A';
+                            addressText.textContent = truncateMiddle(fullAddress, 30);
+                            addressText.dataset.fullAddress = fullAddress; // Store full address in a data attribute
                         }
 
                         // Update My Node Info
