@@ -5343,6 +5343,11 @@ input:checked + .slider:before {
     .sidebar {
         width: 200px;
     }
+
+    .main-content {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
     
     .logs-container {
         width: calc(90vw - 200px);
@@ -5670,9 +5675,20 @@ input:checked + .slider:before {
     color: var(--accent-primary);
 }
 
+.main-content {
+    margin-left: 280px;
+    width: calc(100% - 280px);
+    min-height: 100vh;
+}
+
 @media (max-width: 1200px) {
     .sidebar {
         width: 240px;
+    }
+
+    .main-content {
+        margin-left: 240px;
+        width: calc(100% - 240px);
     }
 }
 
