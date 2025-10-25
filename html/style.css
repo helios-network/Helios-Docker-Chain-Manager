@@ -963,14 +963,6 @@ body {
     color: var(--text-inverse);
 }
 
-[data-theme="dark"] .button.danger:hover {
-    color: var(--text-inverse);
-}
-
-[data-theme="dark"] .button i {
-    color: var(--text-inverse);
-}
-
 [data-theme="dark"] .button:hover i {
     color: var(--text-inverse);
 }
@@ -980,10 +972,6 @@ body {
 }
 
 [data-theme="dark"] .button.tertiary i {
-    color: var(--text-inverse);
-}
-
-[data-theme="dark"] .button.danger i {
     color: var(--text-inverse);
 }
 
@@ -1075,27 +1063,11 @@ body {
     color: var(--text-inverse);
 }
 
-[data-theme="dark"] .modal-footer .button.danger {
-    color: var(--text-inverse);
-}
-
-[data-theme="dark"] .modal-footer .button.danger:hover {
-    color: var(--text-inverse);
-}
-
 [data-theme="dark"] .link-container .button {
     color: var(--text-inverse);
 }
 
 [data-theme="dark"] .link-container .button:hover {
-    color: var(--text-inverse);
-}
-
-[data-theme="dark"] .key-backup-actions .button {
-    color: var(--text-inverse);
-}
-
-[data-theme="dark"] .key-backup-actions .button:hover {
     color: var(--text-inverse);
 }
 
@@ -1112,10 +1084,6 @@ body {
 }
 
 [data-theme="dark"] .button.small:hover {
-    color: var(--text-inverse);
-}
-
-[data-theme="dark"] .button.small .material-icons {
     color: var(--text-inverse);
 }
 
@@ -5245,8 +5213,7 @@ input:checked + .slider:before {
 }
 
 .button.danger {
-    background: var(--accent-error); /* Couleurs grises pour le danger */
-    color: var(--text-inverse);
+    background: var(--accent-error);
 }
 
 .button:disabled {
@@ -8989,20 +8956,6 @@ body.sidebar-open .sidebar-mobile-toggle .material-icons {
     border: 1px solid var(--accent-primary);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 45, 203, 0.15);
-}
-
-.modal-footer .button.danger {
-    background: var(--accent-error);
-    color: var(--text-inverse);
-    border: 1px solid var(--accent-error);
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
-}
-
-.modal-footer .button.danger:hover {
-    background: var(--accent-error);
-    color: var(--text-inverse);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.3);
 }
 
 .modal-footer .button:active {
