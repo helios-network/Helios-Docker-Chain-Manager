@@ -5769,6 +5769,12 @@ input:checked + .slider:before {
     }
 }
 
+@media (min-width: 901px) {
+    .sidebar-mobile-toggle {
+        display: none !important;
+    }
+}
+
 .sidebar-mobile-toggle {
     position: fixed;
     top: 1rem;
