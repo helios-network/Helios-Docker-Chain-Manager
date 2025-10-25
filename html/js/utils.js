@@ -78,34 +78,54 @@ window.pw_prompt = function(options) {
         alert("No callback function provided! Please provide one.") 
     };
 
-    var prompt = document.createElement("div");
-    prompt.className = "pw_prompt";
+    // Create overlay
+    var overlay = document.createElement("div");
+    overlay.className = "pw_prompt";
+
+    // Create content container
+    var content = document.createElement("div");
 
     var submit = function() {
         options.callback(input.value);
-        document.body.removeChild(prompt);
+        document.body.removeChild(overlay);
     };
+
+    var cancel = function(e) {
+        if (e.target === overlay) {
+            document.body.removeChild(overlay);
+        }
+    };
+
+    // Allow clicking overlay to close
+    overlay.addEventListener("click", cancel, false);
 
     var label = document.createElement("label");
     label.textContent = lm;
-    label.for = "pw_prompt_input";
-    prompt.appendChild(label);
+    label.htmlFor = "pw_prompt_input";
+    content.appendChild(label);
 
     var input = document.createElement("input");
     input.id = "pw_prompt_input";
-    input.type = lm == "Password:" ? "password" : "text";
+    input.type = lm.toLowerCase().includes("password") ? "password" : "text";
     input.classList.add('form-control');
+    input.placeholder = lm.toLowerCase().includes("password") ? "Enter your password" : "Enter value";
     input.addEventListener("keyup", function(e) {
         if (e.keyCode == 13) submit();
     }, false);
-    prompt.appendChild(input);
+    content.appendChild(input);
 
     var button = document.createElement("button");
     button.textContent = bm;
     button.addEventListener("click", submit, false);
-    prompt.appendChild(button);
+    content.appendChild(button);
 
-    document.body.appendChild(prompt);
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+
+    // Focus input after a brief delay to ensure it's rendered
+    setTimeout(function() {
+        input.focus();
+    }, 100);
 };
 
 window.btn_prompt = function(options) {
@@ -114,18 +134,32 @@ window.btn_prompt = function(options) {
         alert("No callback function provided! Please provide one.") 
     };
 
-    var prompt = document.createElement("div");
-    prompt.className = "btn_prompt";
+    // Create overlay
+    var overlay = document.createElement("div");
+    overlay.className = "btn_prompt";
+
+    // Create content container
+    var content = document.createElement("div");
 
     var submit = function() {
         options.callback();
-        document.body.removeChild(prompt);
+        document.body.removeChild(overlay);
     };
+
+    var cancel = function(e) {
+        if (e.target === overlay) {
+            document.body.removeChild(overlay);
+        }
+    };
+
+    // Allow clicking overlay to close
+    overlay.addEventListener("click", cancel, false);
 
     var button = document.createElement("button");
     button.textContent = bm;
     button.addEventListener("click", submit, false);
-    prompt.appendChild(button);
+    content.appendChild(button);
 
-    document.body.appendChild(prompt);
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
 };

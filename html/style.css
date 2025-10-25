@@ -6184,39 +6184,228 @@ body.sidebar-open .sidebar-mobile-toggle .material-icons {
     }
 }
 
+/* Password Prompt Modal */
 .pw_prompt {
-    position:fixed;
-    left: 50%;
-    top: calc(50% - 100px);
-    margin-left:-100px;
-    padding:15px;
-    width:200px;
-    border:1px solid black;
+    position: fixed;
+    inset: 0;
     z-index: 10000;
-    background-color: black;
-    border-radius: 7px;
-}
-.pw_prompt label {
-    display:block; 
-    margin-bottom:5px;
-    text-align: center;
-}
-.pw_prompt input {
-    margin-bottom:10px;
-    width: 100%;
+    background: var(--overlay);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.pw_prompt > div {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 
+        0 24px 48px rgba(0, 0, 0, 0.15),
+        0 12px 24px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-primary);
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.pw_prompt label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.pw_prompt label::before {
+    content: 'lock';
+    font-family: 'Material Icons';
+    font-size: 1.5rem;
+    color: var(--accent-primary);
+}
+
+.pw_prompt input {
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-input);
+    border-radius: 10px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.pw_prompt input:focus {
+    outline: none;
+    border-color: var(--border-input-focus);
+    box-shadow: 0 0 0 3px rgba(0, 45, 203, 0.1);
+    background: var(--bg-card);
+}
+
+.pw_prompt input::placeholder {
+    color: var(--text-tertiary);
+}
+
+.pw_prompt button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: var(--bg-button-primary);
+    color: var(--text-inverse);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-button);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.pw_prompt button:hover {
+    background: var(--bg-button-primary-hover);
+    box-shadow: var(--shadow-button-hover);
+    transform: translateY(-1px);
+}
+
+.pw_prompt button:active {
+    transform: translateY(0);
+}
+
+.pw_prompt button::after {
+    content: 'arrow_forward';
+    font-family: 'Material Icons';
+    font-size: 1.2rem;
+}
+
+/* Button Prompt Modal */
 .btn_prompt {
-    position:fixed;
-    left: 50%;
-    top: calc(50% - 100px);
-    margin-left:-100px;
-    padding:15px;
-    width:200px;
-    border:1px solid black;
+    position: fixed;
+    inset: 0;
     z-index: 10000;
-    background-color: black;
-    border-radius: 7px;
+    background: var(--overlay);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.btn_prompt > div {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 
+        0 24px 48px rgba(0, 0, 0, 0.15),
+        0 12px 24px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-primary);
+    animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn_prompt button {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    background: var(--bg-button-primary);
+    color: var(--text-inverse);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-button);
+}
+
+.btn_prompt button:hover {
+    background: var(--bg-button-primary-hover);
+    box-shadow: var(--shadow-button-hover);
+    transform: translateY(-1px);
+}
+
+.btn_prompt button:active {
+    transform: translateY(0);
+}
+
+/* Dark Theme Support for Prompts */
+[data-theme="dark"] .pw_prompt > div,
+[data-theme="dark"] .btn_prompt > div {
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    box-shadow: 
+        0 24px 48px rgba(0, 0, 0, 0.4),
+        0 12px 24px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .pw_prompt input {
+    background: var(--bg-input);
+    border: 1px solid var(--border-input);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .pw_prompt input:focus {
+    border-color: var(--border-input-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    background: var(--bg-card);
+}
+
+/* Responsive Adjustments for Prompts */
+@media (max-width: 600px) {
+    .pw_prompt > div,
+    .btn_prompt > div {
+        padding: 1.5rem;
+        max-width: 90vw;
+    }
+
+    .pw_prompt label {
+        font-size: 1rem;
+    }
+
+    .pw_prompt label::before {
+        font-size: 1.3rem;
+    }
+
+    .pw_prompt input,
+    .pw_prompt button,
+    .btn_prompt button {
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+    }
 }
 
 .address-container {
