@@ -13,55 +13,88 @@
         <div class="notification-container" id="notification-container"></div>
 
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="backups-content" class="grid-container-one">
-                    <!-- Section Backups List -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <span class="material-icons">backup</span>
-                                <h3>Backup Files</h3>
-                            </div>
-                            <div class="header-actions">
-                                <button id="create-backup" class="button primary" onclick="showCreateBackupModal()">
-                                    <span class="material-icons">add</span>
-                                    Create Backup
-                                </button>
+            <!-- Notification Container -->
+            <div class="notification-container" id="notification-container"></div>
 
-                                <button id="refresh-backups" class="button secondary" onclick="loadBackups()">
-                                    <span class="material-icons">refresh</span>
-                                    Refresh
-                                </button>
-                                <button id="configure-b2-button" class="button secondary" onclick="openB2ConfigModal()">
-                                    <span class="material-icons">cloud_upload</span>
-                                    Configure B2
-                                </button>
-                                <button id="create-backup-from-b2" class="button secondary" onclick="showCreateBackupFromB2Modal()">
-                                    <span class="material-icons">cloud_download</span>
-                                    From B2 Link
-                                </button>
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Hero Header -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Data Protection</span>
+                                <h1>Backup Management</h1>
+                                <p>Create, restore, and manage blockchain data backups. Integrate with Backblaze B2 for cloud storage.</p>
+                            </div>
+                            <div class="status-hero-meta overview-summary">
+                                <div class="summary-item">
+                                    <button id="create-backup" class="button primary" onclick="showCreateBackupModal()">
+                                        <span class="material-icons">add</span>
+                                        Create Backup
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="section-content">
+                        <div class="node-actions overview-body">
+                            <div class="node-controls">
+                                <div class="controls-header">
+                                    <span class="material-icons">cloud</span>
+                                    <div>
+                                        <h3>Quick Actions</h3>
+                                        <p>Manage backups and cloud storage configuration.</p>
+                                    </div>
+                                </div>
+                                <div class="node-action-buttons">
+                                    <button id="refresh-backups" class="button secondary" onclick="loadBackups()">
+                                        <span class="material-icons">refresh</span>
+                                        Refresh
+                                    </button>
+                                    <button id="configure-b2-button" class="button tertiary" onclick="openB2ConfigModal()">
+                                        <span class="material-icons">cloud_upload</span>
+                                        Configure B2
+                                    </button>
+                                    <button id="create-backup-from-b2" class="button tertiary" onclick="showCreateBackupFromB2Modal()">
+                                        <span class="material-icons">cloud_download</span>
+                                        From B2 Link
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Backups List Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">backup</span>
+                                <div>
+                                    <h2>Backup Files</h2>
+                                    <p>View and manage your local blockchain backups.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
                             <div id="backups-table-container">
                                 <div id="loading-backups" class="loading-container">
                                     <div class="spinner-border"></div>
                                     <p>Loading backups...</p>
                                 </div>
                                 <div id="backups-table" style="display: none;">
-                                    <table class="backups-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Block ID</th>
-                                                <th>Date & Time</th>
-                                                <th>Filename</th>
-                                                <th>Size</th>
-                                                <th>Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="backups-table-body">
-                                        </tbody>
-                                    </table>
+                                    <div class="table-responsive">
+                                        <table class="backups-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Block ID</th>
+                                                    <th>Date & Time</th>
+                                                    <th>Filename</th>
+                                                    <th>Size</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="backups-table-body">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div id="no-backups" style="display: none;">
                                     <div class="empty-state">
@@ -72,8 +105,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                </section>
             </div>
         </div>
 

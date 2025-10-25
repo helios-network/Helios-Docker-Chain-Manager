@@ -10,76 +10,127 @@
         <div class="sidebar"></div>
 
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="testdisplay" class="grid-container-one">
-                    <!-- Hyperion Status Card -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">account_tree</i>
-                                <span>Hyperion Status</span>
+            <div class="status-page">
+                <section class="status-panels">
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Indexing Service</span>
+                                <h1>Hyperion Node</h1>
+                                <p>Manage and monitor your Hyperion indexing node for enhanced blockchain data accessibility.</p>
                             </div>
-                            <div class="status-badge" id="hyperion-status-badge">Inactive</div>
-                        </div>
-                        <div class="section-content">
-                            <div class="button-group grp3">
-                                <button id="btnStart" class="button primary" onclick="startHyperion(this)" disabled>
-                                    <i class="material-icons">play_arrow</i>
-                                    <span>Start</span>
-                                </button>
-                                <button id="btnStop" class="button secondary" onclick="stopHyperion(this)" disabled>
-                                    <i class="material-icons">stop</i>
-                                    <span>Stop</span>
-                                </button>
-                                <button id="btnOpenInterface" class="button secondary" onclick="openInterface(this)">
-                                    <i class="material-icons">open_in_new</i>
-                                    <span>Open Interface</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Hyperion Logs Card -->
-                    <div class="section logs-section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">terminal</i>
-                                <span>Hyperion Logs</span>
-                            </div>
-                        </div>
-                        <div class="section-content">
-                            <div class="control-logs">
-                                <button class="button secondary" id="pause-logs">Pause</button>
-                                <div class="logs-container" id="node1-logs">
-                                    <pre></pre>
+                            <div class="status-hero-meta overview-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Status</span>
+                                    <div class="status-badge" id="hyperion-status-badge">Inactive</div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        <div class="node-actions overview-body">
+                            <div class="node-controls">
+                                <div class="controls-header">
+                                    <span class="material-icons">account_tree</span>
+                                    <div>
+                                        <h3>Node Controls</h3>
+                                        <p>Start or stop your Hyperion node and access the indexer interface.</p>
+                                    </div>
+                                </div>
+                                <div class="node-action-buttons">
+                                    <button id="btnStart" class="button primary" onclick="startHyperion(this)" disabled>
+                                        <span class="material-icons">play_arrow</span>
+                                        Start
+                                    </button>
+                                    <button id="btnStop" class="button secondary" onclick="stopHyperion(this)" disabled>
+                                        <span class="material-icons">stop</span>
+                                        Stop
+                                    </button>
+                                    <button id="btnOpenInterface" class="button tertiary" onclick="openInterface(this)">
+                                        <span class="material-icons">open_in_new</span>
+                                        Interface
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="status-card logs-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">terminal</span>
+                                <div>
+                                    <h2>Node Logs</h2>
+                                    <p>Watch live output from the Hyperion indexer to monitor processing status.</p>
+                                </div>
+                            </div>
+                            <button class="button tertiary" id="pause-logs">Pause</button>
+                        </div>
+                        <div class="logs-container" id="node1-logs">
+                            <pre></pre>
+                        </div>
+                    </article>
+                </section>
             </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
 
+            // Simple notification function
+            function showNotification(type, title, message, duration = 5000) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : type === 'warning' ? '#ff9800' : '#2196F3'};
+                    color: white;
+                    padding: 1rem;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    z-index: 10000;
+                    max-width: 300px;
+                    font-size: 0.9rem;
+                `;
+                
+                notification.innerHTML = `
+                    <div style="font-weight: bold; margin-bottom: 0.5rem;">${title}</div>
+                    <div>${message}</div>
+                `;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, duration);
+            }
+
             async function startHyperion(btn) {
                 btn.disabled = true;
-                const walletPassword = await new Promise((resolve) => {
-                    try {
-                        pw_prompt({
-                            lm: "Please enter your wallet password:", 
-                            callback: function(password) {
-                                resolve(password);
-                            }
-                        });
-                    } catch (e) {
-                        resolve('');
+                try {
+                    const walletPassword = await new Promise((resolve) => {
+                        try {
+                            pw_prompt({
+                                lm: "Please enter your wallet password:", 
+                                callback: function(password) {
+                                    resolve(password);
+                                }
+                            });
+                        } catch (e) {
+                            resolve('');
+                        }
+                    });
+                    
+                    if (!walletPassword) {
+                        showNotification('error', 'Authentication Required', 'Wallet password is required');
+                        btn.disabled = false;
+                        return;
                     }
-                });
-                if (!walletPassword) {
-                    alert("Le mot de passe est requis");
-                    return;
-                }
-                let result = await fetch('/action', {
+                    
+                    showNotification('info', 'Starting', 'Starting Hyperion node...');
+                    
+                    let result = await fetch('/action', {
                         method: 'POST',
                         headers: {
                             'Access-Code': password,
@@ -90,28 +141,61 @@
                             walletPassword: walletPassword
                         })
                     });
+                    
+                    if (result.ok) {
+                        showNotification('success', 'Success', 'Hyperion node started successfully');
+                    } else {
+                        showNotification('error', 'Error', 'Failed to start Hyperion node');
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    showNotification('error', 'Error', 'An error occurred: ' + error.message);
+                    btn.disabled = false;
+                }
             }
 
             async function stopHyperion(btn) {
                 btn.disabled = true;
-                let result = await fetch('/action', {
-                    method: 'POST',
-                    headers: {
-                        'Access-Code': password,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        type: "stopHyperion",
-                    })
-                });
+                try {
+                    showNotification('info', 'Stopping', 'Stopping Hyperion node...');
+                    
+                    let result = await fetch('/action', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            type: "stopHyperion",
+                        })
+                    });
+                    
+                    if (result.ok) {
+                        showNotification('success', 'Success', 'Hyperion node stopped successfully');
+                    } else {
+                        showNotification('error', 'Error', 'Failed to stop Hyperion node');
+                        btn.disabled = false;
+                    }
+                } catch (error) {
+                    showNotification('error', 'Error', 'An error occurred: ' + error.message);
+                    btn.disabled = false;
+                }
             }
 
             async function openInterface(btn) {
+                const originalDisabled = btn.disabled;
                 btn.disabled = true;
-                let url = window.location.href;
-                url = url.replace('8080', '4040');
-                url = url.split('/').slice(0, -1).join('/');
-                window.open(url, '_blank');
+                try {
+                    let url = window.location.href;
+                    url = url.replace('8080', '4040');
+                    url = url.split('/').slice(0, -1).join('/');
+                    window.open(url, '_blank');
+                    showNotification('success', 'Success', 'Opening Hyperion interface in new tab');
+                } catch (error) {
+                    showNotification('error', 'Error', 'Failed to open interface');
+                } finally {
+                    setTimeout(() => btn.disabled = originalDisabled, 500);
+                }
             }
 
             const main = async () => {
@@ -131,15 +215,19 @@
                     let isPaused = false;
                     const pauseButton = document.getElementById('pause-logs');
                     const logsContainer = document.getElementById('node1-logs');
+                    
                     pauseButton.onclick = () => {
                         isPaused = !isPaused;
                         pauseButton.textContent = isPaused ? 'Resume' : 'Pause';
                         if (isPaused) {
-                            logsContainer.style.border = '1px solid orange';
+                            logsContainer.style.border = '2px solid var(--warning-color)';
+                            showNotification('warning', 'Paused', 'Logs paused');
                         } else {
                             logsContainer.style.border = '';
+                            showNotification('success', 'Resumed', 'Logs resumed');
                         }
                     };
+                    
                     setInterval(async () => {
                         let result = await fetch('/test-hyperion', {
                             method: 'POST',
@@ -149,6 +237,7 @@
                             body: JSON.stringify({})
                         });
                         let jsonResult = await result.json();
+                        
                         // Logs
                         const pre = logsContainer.querySelector('pre');
                         if (pre && !isPaused) {
@@ -160,11 +249,13 @@
                                 }
                             }
                         }
+                        
                         // Boutons
                         const btnStart = document.getElementById('btnStart');
                         const btnStop = document.getElementById('btnStop');
                         if (btnStart) btnStart.disabled = jsonResult.hyperion.status == '1';
                         if (btnStop) btnStop.disabled = jsonResult.hyperion.status == '0';
+                        
                         // Badge statut
                         const statusBadge = document.getElementById('hyperion-status-badge');
                         if (statusBadge) {
