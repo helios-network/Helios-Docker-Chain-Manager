@@ -237,7 +237,7 @@
                             <i class="material-icons">block</i>
                             Block Operations
                         </button>
-                        <button class="custom-tab-button" data-tab="database-operations">
+                        <button class="custom-tab-button" data-tab="database-operations" onclick="preFillDatabaseOperationsTab()">
                             <i class="material-icons">storage</i>
                             Database Operations
                         </button>
@@ -751,26 +751,26 @@
                     }
 
                     // Execute second command: heliades experimental-compact-goleveldb
-                    output.textContent += '\nStep 2: Compacting experimental GoLevelDB...\n';
-                    const response2 = await fetch('/execute-compact-goleveldb', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    });
+                    // output.textContent += '\nStep 2: Compacting experimental GoLevelDB...\n';
+                    // const response2 = await fetch('/execute-compact-goleveldb', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Access-Code': password,
+                    //         'Content-Type': 'application/json'
+                    //     },
+                    //     body: JSON.stringify({})
+                    // });
 
-                    if (response2.ok) {
-                        const data2 = await response2.json();
-                        if (data2.success) {
-                            output.textContent += data2.output || 'Experimental GoLevelDB compacted successfully.\n';
-                        } else {
-                            output.textContent += `Error: ${data2.error}\n`;
-                        }
-                    } else {
-                        output.textContent += 'Error: Failed to compact experimental GoLevelDB.\n';
-                    }
+                    // if (response2.ok) {
+                    //     const data2 = await response2.json();
+                    //     if (data2.success) {
+                    //         output.textContent += data2.output || 'Experimental GoLevelDB compacted successfully.\n';
+                    //     } else {
+                    //         output.textContent += `Error: ${data2.error}\n`;
+                    //     }
+                    // } else {
+                    //     output.textContent += 'Error: Failed to compact experimental GoLevelDB.\n';
+                    // }
 
                     output.textContent += '\nCompact storage operation completed.\n';
                 } catch (error) {
@@ -786,6 +786,14 @@
             function clearCompactStorageLogs() {
                 document.getElementById('compact-storage-output').textContent = '';
                 document.getElementById('compact-storage-logs').style.display = 'none';
+            }
+
+            function preFillDatabaseOperationsTab() {
+                const blockHeightInput = document.getElementById('block-height');
+                const nodeHeight = document.getElementById('node-height');
+                if (blockHeightInput && nodeHeight && !isNaN(blockHeightInput.value)) {
+                    blockHeightInput.value = Number(nodeHeight.textContent);
+                }
             }
 
             function switchTab(tabName) {
