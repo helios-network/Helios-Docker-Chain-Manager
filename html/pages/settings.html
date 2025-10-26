@@ -13,73 +13,70 @@
         <div class="notification-container" id="notification-container"></div>
 
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="reinitialize-content" class="grid-container-one">
-                    <!-- Section Reinitialize the node -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <span class="material-icons">settings</span>
-                                <h3>Reinitialize the node</h3>
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Hero Header -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Configuration Center</span>
+                                <h1>Node Settings</h1>
+                                <p>Configure your node behavior, manage storage modes, and control backup settings from a unified interface.</p>
                             </div>
                         </div>
-                        <div class="section-content">
-                            <button id="ethStats-button-stop" class="button danger" onclick="reinitialize()">
-                                <span class="material-icons">restart_alt</span>
-                                Reset
-                            </button>
-                        </div>
-                    </div>
+                    </article>
 
-                    <!-- Section Node Settings -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
+                    <!-- Node Settings Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
                                 <span class="material-icons">tune</span>
-                                <h3>Node Settings</h3>
-                            </div>
-                        </div>
-                        <div class="section-content">
-                            <div class="setting-item">
-                                <label class="setting-label">
-                                    <input type="checkbox" id="dump-commit-debug-execution-trace" class="setting-checkbox">
-                                    <span class="setting-text">Enable Debug Execution Trace</span>
-                                </label>
-                                <p class="setting-description">Enable detailed execution trace logging for debugging purposes</p>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="log-level" class="setting-label">Log Level:</label>
-                                    <select id="log-level" class="setting-select">
-                                        <option value="info">Info</option>
-                                        <option value="error">Error</option>
-                                        <option value="warning">Warning</option>
-                                        <option value="debug">Debug</option>
-                                    </select>
-                                    <p class="setting-description">Set the logging level for the node. Info provides detailed logs, Error shows only errors, Warning shows warnings and errors.</p>
+                                <div>
+                                    <h2>Node Settings</h2>
+                                    <p>Configure logging levels and debug options for optimal performance.</p>
                                 </div>
                             </div>
+                        </div>
+                        <div class="settings-body">
+                            <div class="settings-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="dump-commit-debug-execution-trace">
+                                    <span>Enable Debug Execution Trace</span>
+                                </label>
+                                <p class="help-text">Enable detailed execution trace logging for debugging purposes</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="log-level">Log Level</label>
+                                <select id="log-level" class="form-input">
+                                    <option value="info">Info</option>
+                                    <option value="error">Error</option>
+                                    <option value="warning">Warning</option>
+                                    <option value="debug">Debug</option>
+                                </select>
+                                <p class="help-text">Set the logging level for the node. Info provides detailed logs, Error shows only errors, Warning shows warnings and errors.</p>
+                            </div>
+                            
                             <button id="save-settings" class="button primary" onclick="saveSettings()">
                                 <span class="material-icons">save</span>
                                 Save Settings
                             </button>
                         </div>
-                    </div>
+                    </article>
 
-                    <!-- Section Node Mode -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
+                    <!-- Node Mode Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
                                 <span class="material-icons">storage</span>
-                                <h3>Node Mode</h3>
+                                <div>
+                                    <h2>Node Mode</h2>
+                                    <p>Select the storage mode for your node to balance between disk space and historical data retention.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="section-content">
-                            <div class="setting-item">
-                                <p class="setting-description">Select the storage mode for your node. Only one mode can be active at a time.</p>
-                                
-                                <div class="mode-options">
+                        <div class="settings-body">
+                            <div class="mode-options">
                                     <label class="mode-option">
                                         <input type="radio" name="node-mode" id="mode-archive" value="archive" class="mode-radio">
                                         <div class="mode-content">
@@ -146,29 +143,31 @@
                                         </div>
                                     </label>
                                 </div>
-                            </div>
                             <button id="save-node-mode" class="button primary" onclick="saveNodeMode()">
                                 <span class="material-icons">save</span>
                                 Save Node Mode
                             </button>
                         </div>
-                    </div>
+                    </article>
 
-                    <!-- Section Backup Settings -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
+                    <!-- Backup Settings Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
                                 <span class="material-icons">backup</span>
-                                <h3>Backup Settings</h3>
+                                <div>
+                                    <h2>Backup Settings</h2>
+                                    <p>Configure automatic backups to protect your blockchain data and maintain recovery points.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="section-content">
-                            <div class="setting-item">
-                                <label class="setting-label">
-                                    <input type="checkbox" id="backup-enable" class="setting-checkbox">
-                                    <span class="setting-text">Enable Backup System</span>
+                        <div class="settings-body">
+                            <div class="settings-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="backup-enable">
+                                    <span>Enable Backup System</span>
                                 </label>
-                                <p class="setting-description">Enable automatic backup of blockchain data at regular intervals</p>
+                                <p class="help-text">Enable automatic backup of blockchain data at regular intervals</p>
                                 <div id="backup-mode-warning" class="backup-warning" style="display: none;">
                                     <div class="warning-message">
                                         <i class="material-icons">warning</i>
@@ -177,24 +176,22 @@
                                 </div>
                             </div>
                             
-                            <div id="backup-options" class="setting-item" style="display: none;">
-                                <div class="setting-group">
-                                    <label for="backup-block-interval" class="setting-label">Backup Block Interval:</label>
-                                    <input type="number" id="backup-block-interval" class="setting-input" min="1" value="100">
-                                    <p class="setting-description">Number of blocks between each backup (default: 100)</p>
-                                </div>
-                                
-                                <div class="setting-group">
-                                    <label for="backup-dir" class="setting-label">Backup Directory:</label>
-                                    <input type="text" id="backup-dir" class="setting-input" placeholder="Leave empty for default directory">
-                                    <p class="setting-description">Custom directory path for storing backups (optional)</p>
-                                </div>
-                                
-                                <div class="setting-group">
-                                    <label for="backup-min-retain" class="setting-label">Maximum Backups to Retain:</label>
-                                    <input type="number" id="backup-min-retain" class="setting-input" min="1" value="3">
-                                    <p class="setting-description">Maximum number of backups to keep (default: 3)</p>
-                                </div>
+                            <div id="backup-options" class="settings-group" style="display: none;">
+                                <label for="backup-block-interval">Backup Block Interval</label>
+                                <input type="number" id="backup-block-interval" class="form-input" min="1" value="100">
+                                <p class="help-text">Number of blocks between each backup (default: 100)</p>
+                            </div>
+                            
+                            <div id="backup-dir-group" class="settings-group" style="display: none;">
+                                <label for="backup-dir">Backup Directory</label>
+                                <input type="text" id="backup-dir" class="form-input" placeholder="Leave empty for default directory">
+                                <p class="help-text">Custom directory path for storing backups (optional)</p>
+                            </div>
+                            
+                            <div id="backup-retain-group" class="settings-group" style="display: none;">
+                                <label for="backup-min-retain">Maximum Backups to Retain</label>
+                                <input type="number" id="backup-min-retain" class="form-input" min="1" value="3">
+                                <p class="help-text">Maximum number of backups to keep (default: 3)</p>
                             </div>
                             
                             <button id="save-backup-settings" class="button primary" onclick="saveBackupSettings()">
@@ -202,19 +199,21 @@
                                 Save Backup Settings
                             </button>
                         </div>
-                    </div>
+                    </article>
 
-                    <!-- Section Key Backup -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
+                    <!-- Key Backup Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
                                 <span class="material-icons">vpn_key</span>
-                                <h3>Key Backup</h3>
+                                <div>
+                                    <h2>Key Backup</h2>
+                                    <p>Secure your node and validator keys with encrypted backups.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="section-content">
-                            <div class="setting-item">
-                                <p class="setting-description">Create a backup of your node keys and validator keys. This includes node_key.json, priv_validator_key.json, and all files in the keyring-local directory.</p>
+                        <div class="settings-body">
+                            <p class="help-text">Create a backup of your node keys and validator keys. This includes node_key.json, priv_validator_key.json, and all files in the keyring-local directory.</p>
                                 
                                 <div class="key-backup-actions">
                                     <button id="create-key-backup" class="button primary" onclick="createKeyBackup()">
@@ -237,21 +236,23 @@
                                         Apply Key Backup
                                     </button>
                                 </div>
-                                
-                                <input type="file" id="key-backup-file-input" accept=".tar.gz,.tgz" style="display: none;" onchange="handleKeyBackupUpload(event)">
-                            </div>
+                            
+                            <input type="file" id="key-backup-file-input" accept=".tar.gz,.tgz" style="display: none;" onchange="handleKeyBackupUpload(event)">
                         </div>
-                    </div>
+                    </article>
 
-                    <!-- Section Download Configuration Files -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
+                    <!-- Download Configuration Files Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
                                 <span class="material-icons">file_download</span>
-                                <h3>Download Configuration Files</h3>
+                                <div>
+                                    <h2>Download Configuration Files</h2>
+                                    <p>Export node configuration files for backup or migration purposes.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="section-content">
+                        <div class="settings-body">
                             <div class="button-group">
                                 <button id="download-config" class="button primary" onclick="window.location.href='/download/config.toml'">
                                     <span class="material-icons">file_download</span>
@@ -283,8 +284,31 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </article>
+
+                    <!-- Reinitialize Node Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">restart_alt</span>
+                                <div>
+                                    <h2>Reinitialize Node</h2>
+                                    <p>Reset your node to factory settings. This action will delete all data and require a fresh setup.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div class="warning-box">
+                                <span class="material-icons">warning</span>
+                                <p>Warning: This action is irreversible. All node data will be permanently deleted.</p>
+                            </div>
+                            <button id="ethStats-button-stop" class="button danger" onclick="reinitialize()">
+                                <span class="material-icons">restart_alt</span>
+                                Reset Node
+                            </button>
+                        </div>
+                    </article>
+                </section>
             </div>
         </div>
         <script>
@@ -331,13 +355,20 @@
             const toggleBackupOptions = () => {
                 const backupEnable = document.getElementById('backup-enable').checked;
                 const backupOptions = document.getElementById('backup-options');
-                backupOptions.style.display = backupEnable ? 'block' : 'none';
+                const backupDirGroup = document.getElementById('backup-dir-group');
+                const backupRetainGroup = document.getElementById('backup-retain-group');
+                
+                if (backupOptions) backupOptions.style.display = backupEnable ? 'block' : 'none';
+                if (backupDirGroup) backupDirGroup.style.display = backupEnable ? 'block' : 'none';
+                if (backupRetainGroup) backupRetainGroup.style.display = backupEnable ? 'block' : 'none';
             };
 
             const updateBackupState = () => {
                 const selectedMode = document.querySelector('input[name="node-mode"]:checked');
                 const backupEnable = document.getElementById('backup-enable');
                 const backupOptions = document.getElementById('backup-options');
+                const backupDirGroup = document.getElementById('backup-dir-group');
+                const backupRetainGroup = document.getElementById('backup-retain-group');
                 const backupModeWarning = document.getElementById('backup-mode-warning');
                 const saveBackupButton = document.getElementById('save-backup-settings');
                 
@@ -345,7 +376,9 @@
                     // Disable backup if not in very-light mode
                     backupEnable.checked = false;
                     backupEnable.disabled = true;
-                    backupOptions.style.display = 'none';
+                    if (backupOptions) backupOptions.style.display = 'none';
+                    if (backupDirGroup) backupDirGroup.style.display = 'none';
+                    if (backupRetainGroup) backupRetainGroup.style.display = 'none';
                     backupModeWarning.style.display = 'block';
                     saveBackupButton.disabled = true;
                 } else {

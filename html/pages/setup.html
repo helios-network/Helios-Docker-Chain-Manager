@@ -462,6 +462,13 @@
                     </div>
                 </div>
                 <div class="progress-bar" aria-hidden="true"><div class="progress-bar-inner"></div></div>
+                <div class="progress-download-info" id="progressDownloadInfo" style="display: none;">
+                    <div class="progress-stats">
+                        <span id="downloadBytes">0 MB / 0 MB</span>
+                        <span class="separator">•</span>
+                        <span id="downloadSpeed">0 MB/s</span>
+                    </div>
+                </div>
                 <div id="progressMeta" class="progress-meta" style="display:none;"></div>
             </div>
         </div>
@@ -1137,6 +1144,15 @@
                 requestAnimationFrame(() => overlay.classList.add('show'));
             }
 
+            function formatBytes(bytes, decimals = 2) {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const dm = decimals < 0 ? 0 : decimals;
+                const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+            }
+
             function updateSetupProgress(title, details, metaHtml) {
                 if (title !== undefined) document.getElementById('progressTitle').textContent = title;
                 if (details !== undefined) document.getElementById('progressDetails').textContent = details;
@@ -1327,6 +1343,9 @@
 
                         showSetupProgress('Validating snapshot…', 'Checking header file');
                         setProgressStep('validate');
+                        
+                        let snapshotFileSize = latestSnapshot.fileSize || 0;
+                        
                         try {
                             const infoRes = await fetch('/fetch-b2-backup-info', {
                                 method: 'POST',
@@ -1339,12 +1358,17 @@
                             const infoJson = await infoRes.json();
                             if (infoRes.ok && infoJson.success) {
                                 const b = infoJson.backup || {};
+                                const fileSize = latestSnapshot.fileSize || 0;
+                                snapshotFileSize = fileSize;
+                                const fileSizeMB = Math.round(fileSize / (1024 * 1024));
+                                
                                 updateSetupProgress(
                                     'Downloading snapshot…',
                                     'This step may take several minutes depending on your connection.',
-                                    `<div class="progress-kv"><strong>Fichier:</strong> ${b.filename || 'inconnu'}</div>` +
-                                    `${b.blockId ? `<div class=\"progress-kv\"><strong>Block ID:</strong> ${b.blockId}</div>` : ''}` +
-                                    `${b.uploadedAt ? `<div class=\"progress-kv\"><strong>Uploaded at:</strong> ${b.uploadedAt}</div>` : ''}`
+                                    `<div class="progress-kv"><strong>File:</strong> ${b.filename || 'unknown'}</div>` +
+                                    `<div class="progress-kv"><strong>Size:</strong> ${formatBytes(fileSize)}</div>` +
+                                    `${b.blockId ? `<div class=\"progress-kv\"><strong>Block ID:</strong> ${b.blockId.toLocaleString()}</div>` : ''}` +
+                                    `${b.uploadedAt ? `<div class=\"progress-kv\"><strong>Uploaded:</strong> ${new Date(b.uploadedAt).toLocaleString()}</div>` : ''}`
                                 );
                                 setProgressStep('download');
                             } else {
@@ -1352,6 +1376,7 @@
                                 setProgressStep('download');
                             }
                         } catch (e) {
+                            console.log(e)
                             updateSetupProgress('Downloading snapshot…', 'Unable to validate header, continuing anyway.');
                             setProgressStep('download');
                         }

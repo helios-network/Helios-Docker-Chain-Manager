@@ -13,215 +13,233 @@
         <div class="notification-container" id="notification-container"></div>
 
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="rpc-content" class="grid-container-one">
-                    <!-- Section RPC Configuration -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <span class="material-icons">router</span>
-                                <h3>RPC Configuration</h3>
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Hero Header -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">RPC Management</span>
+                                <h1>RPC Configuration</h1>
+                                <p>Configure RPC rate limiting, connection settings, and monitor real-time metrics for your node's RPC endpoints.</p>
                             </div>
                         </div>
-                        <div class="section-content">
-                            <p class="setting-description">
-                                Configure the RPC rate limiting and connection settings. These settings will be applied to the node's app.toml file and take effect when the node starts.
-                            </p>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="rate-limit-requests-per-second" class="setting-label">Rate Limit Requests Per Second:</label>
-                                    <input type="number" id="rate-limit-requests-per-second" class="setting-input" min="1" max="1000" value="100">
-                                    <p class="setting-description">Maximum number of requests per second per IP address (1-1000)</p>
+                    </article>
+
+                    <!-- RPC Connection Settings Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">router</span>
+                                <div>
+                                    <h2>Connection Settings</h2>
+                                    <p>Configure HTTP and WebSocket RPC endpoints and connection limits.</p>
                                 </div>
                             </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="rate-limit-window" class="setting-label">Rate Limit Window:</label>
-                                    <select id="rate-limit-window" class="setting-select">
-                                        <option value="1s">1 second</option>
-                                        <option value="5s">5 seconds</option>
-                                        <option value="10s">10 seconds</option>
-                                        <option value="30s">30 seconds</option>
-                                        <option value="1m">1 minute</option>
-                                        <option value="5m">5 minutes</option>
-                                    </select>
-                                    <p class="setting-description">Time window for rate limiting calculations</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="max-concurrent-connections" class="setting-label">Max Concurrent Connections:</label>
-                                    <input type="number" id="max-concurrent-connections" class="setting-input" min="1" max="10000" value="100">
-                                    <p class="setting-description">Maximum number of concurrent connections allowed (1-10000)</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="max-request-duration" class="setting-label">Max Request Duration:</label>
-                                    <select id="max-request-duration" class="setting-select">
-                                        <option value="1s">1 second</option>
-                                        <option value="2s">2 seconds</option>
-                                        <option value="3s">3 seconds</option>
-                                        <option value="4s">4 seconds</option>
-                                        <option value="5s">5 seconds</option>
-                                        <option value="10s">10 seconds</option>
-                                        <option value="15s">15 seconds</option>
-                                        <option value="30s" selected>30 seconds</option>
-                                        <option value="60s">1 minute</option>
-                                        <option value="120s">2 minutes</option>
-                                        <option value="300s">5 minutes</option>
-                                    </select>
-                                    <p class="setting-description">Maximum duration allowed for RPC requests</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="compute-time-window" class="setting-label">Compute Time Window:</label>
-                                    <select id="compute-time-window" class="setting-select">
-                                        <option value="1s">1 second</option>
-                                        <option value="2s">2 seconds</option>
-                                        <option value="3s" selected>3 seconds</option>
-                                        <option value="4s">4 seconds</option>
-                                        <option value="5s">5 seconds</option>
-                                        <option value="6s">6 seconds</option>
-                                        <option value="7s">7 seconds</option>
-                                        <option value="8s">8 seconds</option>
-                                        <option value="9s">9 seconds</option>
-                                        <option value="10s">10 seconds</option>
-                                        <option value="30s">30 seconds</option>
-                                        <option value="1m">1 minute</option>
-                                        <option value="2m">2 minutes</option>
-                                        <option value="5m">5 minutes</option>
-                                        <option value="10m">10 minutes</option>
-                                        <option value="15m">15 minutes</option>
-                                        <option value="30m">30 minutes</option>
-                                        <option value="1h">1 hour</option>
-                                    </select>
-                                    <p class="setting-description">Time window for compute time limiting per IP</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="compute-time-limit-per-window-per-ip" class="setting-label">Compute Time Limit Per Window Per IP:</label>
-                                    <select id="compute-time-limit-per-window-per-ip" class="setting-select">
-                                        <option value="1s">1 second</option>
-                                        <option value="2s">2 seconds</option>
-                                        <option value="3s">3 seconds</option>
-                                        <option value="4s">4 seconds</option>
-                                        <option value="5s" selected>5 seconds</option>
-                                        <option value="10s">10 seconds</option>
-                                        <option value="15s">15 seconds</option>
-                                        <option value="30s">30 seconds</option>
-                                        <option value="1m">1 minute</option>
-                                        <option value="2m">2 minutes</option>
-                                        <option value="5m">5 minutes</option>
-                                        <option value="10m">10 minutes</option>
-                                        <option value="15m">15 minutes</option>
-                                        <option value="30m">30 minutes</option>
-                                        <option value="1h">1 hour</option>
-                                    </select>
-                                    <p class="setting-description">Maximum compute time allowed per IP within the time window</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="gas-cap" class="setting-label">Gas Cap:</label>
-                                    <input type="number" id="gas-cap" class="setting-input" min="100000" max="10000000" value="2000000">
-                                    <p class="setting-description">Maximum gas allowed for eth_call and eth_estimateGas simulations</p>
-                                </div>
-                            </div>
-                            
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label for="evm-timeout" class="setting-label">EVM Timeout:</label>
-                                    <select id="evm-timeout" class="setting-select">
-                                        <option value="1s">1 second</option>
-                                        <option value="2s" selected>2 seconds</option>
-                                        <option value="3s">3 seconds</option>
-                                        <option value="4s">4 seconds</option>
-                                        <option value="5s">5 seconds</option>
-                                        <option value="10s">10 seconds</option>
-                                        <option value="15s">15 seconds</option>
-                                        <option value="30s">30 seconds</option>
-                                        <option value="1m">1 minute</option>
-                                        <option value="2m">2 minutes</option>
-                                        <option value="5m">5 minutes</option>
-                                    </select>
-                                    <p class="setting-description">Timeout for EVM execution (eth_call, eth_estimateGas)</p>
-                                </div>
-                            </div>
-                            
+                        </div>
+                        <div class="settings-body">
                             <!-- RPC HTTP Configuration -->
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label class="setting-label">RPC HTTP Configuration:</label>
-                                    <div class="rpc-http-config">
-                                        <div class="rpc-option">
-                                            <label class="checkbox-label">
-                                                <input type="checkbox" id="rpc-http-enabled" class="setting-checkbox">
-                                                <span class="checkbox-text">Enable HTTP RPC</span>
-                                            </label>
-                                        </div>
-                                        <div class="rpc-port-config">
-                                            <label for="rpc-http-port" class="setting-label">HTTP Port:</label>
-                                            <input type="number" id="rpc-http-port" class="setting-input" min="0" max="65535" value="8545">
-                                            <p class="setting-description">Port for HTTP RPC (0 to disable)</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="settings-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="rpc-http-enabled">
+                                    <span>Enable HTTP RPC</span>
+                                </label>
+                                <p class="help-text">Enable JSON-RPC over HTTP</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="rpc-http-port">HTTP Port</label>
+                                <input type="number" id="rpc-http-port" class="form-input" min="0" max="65535" value="8545">
+                                <p class="help-text">Port for HTTP RPC (set to 0 to disable)</p>
                             </div>
 
                             <!-- RPC WebSocket Configuration -->
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label class="setting-label">RPC WebSocket Configuration:</label>
-                                    <div class="rpc-ws-config">
-                                        <div class="rpc-option">
-                                            <label class="checkbox-label">
-                                                <input type="checkbox" id="rpc-ws-enabled" class="setting-checkbox">
-                                                <span class="checkbox-text">Enable WebSocket RPC</span>
-                                            </label>
-                                        </div>
-                                        <div class="rpc-port-config">
-                                            <label for="rpc-ws-port" class="setting-label">WebSocket Port:</label>
-                                            <input type="number" id="rpc-ws-port" class="setting-input" min="0" max="65535" value="8546">
-                                            <p class="setting-description">Port for WebSocket RPC (0 to disable)</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="settings-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="rpc-ws-enabled">
+                                    <span>Enable WebSocket RPC</span>
+                                </label>
+                                <p class="help-text">Enable JSON-RPC over WebSocket</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="rpc-ws-port">WebSocket Port</label>
+                                <input type="number" id="rpc-ws-port" class="form-input" min="0" max="65535" value="8546">
+                                <p class="help-text">Port for WebSocket RPC (set to 0 to disable)</p>
                             </div>
 
-                            <!-- Method Rate Limits -->
-                            <div class="setting-item">
-                                <div class="setting-group">
-                                    <label class="setting-label">Method Rate Limits:</label>
-                                    <p class="setting-description">Configure rate limits for specific RPC methods. Set to 0 to remove the limit.</p>
-                                    
-                                    <div class="method-rate-limits-container">
-                                        <div class="method-rate-limits-header">
-                                            <span>Method</span>
-                                            <span>Rate Limit (per window)</span>
-                                            <span>Actions</span>
-                                        </div>
-                                        <div id="method-rate-limits-list">
-                                            <!-- Method rate limits will be populated here -->
-                                        </div>
-                                        <div class="add-method-rate-limit">
-                                            <input type="text" id="new-method-name" placeholder="Method name (e.g., eth_call)" class="setting-input">
-                                            <input type="number" id="new-method-limit" placeholder="Rate limit" min="0" max="1000" class="setting-input">
-                                            <button type="button" onclick="addMethodRateLimit()" class="button secondary">
-                                                <span class="material-icons">add</span>
-                                                Add Method
-                                            </button>
-                                        </div>
-                                    </div>
+                            <div class="settings-group">
+                                <label for="max-concurrent-connections">Max Concurrent Connections</label>
+                                <input type="number" id="max-concurrent-connections" class="form-input" min="1" max="10000" value="100">
+                                <p class="help-text">Maximum number of concurrent connections allowed (1-10000)</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Rate Limiting Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">speed</span>
+                                <div>
+                                    <h2>Rate Limiting</h2>
+                                    <p>Control request rates and execution time limits to protect your node.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div class="settings-group">
+                                <label for="rate-limit-requests-per-second">Rate Limit Requests Per Second</label>
+                                <input type="number" id="rate-limit-requests-per-second" class="form-input" min="1" max="1000" value="100">
+                                <p class="help-text">Maximum number of requests per second per IP address (1-1000)</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="rate-limit-window">Rate Limit Window</label>
+                                <select id="rate-limit-window" class="form-input">
+                                    <option value="1s">1 second</option>
+                                    <option value="5s">5 seconds</option>
+                                    <option value="10s">10 seconds</option>
+                                    <option value="30s">30 seconds</option>
+                                    <option value="1m">1 minute</option>
+                                    <option value="5m">5 minutes</option>
+                                </select>
+                                <p class="help-text">Time window for rate limiting calculations</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="max-request-duration">Max Request Duration</label>
+                                <select id="max-request-duration" class="form-input">
+                                    <option value="1s">1 second</option>
+                                    <option value="2s">2 seconds</option>
+                                    <option value="3s">3 seconds</option>
+                                    <option value="4s">4 seconds</option>
+                                    <option value="5s">5 seconds</option>
+                                    <option value="10s">10 seconds</option>
+                                    <option value="15s">15 seconds</option>
+                                    <option value="30s" selected>30 seconds</option>
+                                    <option value="60s">1 minute</option>
+                                    <option value="120s">2 minutes</option>
+                                    <option value="300s">5 minutes</option>
+                                </select>
+                                <p class="help-text">Maximum duration allowed for RPC requests</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="compute-time-window">Compute Time Window</label>
+                                <select id="compute-time-window" class="form-input">
+                                    <option value="1s">1 second</option>
+                                    <option value="2s">2 seconds</option>
+                                    <option value="3s" selected>3 seconds</option>
+                                    <option value="4s">4 seconds</option>
+                                    <option value="5s">5 seconds</option>
+                                    <option value="6s">6 seconds</option>
+                                    <option value="7s">7 seconds</option>
+                                    <option value="8s">8 seconds</option>
+                                    <option value="9s">9 seconds</option>
+                                    <option value="10s">10 seconds</option>
+                                    <option value="30s">30 seconds</option>
+                                    <option value="1m">1 minute</option>
+                                    <option value="2m">2 minutes</option>
+                                    <option value="5m">5 minutes</option>
+                                    <option value="10m">10 minutes</option>
+                                    <option value="15m">15 minutes</option>
+                                    <option value="30m">30 minutes</option>
+                                    <option value="1h">1 hour</option>
+                                </select>
+                                <p class="help-text">Time window for compute time limiting per IP</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="compute-time-limit-per-window-per-ip">Compute Time Limit Per Window Per IP</label>
+                                <select id="compute-time-limit-per-window-per-ip" class="form-input">
+                                    <option value="1s">1 second</option>
+                                    <option value="2s">2 seconds</option>
+                                    <option value="3s">3 seconds</option>
+                                    <option value="4s">4 seconds</option>
+                                    <option value="5s" selected>5 seconds</option>
+                                    <option value="10s">10 seconds</option>
+                                    <option value="15s">15 seconds</option>
+                                    <option value="30s">30 seconds</option>
+                                    <option value="1m">1 minute</option>
+                                    <option value="2m">2 minutes</option>
+                                    <option value="5m">5 minutes</option>
+                                    <option value="10m">10 minutes</option>
+                                    <option value="15m">15 minutes</option>
+                                    <option value="30m">30 minutes</option>
+                                    <option value="1h">1 hour</option>
+                                </select>
+                                <p class="help-text">Maximum compute time allowed per IP within the time window</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- EVM Configuration Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">settings</span>
+                                <div>
+                                    <h2>EVM Configuration</h2>
+                                    <p>Configure gas limits and execution timeouts for EVM operations.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div class="settings-group">
+                                <label for="gas-cap">Gas Cap</label>
+                                <input type="number" id="gas-cap" class="form-input" min="100000" max="10000000" value="2000000">
+                                <p class="help-text">Maximum gas allowed for eth_call and eth_estimateGas simulations</p>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label for="evm-timeout">EVM Timeout</label>
+                                <select id="evm-timeout" class="form-input">
+                                    <option value="1s">1 second</option>
+                                    <option value="2s" selected>2 seconds</option>
+                                    <option value="3s">3 seconds</option>
+                                    <option value="4s">4 seconds</option>
+                                    <option value="5s">5 seconds</option>
+                                    <option value="10s">10 seconds</option>
+                                    <option value="15s">15 seconds</option>
+                                    <option value="30s">30 seconds</option>
+                                    <option value="1m">1 minute</option>
+                                    <option value="2m">2 minutes</option>
+                                    <option value="5m">5 minutes</option>
+                                </select>
+                                <p class="help-text">Timeout for EVM execution (eth_call, eth_estimateGas)</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Method Rate Limits Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">rule</span>
+                                <div>
+                                    <h2>Method Rate Limits</h2>
+                                    <p>Configure rate limits for specific RPC methods. Set to 0 to remove the limit.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div class="method-rate-limits-container">
+                                <div class="method-rate-limits-header">
+                                    <span>Method</span>
+                                    <span>Rate Limit (per window)</span>
+                                    <span>Actions</span>
+                                </div>
+                                <div id="method-rate-limits-list">
+                                    <!-- Method rate limits will be populated here -->
+                                </div>
+                                <div class="add-method-rate-limit">
+                                    <input type="text" id="new-method-name" placeholder="Method name (e.g., eth_call)" class="form-input">
+                                    <input type="number" id="new-method-limit" placeholder="Rate limit" min="0" max="1000" class="form-input">
+                                    <button type="button" onclick="addMethodRateLimit()" class="button secondary">
+                                        <span class="material-icons">add</span>
+                                        Add Method
+                                    </button>
                                 </div>
                             </div>
                             
@@ -230,27 +248,24 @@
                                 Save RPC Configuration
                             </button>
                         </div>
-                    </div>
+                    </article>
 
-
-
-
-
-
-
-                    <!-- Section RPC Metrics -->
-                    <div class="section">
-                        <div class="section-header">
-                            <div class="section-title">
+                    <!-- RPC Metrics Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
                                 <span class="material-icons">analytics</span>
-                                <h3>RPC Metrics</h3>
+                                <div>
+                                    <h2>RPC Metrics</h2>
+                                    <p>Monitor real-time performance metrics and request statistics.</p>
+                                </div>
                             </div>
-                            <button class="button secondary" onclick="refreshMetrics()">
+                            <button class="button tertiary" onclick="refreshMetrics()">
                                 <span class="material-icons">refresh</span>
                                 Refresh
                             </button>
                         </div>
-                        <div class="section-content">
+                        <div class="settings-body">
                             <div id="metrics-loading" class="metrics-loading" style="display: none;">
                                 <div class="loading-spinner"></div>
                                 <span>Loading metrics...</span>
@@ -339,8 +354,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                </section>
             </div>
         </div>
 

@@ -8,108 +8,151 @@
     </head>
     <body>
         <div class="sidebar"></div>
+
+        <!-- Notification Container -->
+        <div class="notification-container" id="notification-container"></div>
+
         <div class="main-content" style="display: none">
-            <div class="container">
-                <div id="wallet-container" class="wallet-grid">
-                    <div class="wallet-card">
-                        <div class="section-header">
-                            <div class="section-title">
-                                <i class="material-icons">account_balance_wallet</i>
-                                <span>Wallet</span>
+            <div class="status-page">
+                <section class="status-panels">
+                    <!-- Hero Header -->
+                    <article class="status-card status-overview-card">
+                        <div class="overview-header">
+                            <div class="status-hero-text">
+                                <span class="status-hero-eyebrow">Wallet Management</span>
+                                <h1>My Wallet</h1>
+                                <p>View your balance, manage your wallet address, and send transactions to other addresses on the Helios network.</p>
+                            </div>
+                            <div class="status-hero-meta overview-summary">
+                                <div class="summary-item">
+                                    <span class="summary-label">Balance</span>
+                                    <div class="balance-display" id="hero-balance">
+                                        <span class="balance-value">0.00</span>
+                                        <span class="balance-currency">HLS</span>
+                                    </div>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">Wallet Address</span>
+                                    <div class="node-address-chip" id="wallet-address-chip">
+                                        <span id="wallet-address-short">0x0000...0000</span>
+                                        <button class="icon-button" type="button" onclick="copyWalletAddress()" aria-label="Copy wallet address">
+                                            <span class="material-icons">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        
-                        <!-- Message Container -->
-                        <div id="message-container" class="message-container"></div>
-                        
-                        <!-- Balance Section -->
-                        <div class="balance-section">
-                            <div class="balance-title">
-                                <i class="material-icons">account_balance</i>
-                                Current Balance
-                            </div>
-                            <div class="balance-amount" id="wallet-balance">0.00 HLS</div>
-                        </div>
+                    </article>
 
-                        <!-- Address Section -->
-                        <div class="address-section">
-                            <div class="address-title">
-                                <i class="material-icons">account_circle</i>
-                                Wallet Address
-                            </div>
-                            <div class="address-display">
-                                <span class="address-text" id="wallet-address">0x1234567890abcdef1234567890abcdef12345678</span>
-                                <button class="copy-button" onclick="copyWalletAddress()">
-                                    <i class="material-icons">content_copy</i>
-                                </button>
+
+                    <!-- Send Transaction Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">send</span>
+                                <div>
+                                    <h2>Send Transaction</h2>
+                                    <p>Transfer HLS tokens to another wallet address on the network.</p>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- Transfer Section -->
-                        <div class="transfer-section">
-                            <div class="transfer-title">
-                                <i class="material-icons">send</i>
-                                Send Transaction
-                            </div>
-                            
-                            <div class="form-group">
+                        <div class="settings-body">
+                            <div class="settings-group">
                                 <label for="wallet-address-to">Destination Address</label>
                                 <input type="text" 
                                        id="wallet-address-to" 
+                                       class="form-input"
                                        placeholder="Enter destination address (0x...)" />
+                                <p class="help-text">The recipient's wallet address (must start with 0x)</p>
                             </div>
 
-                            <div class="form-group">
+                            <div class="settings-group">
                                 <label for="amount-to">Amount (HLS)</label>
                                 <input type="number" 
                                        id="amount-to" 
+                                       class="form-input"
                                        placeholder="Enter amount to send" 
                                        min="0" 
                                        step="0.000001" />
+                                <p class="help-text">Amount of HLS tokens to send</p>
                             </div>
 
-                            <div class="action-buttons">
-                                <button class="send-button" onclick="sendAction()">
-                                    <i class="material-icons">send</i>
-                                    <span>Send Transaction</span>
-                                </button>
-                            </div>
+                            <button class="button primary" onclick="sendAction()">
+                                <span class="material-icons">send</span>
+                                Send Transaction
+                            </button>
                         </div>
-                    </div>
-                </div>
+                    </article>
+                </section>
             </div>
         </div>
         <script>
             let password = window.localStorage.getItem("access-code");
 
-            function showMessage(message, type) {
-                const messageContainer = document.getElementById('message-container');
-                messageContainer.textContent = message;
-                messageContainer.className = `message-container ${type}`;
-                messageContainer.style.display = 'block';
+            const showNotification = (type, title, message, duration = 5000) => {
+                const container = document.getElementById('notification-container');
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
                 
-                // Auto-hide after 5 seconds
+                const iconMap = {
+                    success: 'check_circle',
+                    error: 'error',
+                    warning: 'warning',
+                    info: 'info'
+                };
+                
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <span class="material-icons">${iconMap[type] || 'info'}</span>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close" onclick="this.parentElement.remove()">
+                        <span class="material-icons">close</span>
+                    </button>
+                    <div class="notification-progress" style="width: 100%"></div>
+                `;
+                
+                container.appendChild(notification);
+                
                 setTimeout(() => {
-                    messageContainer.style.display = 'none';
-                }, 5000);
-            }
+                    notification.classList.add('show');
+                }, 10);
+                
+                if (duration > 0) {
+                    setTimeout(() => {
+                        notification.classList.add('hide');
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 400);
+                    }, duration);
+                    
+                    const progress = notification.querySelector('.notification-progress');
+                    progress.style.transition = `width ${duration}ms linear`;
+                    setTimeout(() => {
+                        progress.style.width = '0%';
+                    }, 10);
+                }
+            };
 
             function copyWalletAddress() {
-                const addressText = document.getElementById('wallet-address').textContent;
+                const addressText = document.getElementById('wallet-address-full').textContent;
                 navigator.clipboard.writeText(addressText).then(() => {
-                    const copyButton = document.querySelector('.copy-button');
-                    const originalContent = copyButton.innerHTML;
+                    const addressChip = document.getElementById('wallet-address-chip');
+                    const originalBackground = addressChip.style.backgroundColor;
                     
-                    copyButton.innerHTML = '<i class="material-icons">check</i>';
-                    copyButton.style.background = 'rgba(46, 204, 113, 0.2)';
-                    copyButton.style.borderColor = 'rgba(46, 204, 113, 0.3)';
-                    copyButton.style.color = '#2ECC71';
+                    addressChip.style.backgroundColor = 'rgba(46, 204, 113, 0.2)';
+                    addressChip.style.borderColor = 'rgba(46, 204, 113, 0.3)';
+                    
+                    showNotification('success', 'Copied!', 'Wallet address copied to clipboard');
                     
                     setTimeout(() => {
-                        copyButton.innerHTML = originalContent;
-                        copyButton.style.background = '';
-                        copyButton.style.borderColor = '';
-                        copyButton.style.color = '';
+                        addressChip.style.backgroundColor = originalBackground;
+                        addressChip.style.borderColor = '';
                     }, 2000);
                 });
             }
@@ -119,18 +162,18 @@
                 const addressTo = document.getElementById('wallet-address-to').value;
                 
                 if (!amount || amount <= 0) {
-                    showMessage("Please enter a valid amount", "error");
+                    showNotification('error', 'Invalid Amount', 'Please enter a valid amount greater than 0');
                     return;
                 }
                 
                 if (!addressTo || addressTo.trim() === '') {
-                    showMessage("Please enter a valid destination address", "error");
+                    showNotification('error', 'Invalid Address', 'Please enter a valid destination address');
                     return;
                 }
                 
                 // Basic address validation
                 if (!addressTo.startsWith('0x') || addressTo.length !== 42) {
-                    showMessage("Please enter a valid Ethereum-style address (0x...)", "error");
+                    showNotification('error', 'Invalid Address Format', 'Please enter a valid Ethereum-style address (0x... with 42 characters)');
                     return;
                 }
                 
@@ -148,7 +191,7 @@
                 });
                 
                 if (!walletPassword) {
-                    showMessage("Password is required", "error");
+                    showNotification('error', 'Password Required', 'Password is required to send transaction');
                     return;
                 }
                 
@@ -157,22 +200,37 @@
                     amount: amount
                 };
                 
+                showNotification('info', 'Processing', 'Sending transaction...');
+                
                 const result = await apiWalletTransfer(walletPassword, walletData);
                 if (result.error) {
-                    showMessage(result.error, "error");
+                    showNotification('error', 'Transaction Failed', result.error);
                     return;
                 }
                 
-                showMessage(`Transfer successful! Transaction hash: ${result.hash}`, "success");
+                showNotification('success', 'Transaction Successful!', `Transaction hash: ${result.hash}`);
                 
-                // Clear form
                 document.getElementById('amount-to').value = '';
                 document.getElementById('wallet-address-to').value = '';
                 
-                // Refresh wallet info
-                const wallet = await apiGetWalletInfo();
-                if (wallet) {
-                    document.getElementById('wallet-balance').textContent = `${wallet.balance} HLS`;
+                await updateWalletInfo();
+            }
+
+            async function updateWalletInfo() {
+                try {
+                    const wallet = await apiGetWalletInfo();
+                    
+                    if (wallet && wallet !== false && wallet.address) {
+                        const balance = wallet.balance || '0.00';
+                        const address = wallet.address;
+
+                        document.getElementById('hero-balance').querySelector('.balance-value').textContent = balance;
+                        document.getElementById('wallet-address-short').textContent = address;
+                    } else {
+                        console.log('Wallet info not available - node may be offline');
+                    }
+                } catch (error) {
+                    console.error('Error updating wallet info:', error);
                 }
             }
 
@@ -188,11 +246,11 @@
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
 
-                const wallet = await apiGetWalletInfo();
-                if (wallet) {
-                    document.getElementById('wallet-address').textContent = wallet.address;
-                    document.getElementById('wallet-balance').textContent = `${wallet.balance} HLS`;
-                }
+                await updateWalletInfo();
+                
+                setInterval(async () => {
+                    await updateWalletInfo();
+                }, 10000);
             }
 
             window.addEventListener('DOMContentLoaded', async (event) => {

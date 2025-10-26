@@ -5,57 +5,6 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
         <link rel="stylesheet" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <style>
-            /* Custom Tabs CSS */
-            .custom-tabs {
-                display: flex;
-                border-bottom: 1px solid #e0e0e0;
-                margin-bottom: 20px;
-            }
-
-            .custom-tab-button {
-                background: none;
-                border: none;
-                padding: 12px 20px;
-                cursor: pointer;
-                border-bottom: 3px solid transparent;
-                color: #666;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-
-            .custom-tab-button:hover {
-                color: #333;
-                background-color: #f5f5f5;
-            }
-
-            .custom-tab-button.active {
-                color: #2196F3;
-                border-bottom-color: #2196F3;
-                background-color: #f0f8ff;
-            }
-
-            .custom-tab-content {
-                position: relative;
-            }
-
-            .custom-tab-pane {
-                display: none;
-                animation: fadeIn 0.3s ease-in;
-            }
-
-            .custom-tab-pane.active {
-                display: block;
-            }
-
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-        </style>
     </head>
     <body>
         <div class="sidebar"></div>
@@ -237,7 +186,7 @@
                             <i class="material-icons">block</i>
                             Block Operations
                         </button>
-                        <button class="custom-tab-button" data-tab="database-operations">
+                        <button class="custom-tab-button" data-tab="database-operations" onclick="preFillDatabaseOperationsTab()">
                             <i class="material-icons">storage</i>
                             Database Operations
                         </button>
@@ -252,7 +201,6 @@
                         <!-- Block Operations Tab -->
                         <div id="block-operations" class="custom-tab-pane active">
                             <div class="commands-section">
-                                <h4>Block Operations</h4>
                                 
                                 <!-- Rollback Command -->
                                 <div class="command-item">
@@ -282,9 +230,7 @@
 
                         <!-- Database Operations Tab -->
                         <div id="database-operations" class="custom-tab-pane">
-                            <div class="commands-section">
-                                <h4>Database Operations</h4>
-                                
+                            <div class="commands-section">                                
                                 <!-- Application DB Info Command -->
                                 <div class="command-item">
                                     <div class="command-header">
@@ -317,9 +263,7 @@
 
                         <!-- Compact Storage Tab -->
                         <div id="compact-storage" class="custom-tab-pane">
-                            <div class="commands-section">
-                                <h4>Compact Storage</h4>
-                                
+                            <div class="commands-section">                                
                                 <!-- Compact Storage Command -->
                                 <div class="command-item">
                                     <div class="command-header">
@@ -472,7 +416,7 @@
             }
 
             function copyAddress() {
-                const addressText = document.getElementById('address-text').textContent;
+                const addressText = document.getElementById('address-text').dataset.fullAddress;
                 navigator.clipboard.writeText(addressText).then(() => {
                     const addressContainer = document.getElementById('node-address');
                     addressContainer.style.backgroundColor = '#e0f7fa';
@@ -751,26 +695,26 @@
                     }
 
                     // Execute second command: heliades experimental-compact-goleveldb
-                    output.textContent += '\nStep 2: Compacting experimental GoLevelDB...\n';
-                    const response2 = await fetch('/execute-compact-goleveldb', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({})
-                    });
+                    // output.textContent += '\nStep 2: Compacting experimental GoLevelDB...\n';
+                    // const response2 = await fetch('/execute-compact-goleveldb', {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Access-Code': password,
+                    //         'Content-Type': 'application/json'
+                    //     },
+                    //     body: JSON.stringify({})
+                    // });
 
-                    if (response2.ok) {
-                        const data2 = await response2.json();
-                        if (data2.success) {
-                            output.textContent += data2.output || 'Experimental GoLevelDB compacted successfully.\n';
-                        } else {
-                            output.textContent += `Error: ${data2.error}\n`;
-                        }
-                    } else {
-                        output.textContent += 'Error: Failed to compact experimental GoLevelDB.\n';
-                    }
+                    // if (response2.ok) {
+                    //     const data2 = await response2.json();
+                    //     if (data2.success) {
+                    //         output.textContent += data2.output || 'Experimental GoLevelDB compacted successfully.\n';
+                    //     } else {
+                    //         output.textContent += `Error: ${data2.error}\n`;
+                    //     }
+                    // } else {
+                    //     output.textContent += 'Error: Failed to compact experimental GoLevelDB.\n';
+                    // }
 
                     output.textContent += '\nCompact storage operation completed.\n';
                 } catch (error) {
@@ -786,6 +730,14 @@
             function clearCompactStorageLogs() {
                 document.getElementById('compact-storage-output').textContent = '';
                 document.getElementById('compact-storage-logs').style.display = 'none';
+            }
+
+            function preFillDatabaseOperationsTab() {
+                const blockHeightInput = document.getElementById('block-height');
+                const nodeHeight = document.getElementById('node-height');
+                if (blockHeightInput && nodeHeight && !isNaN(blockHeightInput.value)) {
+                    blockHeightInput.value = Number(nodeHeight.textContent);
+                }
             }
 
             function switchTab(tabName) {
@@ -904,7 +856,9 @@
 
                         const addressText = document.getElementById('address-text');
                         if (addressText) {
-                            addressText.textContent = jsonResult.node?.infos?.address || 'N/A';
+                            const fullAddress = jsonResult.node?.infos?.address || 'N/A';
+                            addressText.textContent = truncateMiddle(fullAddress, 30);
+                            addressText.dataset.fullAddress = fullAddress; // Store full address in a data attribute
                         }
 
                         // Update My Node Info
