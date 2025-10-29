@@ -477,6 +477,9 @@
             let fromGenesisType = 'fromBackup';
             let traceDB = false;
             let latestSnapshot = null;
+            let downloadProgressIntervalId = null;
+            let downloadProgressErrorCount = 0;
+            const DOWNLOAD_PROGRESS_POLL_INTERVAL = 1500;
             
             // Initialize validation on page load
             document.addEventListener('DOMContentLoaded', function() {
@@ -550,11 +553,6 @@
                 // Update the status display
                 if (snapshotStatus) {
                     snapshotStatus.textContent = `Latest snapshot (Block ${latestSnapshot.blockId.toLocaleString()})`;
-                }
-
-                // Set a default moniker if empty
-                if (backupMoniker && !backupMoniker.value) {
-                    backupMoniker.value = 'helios-node';
                 }
 
                 // Set a default chain ID if empty
@@ -1176,6 +1174,142 @@
                 meta.style.display = 'none';
             }
 
+            function startDownloadProgressPolling() {
+                const infoEl = document.getElementById('progressDownloadInfo');
+                const bytesEl = document.getElementById('downloadBytes');
+                const speedEl = document.getElementById('downloadSpeed');
+                const barInner = document.querySelector('.progress-bar-inner');
+
+                if (infoEl) {
+                    infoEl.style.display = '';
+                }
+                if (bytesEl) {
+                    bytesEl.textContent = 'Preparing download…';
+                }
+                if (speedEl) {
+                    speedEl.textContent = '—';
+                }
+                if (barInner) {
+                    barInner.style.width = '0%';
+                }
+
+                if (downloadProgressIntervalId) {
+                    clearInterval(downloadProgressIntervalId);
+                }
+                downloadProgressErrorCount = 0;
+
+                const fetchProgress = async () => {
+                    try {
+                        const response = await fetch('/setup-node-from-backup/progress', {
+                            method: 'GET',
+                            headers: {
+                                'Access-Code': password,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+
+                        const progress = await response.json();
+                        downloadProgressErrorCount = 0;
+                        updateDownloadProgressDisplay(progress);
+
+                        if (progress.status === 'completed' || progress.status === 'error' || progress.status === 'applying') {
+                            stopDownloadProgressPolling();
+                        }
+                    } catch (err) {
+                        downloadProgressErrorCount += 1;
+                        if (downloadProgressErrorCount <= 3) {
+                            console.error('Failed to fetch download progress:', err);
+                        }
+                        if (downloadProgressErrorCount >= 10) {
+                            stopDownloadProgressPolling();
+                        }
+                    }
+                };
+
+                downloadProgressIntervalId = setInterval(fetchProgress, DOWNLOAD_PROGRESS_POLL_INTERVAL);
+                fetchProgress();
+            }
+
+            function stopDownloadProgressPolling() {
+                if (downloadProgressIntervalId) {
+                    clearInterval(downloadProgressIntervalId);
+                    downloadProgressIntervalId = null;
+                }
+                downloadProgressErrorCount = 0;
+            }
+
+            function updateDownloadProgressDisplay(progress) {
+                const infoEl = document.getElementById('progressDownloadInfo');
+                const bytesEl = document.getElementById('downloadBytes');
+                const speedEl = document.getElementById('downloadSpeed');
+                const barInner = document.querySelector('.progress-bar-inner');
+                const titleEl = document.getElementById('progressTitle');
+
+                if (!infoEl || !bytesEl || !speedEl || !barInner) {
+                    return;
+                }
+
+                if (!progress || progress.status === 'idle') {
+                    infoEl.style.display = 'none';
+                    return;
+                }
+
+                infoEl.style.display = '';
+
+                const downloadedBytes = typeof progress.downloadedBytes === 'number' ? progress.downloadedBytes : 0;
+                const totalBytes = typeof progress.totalBytes === 'number' ? progress.totalBytes : null;
+                const percent = typeof progress.percent === 'number'
+                    ? Math.min(100, progress.percent)
+                    : (totalBytes ? Math.min(100, (downloadedBytes / totalBytes) * 100) : null);
+
+                if (progress.status === 'validating' || progress.status === 'initializing') {
+                    bytesEl.textContent = 'Preparing download…';
+                    barInner.style.width = '0%';
+                } else if (totalBytes) {
+                    const percentText = percent != null ? ` (${percent.toFixed(1)}%)` : '';
+                    bytesEl.textContent = `${formatBytes(downloadedBytes)} / ${formatBytes(totalBytes)}${percentText}`;
+                    barInner.style.width = `${percent != null ? percent : 0}%`;
+                } else {
+                    bytesEl.textContent = `${formatBytes(downloadedBytes)} downloaded`;
+                    barInner.style.width = percent != null ? `${percent}%` : '0%';
+                }
+
+                let speedLabel = '...';
+                if (progress.status === 'validating' || progress.status === 'initializing') {
+                    speedLabel = 'Validating header…';
+                } else if (progress.status === 'downloading') {
+                    if (typeof progress.speedBps === 'number' && progress.speedBps > 0) {
+                        speedLabel = `${formatBytes(progress.speedBps)}/s`;
+                    } else {
+                        speedLabel = 'Calculating speed…';
+                    }
+                } else if (progress.status === 'downloaded') {
+                    speedLabel = 'Download complete';
+                } else if (progress.status === 'applying') {
+                    speedLabel = 'Applying snapshot…';
+                } else if (progress.status === 'completed') {
+                    speedLabel = 'Setup complete';
+                } else if (progress.status === 'error') {
+                    speedLabel = 'Download failed';
+                }
+
+                speedEl.textContent = speedLabel;
+
+                if (progress.stage) {
+                    setProgressStep(progress.stage);
+                } else if (progress.status === 'completed') {
+                    setProgressStep('completed');
+                }
+
+                if (progress.stage === 'download' && percent != null && titleEl) {
+                    titleEl.textContent = `Downloading snapshot… (${percent.toFixed(1)}%)`;
+                }
+            }
+
             function setProgressStep(stage) {
                 const steps = ['validate','download','apply'];
                 const ids = {
@@ -1183,16 +1317,37 @@
                     download: 'step-download',
                     apply: 'step-apply'
                 };
+                const stageMappings = {
+                    done: 'apply',
+                    completed: 'apply'
+                };
+                const normalizedStage = stageMappings[stage] || stage;
+                if (!normalizedStage || !ids[normalizedStage]) {
+                    return;
+                }
                 steps.forEach((s) => {
                     const el = document.getElementById(ids[s]);
-                    el.classList.remove('active','completed');
+                    if (el) {
+                        el.classList.remove('active','completed');
+                    }
                 });
-                const currentIndex = steps.indexOf(stage);
+                const currentIndex = steps.indexOf(normalizedStage);
+                if (currentIndex === -1) {
+                    return;
+                }
                 steps.forEach((s, idx) => {
                     const el = document.getElementById(ids[s]);
+                    if (!el) return;
                     if (idx < currentIndex) el.classList.add('completed');
-                    if (idx === currentIndex) el.classList.add('active');
+                    if (idx === currentIndex) el.classList.add(stage === 'done' || stage === 'completed' ? 'completed' : 'active');
                 });
+                if ((stage === 'done' || stage === 'completed') && ids.apply) {
+                    const el = document.getElementById(ids.apply);
+                    if (el) {
+                        el.classList.remove('active');
+                        el.classList.add('completed');
+                    }
+                }
             }
 
             async function fire() {
@@ -1380,6 +1535,8 @@
                             updateSetupProgress('Downloading snapshot…', 'Unable to validate header, continuing anyway.');
                             setProgressStep('download');
                         }
+
+                        startDownloadProgressPolling();
                         
                         result = await fetch('/setup-node-from-backup', {
                             method: 'POST',
@@ -1447,12 +1604,14 @@
                         genesisURLElement.classList.add('error');
                     } else if (fromGenesisType === 'fromBackup') {
                         const errorMessage = (error && error.message) ? error.message : 'Failed to setup node from snapshot';
+                        stopDownloadProgressPolling();
                         hideSetupProgress();
                         showNotification('error', 'Setup Failed', errorMessage);
                     }
                 } finally {
                     fireButton.disabled = false;
                     if (fromGenesisType === 'fromBackup') {
+                        stopDownloadProgressPolling();
                         hideSetupProgress();
                     }
                 }
