@@ -24,7 +24,7 @@
                             <div class="status-hero-text">
                                 <span class="status-hero-eyebrow">Data Protection</span>
                                 <h1>Backup Management</h1>
-                                <p>Create, restore, and manage blockchain data backups. Integrate with Backblaze B2 for cloud storage.</p>
+                                <p>Create, restore, and manage blockchain data backups. Access managed Helios snapshots hosted by our infrastructure.</p>
                             </div>
                             <div class="status-hero-meta overview-summary">
                                 <div class="summary-item">
@@ -41,22 +41,72 @@
                                     <span class="material-icons">cloud</span>
                                     <div>
                                         <h3>Quick Actions</h3>
-                                        <p>Manage backups and cloud storage configuration.</p>
+                                        <p>Manage local backups and hosted Helios snapshots.</p>
                                     </div>
                                 </div>
                                 <div class="node-action-buttons">
                                     <button id="refresh-backups" class="button secondary" onclick="loadBackups()">
                                         <span class="material-icons">refresh</span>
-                                        Refresh
+                                        Refresh Local
                                     </button>
-                                    <button id="configure-b2-button" class="button tertiary" onclick="openB2ConfigModal()">
-                                        <span class="material-icons">cloud_upload</span>
-                                        Configure B2
-                                    </button>
-                                    <button id="create-backup-from-b2" class="button tertiary" onclick="showCreateBackupFromB2Modal()">
+                                    <button id="refresh-remote-snapshots" class="button tertiary" onclick="loadRemoteSnapshots(true)">
                                         <span class="material-icons">cloud_download</span>
-                                        From B2 Link
+                                        Refresh Snapshots
                                     </button>
+                                    <button id="open-snapshot-portal" class="button tertiary" onclick="openSnapshotsPortal()">
+                                        <span class="material-icons">open_in_new</span>
+                                        Snapshot Portal
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Remote Snapshots Card -->
+                    <article class="status-card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="material-icons">cloud_queue</span>
+                                <div>
+                                    <h2>Hosted Snapshots</h2>
+                                    <p>Browse Helios snapshots ready to download and apply.</p>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="button tertiary small" onclick="loadRemoteSnapshots(true)">
+                                    <span class="material-icons">refresh</span>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div class="settings-body">
+                            <div id="remote-snapshots-container">
+                                <div id="remote-snapshots-loading" class="loading-container">
+                                    <div class="spinner-border"></div>
+                                    <p>Loading snapshots...</p>
+                                </div>
+                                <div id="remote-snapshots-table" style="display: none;">
+                                    <div class="table-responsive">
+                                        <table class="backups-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Block ID</th>
+                                                    <th>Uploaded</th>
+                                                    <th>Snapshot</th>
+                                                    <th>Size</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="remote-snapshots-table-body"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="remote-snapshots-empty" style="display: none;">
+                                    <div class="empty-state">
+                                        <span class="material-icons">cloud_off</span>
+                                        <h3>No snapshots available</h3>
+                                        <p>We could not load hosted snapshots right now. Try refreshing or open the snapshot portal.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -241,185 +291,40 @@
             </div>
         </div>
 
-        <!-- B2 Configuration Modal -->
-        <div id="b2-config-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>
-                        <span class="material-icons">cloud_upload</span>
-                        Backblaze B2 Configuration
-                    </h3>
-                    <button class="modal-close" onclick="closeB2ConfigModal()">
-                        <span class="material-icons">close</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label for="b2-application-key-id">Application Key ID</label>
-                        <input type="text" 
-                               id="b2-application-key-id" 
-                               class="form-control"
-                               placeholder="Enter your B2 Application Key ID" />
-                        <small class="form-text">Your Backblaze B2 Application Key ID</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="b2-application-key">Application Key</label>
-                        <input type="password" 
-                               id="b2-application-key" 
-                               class="form-control"
-                               placeholder="Enter your B2 Application Key" />
-                        <small class="form-text">Your Backblaze B2 Application Key (will be stored securely)</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="b2-bucket-name">Bucket Name</label>
-                        <input type="text" 
-                               id="b2-bucket-name" 
-                               class="form-control"
-                               placeholder="Enter your B2 bucket name" />
-                        <small class="form-text">The name of your B2 bucket for storing data</small>
+        <div id="snapshotProgressOverlay" class="progress-overlay" style="display:none;">
+            <div class="progress-card" role="dialog" aria-live="polite" aria-atomic="true">
+                <div class="progress-header">
+                    <div class="progress-spinner"></div>
+                    <div class="progress-texts">
+                        <div id="snapshotProgressTitle" class="progress-title">Preparing snapshot download…</div>
+                        <div id="snapshotProgressDetails" class="progress-details">Connecting to Helios snapshot service.</div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="button danger" onclick="deleteB2Config()" id="delete-b2-config-btn" style="display: none;">
-                        Delete Configuration
-                    </button>
-                    <button class="button secondary" onclick="testB2Config()" id="test-b2-config-btn">
-                        Test Connection
-                    </button>
-                    <button class="button primary" onclick="saveB2Config()">
-                        Save Configuration
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- B2 Upload Success Modal -->
-        <div id="b2-upload-success-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>
-                        <span class="material-icons" style="color: #2ECC71;">check_circle</span>
-                        B2 Backup
-                    </h3>
-                    <button class="modal-close" onclick="closeB2UploadSuccessModal()">
-                        <span class="material-icons">close</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="b2-links-section">
-                        <h4>Download Links:</h4>
-                        <div class="b2-link-item">
-                            <label>Backup File:</label>
-                            <div class="link-container">
-                                <input type="text" value="${files?.backup?.url || 'URL not available'}" readonly class="form-control" id="backup-link">
-                                <button class="button tertiary small" onclick="copyToClipboard('backup-link')" title="Copy Link">
-                                    <span class="material-icons">content_copy</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="b2-link-item">
-                            <label>Header File:</label>
-                            <div class="link-container">
-                                <input type="text" value="${files?.header?.url || 'URL not available'}" readonly class="form-control" id="header-link">
-                                <button class="button tertiary small" onclick="copyToClipboard('header-link')" title="Copy Link">
-                                    <span class="material-icons">content_copy</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="upload-stats">
-                        <h4>Upload Statistics:</h4>
-                        <div class="stats-grid">
-                            <div class="stat-item">
-                                <span class="stat-label">Backup Size:</span>
-                                <span class="stat-value" id="b2-upload-backup-size"></span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="stat-label">Header Size:</span>
-                                <span class="stat-value" id="b2-upload-header-size"></span>
-                            </div>
-                        </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="snapshot-progress-bar" aria-hidden="true">
+                        <div class="progress-bar-inner" id="snapshot-progress-bar-inner"></div>
+                        <div class="progress-bar-determinate" id="snapshot-progress-bar-fill"></div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="button secondary" onclick="closeB2UploadSuccessModal()">
-                        <span class="material-icons">close</span>
-                        Close
-                    </button>
-                    <button class="button primary" onclick="openB2Links()">
-                        <span class="material-icons">open_in_new</span>
-                        Open in B2
-                    </button>
+                <div class="progress-meta">
+                    <div class="progress-kv"><strong>Filename:</strong> <span id="snapshot-progress-filename">-</span></div>
+                    <div class="progress-kv"><strong>Transferred:</strong> <span id="snapshot-progress-bytes">0 Bytes</span></div>
+                    <div class="progress-kv"><strong>Speed:</strong> <span id="snapshot-progress-speed">--</span></div>
+                    <div class="progress-kv"><strong>Progress:</strong> <span id="snapshot-progress-percent">--</span></div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Create Backup from B2 Link Modal -->
-        <div id="create-backup-from-b2-modal" class="modal" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>
-                        <span class="material-icons">cloud_download</span>
-                        Create Backup from B2 Link
-                    </h3>
-                    <button class="modal-close" onclick="hideCreateBackupFromB2Modal()">
-                        <span class="material-icons">close</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="info-message">
-                        <p>This will download a backup from a Backblaze B2 header file link and create a local backup.</p>
-                        <p>The header file should contain information about the backup file to download.</p>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="b2-header-url">B2 Header File URL:</label>
-                        <input type="url" id="b2-header-url" class="form-control" 
-                               placeholder="https://f003.backblazeb2.com/file/helios-testnet-snapshots/backups/snapshot_89_2025-08-01_00-51-03.tar.gz.b2header.json"
-                               value="">
-                        <small class="form-help">Enter the URL of the B2 header file (.b2header.json)</small>
-                    </div>
-                    
-                    <div class="backup-preview" id="b2-backup-preview" style="display: none;">
-                        <h4>Backup Information:</h4>
-                        <div class="backup-info-grid">
-                            <div class="info-item">
-                                <span class="info-label">Filename:</span>
-                                <span class="info-value" id="b2-preview-filename"></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Block ID:</span>
-                                <span class="info-value" id="b2-preview-block-id"></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Upload Date:</span>
-                                <span class="info-value" id="b2-preview-upload-date"></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Description:</span>
-                                <span class="info-value" id="b2-preview-description"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="button secondary" onclick="previewB2Backup()" id="preview-b2-backup-btn">
-                        <span class="material-icons">preview</span>
-                        Preview
-                    </button>
-                    <button class="button primary" onclick="createBackupFromB2()" id="create-b2-backup-btn" disabled>
-                        <span class="material-icons">cloud_download</span>
-                        Download & Create Backup
-                    </button>
+                <div id="snapshot-progress-error" class="error-message" style="display:none;">
+                    <span class="material-icons">error</span>
+                    <p id="snapshot-progress-error-text"></p>
                 </div>
             </div>
         </div>
 
         <script>
             let password = window.localStorage.getItem("access-code");
-            let b2ConfigAvailable = false;
-            let b2UploadInfo = {}; // Store B2 upload information
+            let remoteSnapshots = [];
+            const SNAPSHOT_PROGRESS_POLL_INTERVAL = 1500;
+            let snapshotDownloadIntervalId = null;
+            let snapshotDownloadErrorCount = 0;
 
             // Notification system
             const showNotification = (type, title, message, duration = 5000) => {
@@ -477,100 +382,520 @@
                 return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             };
 
-            // B2 Configuration check
-            async function checkB2Config() {
+            const formatBlockId = (blockId) => {
+                if (typeof blockId === 'number' && !Number.isNaN(blockId)) {
+                    return blockId.toLocaleString();
+                }
+                const parsed = Number(blockId);
+                return Number.isNaN(parsed) ? (blockId || 'Unknown') : parsed.toLocaleString();
+            };
+
+            const formatSnapshotDate = (isoString) => {
+                if (!isoString) return 'Unknown';
+                const date = new Date(isoString);
+                if (Number.isNaN(date.getTime())) {
+                    return isoString;
+                }
+                return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+            };
+
+            const openSnapshotsPortal = () => {
+                window.open('https://snapshots.helioschainlabs.org/snapshots/', '_blank', 'noopener');
+            };
+
+            const openSnapshotLink = (url) => {
+                if (!url) {
+                    showNotification('warning', 'Snapshot', 'Download URL not available for this snapshot.');
+                    return;
+                }
+                window.open(url, '_blank', 'noopener');
+            };
+
+            const copyToClipboard = async (text, successMessage = 'Copied to clipboard') => {
+                if (!text) {
+                    showNotification('warning', 'Copy', 'Nothing to copy.');
+                    return;
+                }
+
                 try {
-                    const response = await fetch('/get-settings', {
+                    await navigator.clipboard.writeText(text);
+                    showNotification('success', 'Copied', successMessage);
+                } catch (err) {
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    try {
+                        document.execCommand('copy');
+                        showNotification('success', 'Copied', successMessage);
+                    } catch (fallbackError) {
+                        showNotification('error', 'Copy Failed', 'Unable to copy to clipboard.');
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                }
+            };
+
+            const showSnapshotDownloadModal = (snapshot) => {
+                const overlay = document.getElementById('snapshotProgressOverlay');
+                if (!overlay) {
+                    return;
+                }
+
+                const titleEl = document.getElementById('snapshotProgressTitle');
+                const detailsEl = document.getElementById('snapshotProgressDetails');
+                const filenameEl = document.getElementById('snapshot-progress-filename');
+                const bytesEl = document.getElementById('snapshot-progress-bytes');
+                const speedEl = document.getElementById('snapshot-progress-speed');
+                const percentEl = document.getElementById('snapshot-progress-percent');
+                const innerBar = document.getElementById('snapshot-progress-bar-inner');
+                const determinateBar = document.getElementById('snapshot-progress-bar-fill');
+                const bar = document.getElementById('snapshot-progress-bar');
+                const errorEl = document.getElementById('snapshot-progress-error');
+
+                if (titleEl) titleEl.textContent = 'Preparing snapshot download…';
+                if (detailsEl) detailsEl.textContent = 'Connecting to Helios snapshot service.';
+                if (filenameEl) filenameEl.textContent = snapshot?.filename || '-';
+                if (bytesEl) bytesEl.textContent = '0 Bytes';
+                if (speedEl) speedEl.textContent = '--';
+                if (percentEl) percentEl.textContent = '--';
+                if (bar) bar.classList.remove('has-progress');
+                if (innerBar) innerBar.style.display = '';
+                if (determinateBar) determinateBar.style.width = '0%';
+                if (errorEl) errorEl.style.display = 'none';
+
+                overlay.classList.remove('hide');
+                overlay.style.display = 'flex';
+                requestAnimationFrame(() => overlay.classList.add('show'));
+            };
+
+            const hideSnapshotDownloadModal = () => {
+                const overlay = document.getElementById('snapshotProgressOverlay');
+                if (!overlay) {
+                    return;
+                }
+                overlay.classList.remove('show');
+                overlay.classList.add('hide');
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    overlay.classList.remove('hide');
+                }, 200);
+            };
+
+            const stopSnapshotDownloadPolling = () => {
+                if (snapshotDownloadIntervalId) {
+                    clearInterval(snapshotDownloadIntervalId);
+                    snapshotDownloadIntervalId = null;
+                }
+                snapshotDownloadErrorCount = 0;
+            };
+
+            const updateSnapshotDownloadModal = (progress) => {
+                const overlay = document.getElementById('snapshotProgressOverlay');
+                if (!overlay || overlay.style.display === 'none') {
+                    return;
+                }
+
+                const titleEl = document.getElementById('snapshotProgressTitle');
+                const detailsEl = document.getElementById('snapshotProgressDetails');
+                const filenameEl = document.getElementById('snapshot-progress-filename');
+                const bytesEl = document.getElementById('snapshot-progress-bytes');
+                const speedEl = document.getElementById('snapshot-progress-speed');
+                const percentEl = document.getElementById('snapshot-progress-percent');
+                const bar = document.getElementById('snapshot-progress-bar');
+                const innerBar = document.getElementById('snapshot-progress-bar-inner');
+                const determinateBar = document.getElementById('snapshot-progress-bar-fill');
+                const errorEl = document.getElementById('snapshot-progress-error');
+                const errorTextEl = document.getElementById('snapshot-progress-error-text');
+
+                if (filenameEl && progress.filename) {
+                    filenameEl.textContent = progress.filename;
+                }
+
+                let statusTitle = 'Preparing snapshot download…';
+                let statusDetails = 'Setting up transfer.';
+
+                switch (progress.status) {
+                    case 'fetching-header':
+                        statusTitle = 'Validating snapshot…';
+                        statusDetails = 'Fetching snapshot metadata.';
+                        break;
+                    case 'downloading':
+                        statusTitle = 'Downloading snapshot…';
+                        statusDetails = 'Transferring snapshot data to your backups directory.';
+                        break;
+                    case 'finalizing':
+                        statusTitle = 'Finalizing snapshot…';
+                        statusDetails = 'Securing the snapshot file locally.';
+                        break;
+                    case 'completed':
+                        statusTitle = 'Download complete';
+                        statusDetails = 'Snapshot saved to your backups directory.';
+                        break;
+                    case 'error':
+                        statusTitle = 'Download failed';
+                        statusDetails = progress.error || 'An error occurred while downloading the snapshot.';
+                        break;
+                    default:
+                        if (progress.stage === 'download') {
+                            statusTitle = 'Downloading snapshot…';
+                            statusDetails = 'Transferring snapshot data to your backups directory.';
+                        } else if (progress.stage === 'finalize') {
+                            statusTitle = 'Finalizing snapshot…';
+                            statusDetails = 'Securing the snapshot file locally.';
+                        }
+                }
+
+                if (titleEl) titleEl.textContent = statusTitle;
+                if (detailsEl) detailsEl.textContent = statusDetails;
+
+                const downloadedLabel = typeof progress.downloadedBytes === 'number'
+                    ? formatFileSize(progress.downloadedBytes)
+                    : '0 Bytes';
+                const totalLabel = typeof progress.totalBytes === 'number'
+                    ? formatFileSize(progress.totalBytes)
+                    : null;
+
+                if (bytesEl) {
+                    bytesEl.textContent = totalLabel ? `${downloadedLabel} / ${totalLabel}` : downloadedLabel;
+                }
+
+                const percent = typeof progress.percent === 'number'
+                    ? Math.min(100, progress.percent)
+                    : (progress.status === 'completed' ? 100 : null);
+
+                if (percentEl) {
+                    percentEl.textContent = percent != null ? `${percent.toFixed(1)}%` : '--';
+                }
+
+                if (bar) {
+                    if (percent != null) {
+                        bar.classList.add('has-progress');
+                        if (innerBar) innerBar.style.display = 'none';
+                        if (determinateBar) determinateBar.style.width = `${percent}%`;
+                    } else {
+                        bar.classList.remove('has-progress');
+                        if (innerBar) innerBar.style.display = '';
+                        if (determinateBar) determinateBar.style.width = '0%';
+                    }
+                }
+
+                if (speedEl) {
+                    if (typeof progress.speedBps === 'number' && progress.speedBps > 0) {
+                        speedEl.textContent = `${formatFileSize(progress.speedBps)}/s`;
+                    } else if (progress.status === 'completed') {
+                        speedEl.textContent = '—';
+                    } else {
+                        speedEl.textContent = 'Calculating…';
+                    }
+                }
+
+                if (progress.status === 'error') {
+                    if (errorEl) {
+                        errorEl.style.display = '';
+                        if (errorTextEl) {
+                            errorTextEl.textContent = progress.error || 'Snapshot download failed.';
+                        }
+                    }
+                    stopSnapshotDownloadPolling();
+                    setTimeout(() => hideSnapshotDownloadModal(), 1800);
+                    return;
+                }
+
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
+
+                if (progress.status === 'completed') {
+                    stopSnapshotDownloadPolling();
+                    setTimeout(() => hideSnapshotDownloadModal(), 1200);
+                }
+            };
+
+            const startSnapshotDownloadPolling = () => {
+                stopSnapshotDownloadPolling();
+                snapshotDownloadErrorCount = 0;
+
+                const fetchProgress = async () => {
+                    try {
+                        const response = await fetch('/download-snapshot/progress', {
+                            method: 'GET',
+                            headers: {
+                                'Access-Code': password,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (response.status === 404) {
+                            stopSnapshotDownloadPolling();
+                            hideSnapshotDownloadModal();
+                            showNotification('info', 'Snapshot Download', 'Realtime download progress is not available on this node.');
+                            return;
+                        }
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}`);
+                        }
+
+                        const progress = await response.json();
+                        snapshotDownloadErrorCount = 0;
+                        updateSnapshotDownloadModal(progress);
+                    } catch (err) {
+                        snapshotDownloadErrorCount += 1;
+                        if (snapshotDownloadErrorCount >= 3) {
+                            stopSnapshotDownloadPolling();
+                            hideSnapshotDownloadModal();
+                        }
+                    }
+                };
+
+                fetchProgress();
+                snapshotDownloadIntervalId = setInterval(fetchProgress, SNAPSHOT_PROGRESS_POLL_INTERVAL);
+            };
+
+            const renderRemoteSnapshots = () => {
+                const loadingElement = document.getElementById('remote-snapshots-loading');
+                const tableElement = document.getElementById('remote-snapshots-table');
+                const emptyElement = document.getElementById('remote-snapshots-empty');
+                const tableBody = document.getElementById('remote-snapshots-table-body');
+
+                if (loadingElement) {
+                    loadingElement.style.display = 'none';
+                }
+
+                if (!Array.isArray(remoteSnapshots) || remoteSnapshots.length === 0) {
+                    if (tableElement) tableElement.style.display = 'none';
+                    if (emptyElement) emptyElement.style.display = 'block';
+                    if (tableBody) tableBody.innerHTML = '';
+                    return;
+                }
+
+                if (emptyElement) emptyElement.style.display = 'none';
+                if (tableElement) tableElement.style.display = 'block';
+
+                if (tableBody) {
+                    tableBody.innerHTML = '';
+
+                    remoteSnapshots.forEach(snapshot => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="block-id">${formatBlockId(snapshot.blockId)}</td>
+                            <td class="date-time">${formatSnapshotDate(snapshot.uploadedAt)}</td>
+                            <td class="filename">
+                                <div class="snapshot-filename">${snapshot.filename || 'Unknown snapshot'}</div>
+                                ${snapshot.description ? `<div class="snapshot-description">${snapshot.description}</div>` : ''}
+                            </td>
+                            <td class="file-size">${formatFileSize(snapshot.fileSize || 0)}</td>
+                            <td class="actions"></td>
+                        `;
+
+                        const actionsCell = row.querySelector('.actions');
+                        const downloadUrl = snapshot.downloadUrl;
+                        const headerUrl = snapshot.headerUrl;
+
+                        if (actionsCell) {
+                            const createActionButton = (icon, title, handler, disabled = false) => {
+                                const button = document.createElement('button');
+                                button.className = 'button tertiary small';
+                                button.title = title;
+                                button.innerHTML = `<span class="material-icons">${icon}</span>`;
+                                if (disabled) {
+                                    button.disabled = true;
+                                } else {
+                                    button.addEventListener('click', handler);
+                                }
+                                return button;
+                            };
+
+                            const canDownload = !!((headerUrl && headerUrl.length) || (downloadUrl && snapshot.filename));
+
+                            const downloadButton = createActionButton(
+                                'download',
+                                'Download snapshot to local backups',
+                                () => downloadSnapshot(snapshot, downloadButton),
+                                !canDownload
+                            );
+                            actionsCell.appendChild(downloadButton);
+
+                            // actionsCell.appendChild(createActionButton('open_in_new', 'Open download link', () => openSnapshotLink(downloadUrl), !downloadUrl));
+                            // actionsCell.appendChild(createActionButton('file_download', 'Copy download URL', () => copyToClipboard(downloadUrl, 'Download URL copied'), !downloadUrl));
+                            actionsCell.appendChild(createActionButton('description', 'Copy header URL', () => copyToClipboard(headerUrl, 'Header URL copied'), !headerUrl));
+                        }
+
+                        tableBody.appendChild(row);
+                    });
+                }
+            };
+
+            const loadRemoteSnapshots = async (showToast = false) => {
+                const loadingElement = document.getElementById('remote-snapshots-loading');
+                const tableElement = document.getElementById('remote-snapshots-table');
+                const emptyElement = document.getElementById('remote-snapshots-empty');
+
+                if (loadingElement) loadingElement.style.display = 'flex';
+                if (tableElement) tableElement.style.display = 'none';
+                if (emptyElement) emptyElement.style.display = 'none';
+
+                try {
+                    const response = await fetch('/fetch-snapshots', {
                         method: 'GET',
                         headers: {
                             'Access-Code': password,
                             'Content-Type': 'application/json'
                         }
                     });
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            b2ConfigAvailable = !!(data.settings.b2ApplicationKeyId && data.settings.b2ApplicationKey && data.settings.b2BucketName);
-                        }
-                    }
-                } catch (error) {
-                    b2ConfigAvailable = false;
-                }
-            }
 
-            // Check B2 upload status for backups
-            async function checkB2UploadStatus(backups) {
-                if (!b2ConfigAvailable) return;
-                
-                for (const backup of backups) {
-                    try {
-                        const response = await fetch('/upload-backup-b2', {
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+
+                    if (data.success && Array.isArray(data.snapshots)) {
+                        remoteSnapshots = data.snapshots
+                            .map(snapshot => ({
+                                ...snapshot,
+                                fileSize: typeof snapshot.fileSize === 'number'
+                                    ? snapshot.fileSize
+                                    : parseInt(snapshot.fileSize, 10)
+                            }))
+                            .sort((a, b) => (b.blockId || 0) - (a.blockId || 0));
+
+                        renderRemoteSnapshots();
+
+                        if (showToast) {
+                            showNotification('success', 'Snapshots', 'Hosted snapshots refreshed.');
+                        }
+                        return;
+                    }
+
+                    throw new Error(data.error || 'Invalid snapshot response');
+                } catch (error) {
+                    console.error('Error loading hosted snapshots:', error);
+                    remoteSnapshots = [];
+                    renderRemoteSnapshots();
+                    if (showToast) {
+                        showNotification('warning', 'Snapshots', 'Unable to refresh hosted snapshots.');
+                    }
+                }
+            };
+
+            const downloadSnapshot = async (snapshot, triggerButton) => {
+                if (!snapshot) {
+                    return;
+                }
+
+                const button = triggerButton || null;
+                const originalContent = button ? button.innerHTML : null;
+                let downloadSuccess = false;
+                let usedFallback = false;
+
+                showSnapshotDownloadModal(snapshot);
+                startSnapshotDownloadPolling();
+
+                if (button) {
+                    button.disabled = true;
+                    button.innerHTML = '<span class="spinner-border"></span>';
+                }
+
+                try {
+                    showNotification('info', 'Snapshot Download', `Downloading snapshot ${snapshot.filename || ''}…`);
+
+                    const payload = {
+                        headerUrl: snapshot.headerUrl || null,
+                        downloadUrl: snapshot.downloadUrl || null,
+                        filename: snapshot.filename || null
+                    };
+
+                    let response = await fetch('/download-snapshot', {
+                        method: 'POST',
+                        headers: {
+                            'Access-Code': password,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.status === 404 && payload.headerUrl) {
+                        // Fallback for older servers without the new endpoint
+                        response = await fetch('/create-backup-from-b2', {
                             method: 'POST',
                             headers: {
-                                'Access-Code': password
+                                'Access-Code': password,
+                                'Content-Type': 'application/json'
                             },
-                            body: (() => {
-                                const formData = new FormData();
-                                formData.append('backup', new Blob(['check'], { type: 'application/octet-stream' }), backup.filename);
-                                formData.append('header', new Blob(['check'], { type: 'application/json' }), backup.filename + '.b2header.json');
-                                formData.append('checkOnly', 'true');
-                                return formData;
-                            })()
+                            body: JSON.stringify({ headerUrl: payload.headerUrl })
                         });
-                        
-                        if (response.ok) {
-                            const data = await response.json();
-                            console.log(data)
-                            if (data.success && data.fileExists) {
-                                // Backup exists on B2, show info button
-                                const b2InfoButton = document.getElementById(`b2-info-${backup.filename.replace(/\./g, '-')}`);
-                                if (b2InfoButton) {
-                                    b2InfoButton.style.display = 'inline-flex';
-                                }
-                                
-                                // Store full info if available
-                                if (data.existingFiles?.backup?.url && data.existingFiles?.header?.url) {
-                                    b2UploadInfo[backup.filename] = {
-                                        files: {
-                                            backup: {
-                                                name: backup.filename,
-                                                size: data.existingFiles.backup.size,
-                                                url: data.existingFiles.backup.url
-                                            },
-                                            header: {
-                                                name: backup.filename + '.b2header.json',
-                                                size: data.existingFiles.header.size,
-                                                url: data.existingFiles.header.url
-                                            }
-                                        },
-                                        blockId: backup.blockId,
-                                        uploadedAt: new Date(data.existingFiles.backup.uploadTimestamp * 1000).toISOString()
-                                    };
-                                } else {
-                                    // Store basic info (we'll need to fetch full info when user clicks)
-                                    b2UploadInfo[backup.filename] = {
-                                        exists: true,
-                                        blockId: backup.blockId
-                                    };
-                                }
-                            }
+                        usedFallback = true;
+                    }
+
+                    let data = null;
+                    let parseError = null;
+                    try {
+                        data = await response.clone().json();
+                    } catch (err) {
+                        parseError = err;
+                    }
+
+                    if (response.ok && data?.success) {
+                        downloadSuccess = true;
+                        showNotification('success', 'Snapshot Downloaded', 'Snapshot saved to local backups.');
+                        await loadBackups();
+
+                        if (usedFallback) {
+                            stopSnapshotDownloadPolling();
+                            hideSnapshotDownloadModal();
                         }
-                    } catch (error) {
-                        console.error('Error checking B2 status for', backup.filename, error);
+                        return;
+                    }
+
+                    let errorMessage = data?.error;
+                    if (response.status === 404) {
+                        errorMessage = usedFallback
+                            ? 'Snapshot download endpoint is unavailable on this node. Please update the backend or use the direct download link.'
+                            : 'Snapshot download endpoint not found.';
+                    }
+                    if (!errorMessage) {
+                        try {
+                            errorMessage = await response.clone().text();
+                        } catch (textErr) {
+                            errorMessage = parseError ? parseError.message : 'Snapshot download failed';
+                        }
+                    }
+                    throw new Error(errorMessage || 'Snapshot download failed');
+                } catch (error) {
+                    console.error('Snapshot download failed:', error);
+                    stopSnapshotDownloadPolling();
+                    hideSnapshotDownloadModal();
+                    showNotification('error', 'Snapshot Download', error.message || 'Snapshot download failed');
+                } finally {
+                    if (button) {
+                        button.disabled = false;
+                        button.innerHTML = originalContent || '<span class="material-icons">download</span>';
+                    }
+                    if (!downloadSuccess && !usedFallback) {
+                        stopSnapshotDownloadPolling();
+                        hideSnapshotDownloadModal();
                     }
                 }
-            }
+            };
+
+            // Expose helper functions for inline handlers
+            window.loadRemoteSnapshots = loadRemoteSnapshots;
+            window.openSnapshotsPortal = openSnapshotsPortal;
+            window.downloadSnapshot = downloadSnapshot;
 
             // Backup management functions
             const loadBackups = async () => {
-                await checkB2Config();
                 try {
                     const loadingElement = document.getElementById('loading-backups');
                     const tableElement = document.getElementById('backups-table');
                     const noBackupsElement = document.getElementById('no-backups');
                     const tableBody = document.getElementById('backups-table-body');
 
-                    // Show loading
                     loadingElement.style.display = 'flex';
                     tableElement.style.display = 'none';
                     noBackupsElement.style.display = 'none';
@@ -582,59 +907,50 @@
                             'Content-Type': 'application/json'
                         }
                     });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            loadingElement.style.display = 'none';
-                            
-                            if (data.backups && data.backups.length > 0) {
-                                // Display backups table
-                                tableBody.innerHTML = '';
-                                
-                                data.backups.forEach(backup => {
-                                    const row = document.createElement('tr');
-                                    row.innerHTML = `
-                                        <td class="block-id">${backup.blockId.toLocaleString()}</td>
-                                        <td class="date-time">${backup.formattedDateTime}</td>
-                                        <td class="filename">${backup.filename}</td>
-                                        <td class="file-size">${formatFileSize(backup.size)}</td>
-                                        <td class="actions">
-                                            <button class="button tertiary small" onclick="downloadBackup('${backup.filename}')" title="Download">
-                                                <span class="material-icons">download</span>
-                                            </button>
-                                            <button class="button danger small" onclick="showApplyBackupModal('${backup.filename}', ${backup.blockId})" title="Apply Backup">
-                                                <span class="material-icons">restore</span>
-                                            </button>
-                                            <button class="button danger small" onclick="showDeleteBackupModal('${backup.filename}', ${backup.blockId})" title="Delete Backup">
-                                                <span class="material-icons">delete</span>
-                                            </button>
-                                            ${b2ConfigAvailable ? `<button class='button secondary small' onclick='uploadBackupToB2("${backup.filename}", ${backup.blockId}, "${backup.formattedDateTime}")' title='Upload to B2'><span class='material-icons'>cloud_upload</span></button>` : ''}
-                                            ${b2ConfigAvailable ? `<button class='button tertiary small' onclick='showB2Info("${backup.filename}", ${backup.blockId})' title='B2 Info' style='display: none;' id='b2-info-${backup.filename.replace(/\./g, '-')}'><span class='material-icons'>info</span></button>` : ''}
-                                        </td>
-                                    `;
-                                    tableBody.appendChild(row);
-                                });
-                                
-                                tableElement.style.display = 'block';
-                                
-                                // Check B2 upload status for all backups
-                                await checkB2UploadStatus(data.backups);
-                            } else {
-                                // Show no backups message
-                                noBackupsElement.style.display = 'block';
-                            }
-                        } else {
-                            showNotification('error', 'Error', 'Failed to load backups: ' + data.error);
-                        }
-                    } else {
-                        showNotification('error', 'Error', 'Failed to load backups');
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
                     }
+
+                    const data = await response.json();
+                    if (data.success && Array.isArray(data.backups) && data.backups.length > 0) {
+                        loadingElement.style.display = 'none';
+                        tableBody.innerHTML = '';
+
+                        data.backups.forEach(backup => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td class="block-id">${backup.blockId.toLocaleString()}</td>
+                                <td class="date-time">${backup.formattedDateTime}</td>
+                                <td class="filename">${backup.filename}</td>
+                                <td class="file-size">${formatFileSize(backup.size)}</td>
+                                <td class="actions">
+                                    <button class="button tertiary small" onclick="downloadBackup('${backup.filename}')" title="Download">
+                                        <span class="material-icons">download</span>
+                                    </button>
+                                    <button class="button danger small" onclick="showApplyBackupModal('${backup.filename}', ${backup.blockId})" title="Apply Backup">
+                                        <span class="material-icons">restore</span>
+                                    </button>
+                                    <button class="button danger small" onclick="showDeleteBackupModal('${backup.filename}', ${backup.blockId})" title="Delete Backup">
+                                        <span class="material-icons">delete</span>
+                                    </button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+
+                        tableElement.style.display = 'block';
+                        return;
+                    }
+
+                    loadingElement.style.display = 'none';
+                    noBackupsElement.style.display = 'block';
                 } catch (error) {
                     console.error('Error loading backups:', error);
                     showNotification('error', 'Error', 'Failed to load backups');
                 }
             };
+            window.loadBackups = loadBackups;
 
             const downloadBackup = async (filename) => {
                 try {
@@ -900,856 +1216,9 @@
                 }
             };
 
-            // B2 Configuration Functions
-            const openB2ConfigModal = () => {
-                document.getElementById('b2-config-modal').style.display = 'flex';
-                loadB2Config();
-            };
-
-            const closeB2ConfigModal = () => {
-                document.getElementById('b2-config-modal').style.display = 'none';
-                // Clear form fields
-                document.getElementById('b2-application-key-id').value = '';
-                document.getElementById('b2-application-key').value = '';
-                document.getElementById('b2-bucket-name').value = '';
-            };
-
-            async function loadB2Config() {
-                try {
-                    const response = await fetch('/get-settings', {
-                        method: 'GET',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            // Load existing B2 configuration if available
-                            if (data.settings.b2ApplicationKeyId) {
-                                document.getElementById('b2-application-key-id').value = data.settings.b2ApplicationKeyId;
-                            }
-                            if (data.settings.b2BucketName) {
-                                document.getElementById('b2-bucket-name').value = data.settings.b2BucketName;
-                            }
-                            // Note: We don't load the application key for security reasons
-                            
-                            // Show delete button only if configuration exists
-                            const hasExistingConfig = data.settings.b2ApplicationKeyId && data.settings.b2BucketName;
-                            const deleteBtn = document.getElementById('delete-b2-config-btn');
-                            if (hasExistingConfig) {
-                                deleteBtn.style.display = 'inline-flex';
-                            } else {
-                                deleteBtn.style.display = 'none';
-                            }
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error loading B2 configuration:', error);
-                }
-            }
-
-            async function saveB2Config() {
-                const applicationKeyId = document.getElementById('b2-application-key-id').value.trim();
-                const applicationKey = document.getElementById('b2-application-key').value.trim();
-                const bucketName = document.getElementById('b2-bucket-name').value.trim();
-                
-                if (!applicationKeyId) {
-                    showNotification('error', 'Error', 'Please enter your B2 Application Key ID');
-                    return;
-                }
-                
-                if (!applicationKey) {
-                    showNotification('error', 'Error', 'Please enter your B2 Application Key');
-                    return;
-                }
-                
-                if (!bucketName) {
-                    showNotification('error', 'Error', 'Please enter your B2 bucket name');
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('/post-settings', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            b2ApplicationKeyId: applicationKeyId,
-                            b2ApplicationKey: applicationKey,
-                            b2BucketName: bucketName
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            showNotification('success', 'Success', 'B2 configuration saved successfully!');
-                            // Show delete button after successful save
-                            document.getElementById('delete-b2-config-btn').style.display = 'inline-flex';
-                            closeB2ConfigModal();
-                        } else {
-                            showNotification('error', 'Error', 'Error saving B2 configuration: ' + data.error);
-                        }
-                    } else {
-                        showNotification('error', 'Error', 'Error saving B2 configuration');
-                    }
-                } catch (error) {
-                    console.error('Error saving B2 configuration:', error);
-                    showNotification('error', 'Error', 'Error saving B2 configuration');
-                }
-            }
-
-            async function deleteB2Config() {
-                if (!confirm('Are you sure you want to delete the B2 configuration? This action cannot be undone.')) {
-                    return;
-                }
-                
-                try {
-                    const response = await fetch('/post-settings', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            b2ApplicationKeyId: null,
-                            b2ApplicationKey: null,
-                            b2BucketName: null
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        if (data.success) {
-                            showNotification('success', 'Success', 'B2 configuration deleted successfully!');
-                            // Hide delete button after successful deletion
-                            document.getElementById('delete-b2-config-btn').style.display = 'none';
-                            closeB2ConfigModal();
-                        } else {
-                            showNotification('error', 'Error', 'Error deleting B2 configuration: ' + data.error);
-                        }
-                    } else {
-                        showNotification('error', 'Error', 'Error deleting B2 configuration');
-                    }
-                } catch (error) {
-                    console.error('Error deleting B2 configuration:', error);
-                    showNotification('error', 'Error', 'Error deleting B2 configuration');
-                }
-            }
-
-            const testB2Config = async () => {
-                const applicationKeyId = document.getElementById('b2-application-key-id').value.trim();
-                const applicationKey = document.getElementById('b2-application-key').value.trim();
-                const bucketName = document.getElementById('b2-bucket-name').value.trim();
-                
-                if (!applicationKeyId || !applicationKey || !bucketName) {
-                    showNotification('warning', 'Warning', 'Please fill in all B2 configuration fields before testing');
-                    return;
-                }
-                
-                // Save configuration temporarily for testing
-                try {
-                    const response = await fetch('/post-settings', {
-                        method: 'POST',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            b2ApplicationKeyId: applicationKeyId,
-                            b2ApplicationKey: applicationKey,
-                            b2BucketName: bucketName
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        showNotification('error', 'Error', 'Failed to save configuration for testing');
-                        return;
-                    }
-                } catch (error) {
-                    showNotification('error', 'Error', 'Failed to save configuration for testing');
-                    return;
-                }
-                
-                // Test connection
-                showNotification('info', 'Testing', 'Testing B2 connection...');
-                
-                try {
-                    const testResponse = await fetch('/test-b2', {
-                        method: 'GET',
-                        headers: {
-                            'Access-Code': password,
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                    
-                    const testData = await testResponse.json();
-                    
-                    if (testData.success) {
-                        showNotification('success', 'Test Successful', 'B2 configuration is valid and working!');
-                    } else {
-                        showNotification('error', 'Test Failed', `B2 test failed: ${testData.error}`);
-                    }
-                } catch (error) {
-                    showNotification('error', 'Test Error', `Failed to test B2 connection: ${error.message}`);
-                }
-            };
-
-            // B2 Upload functions
-            const uploadBackupToB2 = (filename, blockId, formattedDateTime) => {
-                checkB2FileExists(filename, blockId, formattedDateTime);
-            };
-
-            const checkB2FileExists = async (filename, blockId, formattedDateTime) => {
-                try {
-                    // Generate header JSON file for verification
-                    const header = {
-                        filename: filename,
-                        blockId: blockId,
-                        uploadedAt: new Date().toISOString(),
-                        description: `Helios Node Backup - Block ${blockId} - ${formattedDateTime}`
-                    };
-                    const headerBlob = new Blob([JSON.stringify(header, null, 2)], { type: 'application/json' });
-                    const headerFile = new File([headerBlob], filename + '.b2header.json', { type: 'application/json' });
-
-                    // Create temporary FormData for existence check
-                    const checkFormData = new FormData();
-                    checkFormData.append('backup', new Blob(['check'], { type: 'application/octet-stream' }), filename);
-                    checkFormData.append('header', headerFile);
-                    checkFormData.append('checkOnly', 'true');
-
-                    const response = await fetch('/upload-backup-b2', {
-                        method: 'POST',
-                        headers: { 'Access-Code': password },
-                        body: checkFormData
-                    });
-
-                    const data = await response.json();
-                    
-                    if (data.fileExists) {
-                        showB2FileExistsModal(filename, blockId, formattedDateTime);
-                    } else {
-                        proceedWithB2Upload(filename, blockId, formattedDateTime);
-                    }
-                } catch (error) {
-                    console.error('Error checking B2 file existence:', error);
-                    proceedWithB2Upload(filename, blockId, formattedDateTime);
-                }
-            };
-
-            function showB2FileExistsModal(filename, blockId, formattedDateTime) {
-                // Créer la modal dynamiquement
-                const modalId = 'b2-file-exists-modal';
-                let modal = document.getElementById(modalId);
-                
-                if (modal) {
-                    modal.remove();
-                }
-                
-                modal = document.createElement('div');
-                modal.id = modalId;
-                modal.className = 'modal';
-                modal.style.display = 'flex';
-                
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>
-                                <span class="material-icons" style="color: #F39C12;">warning</span>
-                                File Already Exists
-                            </h3>
-                            <button class="modal-close" onclick="closeB2FileExistsModal()">
-                                <span class="material-icons">close</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="warning-message">
-                                <p><strong>Warning:</strong> A backup with the same name already exists on B2.</p>
-                                <p>If you proceed, the existing backup will be replaced with the new one.</p>
-                            </div>
-                            
-                            <div class="backup-info">
-                                <h4>Backup Details:</h4>
-                                <p><strong>Filename:</strong> ${filename}</p>
-                                <p><strong>Block Height:</strong> ${blockId.toLocaleString()}</p>
-                                <p><strong>Date:</strong> ${formattedDateTime}</p>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="button primary" onclick="proceedWithB2Upload('${filename}', ${blockId}, '${formattedDateTime}')">
-                                <span class="material-icons">cloud_upload</span>
-                                Replace & Upload
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-                // Ajouter event listener pour fermer en cliquant à l'extérieur
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeB2FileExistsModal();
-                    }
-                });
-            }
-
-            function closeB2FileExistsModal() {
-                const modal = document.getElementById('b2-file-exists-modal');
-                if (modal) {
-                    modal.remove();
-                }
-            }
-
-            function proceedWithB2Upload(filename, blockId, formattedDateTime) {
-                // Fermer la modal si elle est ouverte
-                closeB2FileExistsModal();
-                
-                // Créer une modal de progression
-                showB2UploadProgressModal(filename, blockId);
-                
-                // Trouver le bouton d'upload original dans la table
-                const uploadButton = document.querySelector(`button[onclick*="uploadBackupToB2('${filename}"]`);
-                let originalContent = '';
-                if (uploadButton) {
-                    originalContent = uploadButton.innerHTML;
-                    uploadButton.innerHTML = '<span class="spinner-border"></span> Uploading...';
-                    uploadButton.disabled = true;
-                }
-
-                // Générer le fichier d'entête JSON
-                const header = {
-                    filename: filename,
-                    blockId: blockId,
-                    uploadedAt: new Date().toISOString(),
-                    description: `Helios Node Backup - Block ${blockId} - ${formattedDateTime}`
-                };
-                const headerBlob = new Blob([JSON.stringify(header, null, 2)], { type: 'application/json' });
-                const headerFile = new File([headerBlob], filename + '.b2header.json', { type: 'application/json' });
-
-                // Mettre à jour le statut
-                updateB2UploadProgress('Preparing upload...', 10);
-
-                // Récupérer le fichier backup depuis le serveur (en tant que blob)
-                fetch(`/backup-download/${encodeURIComponent(filename)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Access-Code': password
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Failed to download backup: ${response.status} ${response.statusText}`);
-                    }
-                    updateB2UploadProgress('Downloading backup file...', 30);
-                    return response.blob();
-                })
-                .then(backupBlob => {
-                    updateB2UploadProgress('Preparing for upload...', 50);
-                    
-                    const formData = new FormData();
-                    formData.append('backup', backupBlob, filename);
-                    formData.append('header', headerFile);
-                    formData.append('blockId', blockId);
-                    formData.append('date', formattedDateTime);
-                    
-                    // Créer un XMLHttpRequest pour suivre la progression
-                    return new Promise((resolve, reject) => {
-                        const xhr = new XMLHttpRequest();
-                        
-                        xhr.upload.addEventListener('progress', (event) => {
-                            if (event.lengthComputable) {
-                                const percentComplete = (event.loaded / event.total) * 100;
-                                const progress = 50 + (percentComplete * 0.4); // 50% à 90%
-                                updateB2UploadProgress(`Uploading to B2... ${Math.round(percentComplete)}%`, progress);
-                            }
-                        });
-                        
-                        xhr.addEventListener('load', () => {
-                            if (xhr.status >= 200 && xhr.status < 300) {
-                                try {
-                                    const data = JSON.parse(xhr.responseText);
-                                    resolve({ ok: true, data: data });
-                                } catch (e) {
-                                    resolve({ ok: true, data: { success: true, files: [] } });
-                                }
-                            } else {
-                                reject(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`));
-                            }
-                        });
-                        
-                        xhr.addEventListener('error', () => {
-                            reject(new Error('Network error during upload'));
-                        });
-                        
-                        xhr.open('POST', '/upload-backup-b2');
-                        xhr.setRequestHeader('Access-Code', password);
-                        xhr.send(formData);
-                    });
-                })
-                .then(async response => {
-                    updateB2UploadProgress('Finalizing upload...', 95);
-                    
-                    const data = response.data;
-                    
-                    if (response.ok && data.success) {
-                        updateB2UploadProgress('Upload completed successfully!', 100);
-                        
-                        // Save B2 upload information
-                        b2UploadInfo[filename] = {
-                            files: data.files,
-                            blockId: blockId,
-                            uploadedAt: new Date().toISOString()
-                        };
-                        
-                        // Attendre un peu pour montrer le succès
-                        setTimeout(() => {
-                            closeB2UploadProgressModal();
-                            showB2UploadSuccessModal(data.files, filename, blockId);
-                            showNotification('success', 'Upload Successful', 'Backup uploaded to B2 successfully!');
-                            
-                            // Show B2 info button
-                            const b2InfoButton = document.getElementById(`b2-info-${filename.replace(/\./g, '-')}`);
-                            if (b2InfoButton) {
-                                b2InfoButton.style.display = 'inline-flex';
-                            }
-                        }, 1000);
-                    } else {
-                        const errorMessage = data.error || 'Unknown error occurred';
-                        updateB2UploadProgress(`Upload failed: ${errorMessage}`, 0, true);
-                        setTimeout(() => {
-                            closeB2UploadProgressModal();
-                            showNotification('error', 'Upload Failed', `B2 upload failed: ${errorMessage}`);
-                        }, 2000);
-                    }
-                })
-                .catch(error => {
-                    console.error('B2 upload error:', error);
-                    updateB2UploadProgress(`Upload failed: ${error.message}`, 0, true);
-                    setTimeout(() => {
-                        closeB2UploadProgressModal();
-                        showNotification('error', 'Upload Failed', `B2 upload failed: ${error.message}`);
-                    }, 2000);
-                })
-                .finally(() => {
-                    // Restaurer le bouton
-                    if (uploadButton) {
-                        uploadButton.innerHTML = originalContent;
-                        uploadButton.disabled = false;
-                    }
-                });
-            }
-
-            function showB2UploadProgressModal(filename, blockId) {
-                const modalId = 'b2-upload-progress-modal';
-                let modal = document.getElementById(modalId);
-                
-                if (modal) {
-                    modal.remove();
-                }
-                
-                modal = document.createElement('div');
-                modal.id = modalId;
-                modal.className = 'modal';
-                modal.style.display = 'flex';
-                
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>
-                                <span class="material-icons" style="color: #3498db;">cloud_upload</span>
-                                Uploading to Backblaze B2
-                            </h3>
-                        </div>
-                        <div class="modal-body">
-                            <div class="upload-progress-info">
-                                <h4>Uploading backup to B2...</h4>
-                                <p><strong>Backup:</strong> ${filename}</p>
-                                <p><strong>Block Height:</strong> ${blockId.toLocaleString()}</p>
-                            </div>
-                            
-                            <div class="upload-progress-container">
-                                <div class="progress-status" id="upload-progress-status">Preparing upload...</div>
-                                <div class="progress-bar-container">
-                                    <div class="progress-bar" id="upload-progress-bar">
-                                        <div class="progress-fill" id="upload-progress-fill"></div>
-                                    </div>
-                                    <div class="progress-percentage" id="upload-progress-percentage">0%</div>
-                                </div>
-                            </div>
-                            
-                            <div class="upload-info">
-                                <p><small>Large files may take several minutes to upload. Please do not close this window.</small></p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-            }
-
-            function updateB2UploadProgress(status, percentage, isError = false) {
-                const statusElement = document.getElementById('upload-progress-status');
-                const fillElement = document.getElementById('upload-progress-fill');
-                const percentageElement = document.getElementById('upload-progress-percentage');
-                
-                if (statusElement) {
-                    statusElement.textContent = status;
-                    if (isError) {
-                        statusElement.style.color = '#e74c3c';
-                    } else {
-                        statusElement.style.color = '#2c3e50';
-                    }
-                }
-                
-                if (fillElement) {
-                    fillElement.style.width = `${percentage}%`;
-                    if (isError) {
-                        fillElement.style.backgroundColor = '#e74c3c';
-                    } else {
-                        fillElement.style.backgroundColor = '#3498db';
-                    }
-                }
-                
-                if (percentageElement) {
-                    percentageElement.textContent = `${Math.round(percentage)}%`;
-                }
-            }
-
-            function closeB2UploadProgressModal() {
-                const modal = document.getElementById('b2-upload-progress-modal');
-                if (modal) {
-                    modal.remove();
-                }
-            }
-
-            function showB2UploadSuccessModal(files, filename, blockId) {                
-                // Créer la modal dynamiquement
-                const modalId = 'b2-upload-success-modal';
-                let modal = document.getElementById(modalId);
-                
-                if (modal) {
-                    modal.remove();
-                }
-                
-                modal = document.createElement('div');
-                modal.id = modalId;
-                modal.className = 'modal';
-                modal.style.display = 'flex';
-                
-                modal.innerHTML = `
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h3>
-                                <span class="material-icons" style="color: #2ECC71;">check_circle</span>
-                                B2 Backup
-                            </h3>
-                            <button class="modal-close" onclick="closeB2UploadSuccessModal()">
-                                <span class="material-icons">close</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="b2-links-section">
-                                <h4>Download Links:</h4>
-                                <div class="b2-link-item">
-                                    <label>Backup File:</label>
-                                    <div class="link-container">
-                                        <input type="text" value="${files.backup.url}" readonly class="form-control" id="backup-link">
-                                        <button class="button tertiary small" onclick="copyToClipboard('backup-link')" title="Copy Link">
-                                            <span class="material-icons">content_copy</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="b2-link-item">
-                                    <label>Header File:</label>
-                                    <div class="link-container">
-                                        <input type="text" value="${files.header.url}" readonly class="form-control" id="header-link">
-                                        <button class="button tertiary small" onclick="copyToClipboard('header-link')" title="Copy Link">
-                                            <span class="material-icons">content_copy</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="upload-stats">
-                                <h4>Upload Statistics:</h4>
-                                <div class="stats-grid">
-                                    <div class="stat-item">
-                                        <span class="stat-label">Backup Size:</span>
-                                        <span class="stat-value">${formatFileSize(files.backup.size)}</span>
-                                    </div>
-                                    <div class="stat-item">
-                                        <span class="stat-label">Header Size:</span>
-                                        <span class="stat-value">${formatFileSize(files.header.size)}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="button secondary" onclick="closeB2UploadSuccessModal()">
-                                <span class="material-icons">close</span>
-                                Close
-                            </button>
-                            <button class="button primary" onclick="openB2Links()">
-                                <span class="material-icons">open_in_new</span>
-                                Open in B2
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                
-                // Ajouter event listener pour fermer en cliquant à l'extérieur
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeB2UploadSuccessModal();
-                    }
-                });
-            }
-
-            function closeB2UploadSuccessModal() {
-                const modal = document.getElementById('b2-upload-success-modal');
-                if (modal) {
-                    modal.remove();
-                }
-            }
-
-            function copyToClipboard(elementId) {
-                const element = document.getElementById(elementId);
-                element.select();
-                element.setSelectionRange(0, 99999); // Pour mobile
-                
-                try {
-                    document.execCommand('copy');
-                    showNotification('success', 'Copied!', 'Link copied to clipboard');
-                } catch (err) {
-                    // Fallback pour les navigateurs modernes
-                    navigator.clipboard.writeText(element.value).then(() => {
-                        showNotification('success', 'Copied!', 'Link copied to clipboard');
-                    }).catch(() => {
-                        showNotification('error', 'Copy Failed', 'Failed to copy link');
-                    });
-                }
-            }
-
-            async function showB2Info(filename, blockId) {
-                const info = b2UploadInfo[filename];
-                if (!info) {
-                    showNotification('error', 'Error', 'No B2 information found for this backup');
-                    return;
-                }
-                
-                // If we only have basic info, fetch the full details
-                if (info.exists && !info.files) {
-                    try {
-                        showNotification('info', 'Loading', 'Fetching B2 information...');
-                        
-                        const response = await fetch('/upload-backup-b2', {
-                            method: 'POST',
-                            headers: {
-                                'Access-Code': password
-                            },
-                            body: (() => {
-                                const formData = new FormData();
-                                formData.append('backup', new Blob(['check'], { type: 'application/octet-stream' }), filename);
-                                formData.append('header', new Blob(['check'], { type: 'application/json' }), filename + '.b2header.json');
-                                formData.append('checkOnly', 'true');
-                                return formData;
-                            })()
-                        });
-                        
-                        if (response.ok) {
-                            const data = await response.json();
-                            if (data.success && data.existingFiles?.backup?.url && data.existingFiles?.header?.url) {
-                                // Update stored info with full details
-                                b2UploadInfo[filename] = {
-                                    files: {
-                                        backup: {
-                                            name: filename,
-                                            size: data.existingFiles.backup.size,
-                                            url: data.existingFiles.backup.url
-                                        },
-                                        header: {
-                                            name: filename + '.b2header.json',
-                                            size: data.existingFiles.header.size,
-                                            url: data.existingFiles.header.url
-                                        }
-                                    },
-                                    blockId: blockId,
-                                    uploadedAt: new Date(data.existingFiles.backup.uploadTimestamp * 1000).toISOString()
-                                };
-                                
-                                showB2UploadSuccessModal(b2UploadInfo[filename].files, filename, blockId);
-                            } else {
-                                showNotification('error', 'Error', 'Failed to fetch B2 information');
-                            }
-                        } else {
-                            showNotification('error', 'Error', 'Failed to fetch B2 information');
-                        }
-                    } catch (error) {
-                        console.error('Error fetching B2 info:', error);
-                        showNotification('error', 'Error', 'Failed to fetch B2 information');
-                    }
-                } else {
-                    // We have full info, show modal directly
-                    showB2UploadSuccessModal(info.files, filename, blockId);
-                }
-            }
-
-            function openB2Links() {
-                const backupLink = document.getElementById('backup-link').value;
-                const headerLink = document.getElementById('header-link').value;
-                
-                // Ouvrir les liens dans de nouveaux onglets
-                window.open(backupLink, '_blank');
-                window.open(headerLink, '_blank');
-            }
-
-            // Create Backup from B2 Link functions
-            function showCreateBackupFromB2Modal() {
-                const modal = document.getElementById('create-backup-from-b2-modal');
-                if (modal) {
-                    modal.style.display = 'flex';
-                    
-                    // Reset form
-                    document.getElementById('b2-header-url').value = '';
-                    document.getElementById('b2-backup-preview').style.display = 'none';
-                    document.getElementById('create-b2-backup-btn').disabled = true;
-                    
-                    // Add event listeners
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) {
-                            hideCreateBackupFromB2Modal();
-                        }
-                    });
-                    
-                    document.addEventListener('keydown', (e) => {
-                        if (e.key === 'Escape' && modal.style.display === 'flex') {
-                            hideCreateBackupFromB2Modal();
-                        }
-                    });
-                }
-            }
-
-            function hideCreateBackupFromB2Modal() {
-                const modal = document.getElementById('create-backup-from-b2-modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-            }
-
-            async function previewB2Backup() {
-                const headerUrl = document.getElementById('b2-header-url').value.trim();
-                
-                if (!headerUrl) {
-                    showNotification('error', 'Error', 'Please enter a B2 header file URL');
-                    return;
-                }
-                
-                if (!headerUrl.endsWith('.b2header.json') && !headerUrl.endsWith('.header.json')) {
-                    showNotification('error', 'Error', 'URL must end with .b2header.json or .header.json');
-                    return;
-                }
-                
-                try {
-                    showNotification('info', 'Loading', 'Fetching backup information...');
-                    
-                    const response = await fetch('/fetch-b2-backup-info', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Access-Code': password
-                        },
-                        body: JSON.stringify({
-                            headerUrl: headerUrl
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        if (data.success && data.backup) {
-                            // Update preview with backup information
-                            document.getElementById('b2-preview-filename').textContent = data.backup.filename || 'Unknown';
-                            document.getElementById('b2-preview-block-id').textContent = data.backup.blockId || 'Unknown';
-                            document.getElementById('b2-preview-upload-date').textContent = data.backup.uploadedAt ? new Date(data.backup.uploadedAt).toLocaleString() : 'Unknown';
-                            document.getElementById('b2-preview-description').textContent = data.backup.description || 'No description';
-                            
-                            // Show preview and enable download button
-                            document.getElementById('b2-backup-preview').style.display = 'block';
-                            document.getElementById('create-b2-backup-btn').disabled = false;
-                            
-                            showNotification('success', 'Success', 'Backup information loaded successfully');
-                        } else {
-                            showNotification('error', 'Error', data.error || 'Failed to fetch backup information');
-                        }
-                    } else {
-                        showNotification('error', 'Error', 'Failed to fetch backup information');
-                    }
-                } catch (error) {
-                    console.error('Error previewing B2 backup:', error);
-                    showNotification('error', 'Error', 'Failed to preview backup');
-                }
-            }
-
-            async function createBackupFromB2() {
-                const headerUrl = document.getElementById('b2-header-url').value.trim();
-                
-                if (!headerUrl) {
-                    showNotification('error', 'Error', 'Please enter a B2 header file URL');
-                    return;
-                }
-                
-                try {
-                    showNotification('info', 'Loading', 'Downloading and creating backup...');
-                    
-                    // Disable buttons during download
-                    document.getElementById('preview-b2-backup-btn').disabled = true;
-                    document.getElementById('create-b2-backup-btn').disabled = true;
-                    
-                    const response = await fetch('/create-backup-from-b2', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Access-Code': password
-                        },
-                        body: JSON.stringify({
-                            headerUrl: headerUrl
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        
-                        if (data.success) {
-                            showNotification('success', 'Success', 'Backup created successfully from B2 link');
-                            hideCreateBackupFromB2Modal();
-                            await loadBackups(); // Refresh the backups list
-                        } else {
-                            showNotification('error', 'Error', data.error || 'Failed to create backup');
-                        }
-                    } else {
-                        showNotification('error', 'Error', 'Failed to create backup');
-                    }
-                } catch (error) {
-                    console.error('Error creating backup from B2:', error);
-                    showNotification('error', 'Error', 'Failed to create backup');
-                } finally {
-                    // Re-enable buttons
-                    document.getElementById('preview-b2-backup-btn').disabled = false;
-                    document.getElementById('create-b2-backup-btn').disabled = false;
-                }
-            }
-
-            // Main initialization
+            
             const main = async () => {
-                if (password === undefined) {
+                if (password == undefined) {
                     window.location = '/';
                     return;
                 }
@@ -1759,20 +1228,7 @@
                 }
                 displaySideBar();
                 document.querySelectorAll('.main-content')[0].style.display = '';
-                await loadBackups();
-                
-                // Add event listeners for B2 modal
-                document.getElementById('b2-config-modal').addEventListener('click', (e) => {
-                    if (e.target === e.currentTarget) {
-                        closeB2ConfigModal();
-                    }
-                });
-                
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && document.getElementById('b2-config-modal').style.display === 'flex') {
-                        closeB2ConfigModal();
-                    }
-                });
+                await Promise.all([loadBackups(), loadRemoteSnapshots()]);
             };
 
             window.addEventListener('DOMContentLoaded', async (event) => {
