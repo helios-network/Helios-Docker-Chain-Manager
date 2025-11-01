@@ -9,3 +9,4 @@ wasm/
 node/
 data/
 monitoring_*.log
+temp/
