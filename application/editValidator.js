@@ -4,100 +4,7 @@ const fs = require('fs');
 const ethers = require('ethers');
 const path = require('path');
 
-const createValidatorAbi = [
-    {
-      "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "moniker",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "identity",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "website",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "securityContact",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "details",
-              "type": "string"
-            }
-          ],
-          "internalType": "struct Description",
-          "name": "description",
-          "type": "tuple"
-        },
-        {
-          "components": [
-            {
-              "internalType": "uint256",
-              "name": "rate",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "maxRate",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "maxChangeRate",
-              "type": "uint256"
-            }
-          ],
-          "internalType": "struct CommissionRates",
-          "name": "commissionRates",
-          "type": "tuple"
-        },
-        {
-          "internalType": "uint256",
-          "name": "minSelfDelegation",
-          "type": "uint256"
-        },
-        {
-          "internalType": "address",
-          "name": "validatorAddress",
-          "type": "address"
-        },
-        {
-          "internalType": "string",
-          "name": "pubkey",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "minDelegation",
-          "type": "uint256"
-        }
-      ],
-      "name": "createValidator",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "success",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
+const editValidatorAbi = [
     {
       "inputs": [
         {
@@ -171,7 +78,7 @@ const createValidatorAbi = [
     }
 ];
 
-const createValidator = async (app, password, validatorData, retry = 0) => {
+const editValidator = async (app, password, validatorData, retry = 0) => {
     try {
         const RPC_URL = 'http://localhost:8545';
         const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -186,7 +93,7 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
         }
         const wallet = new ethers.Wallet(privateKey, provider);
 
-        console.log("Données reçues dans createValidator:", validatorData); // Debug log
+        console.log("Données reçues dans editValidator:", validatorData); // Debug log
 
         if (!validatorData) {
             throw new Error(`Données invalides: ${JSON.stringify(validatorData)}`);
@@ -213,26 +120,26 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
         const pubkeyJson = (await(execWrapper(`heliades tendermint show-validator`))).trim();
         const pubkey = JSON.parse(pubkeyJson).key;
         const value = ethers.parseUnits("1", 18); // by default 1 HLS
+        const delegateAuthorization = validatorData.delegateAuthorization || true;
 
         console.log('Données formatées:', {
-            description,
-            commissionRates,
-            minSelfDelegation,
-            validatorAddress,
-            pubkey,
-            value
+          description,
+          validatorAddress,
+          commissionRates,
+          minSelfDelegation,
+          minDelegation: 0, // minDelegation
+          delegateAuthorization
         });
 
-        const contract = new ethers.Contract('0x0000000000000000000000000000000000000800', createValidatorAbi, wallet);
+        const contract = new ethers.Contract('0x0000000000000000000000000000000000000800', editValidatorAbi, wallet);
         
-        const tx = await contract.createValidator(
+        const tx = await contract.editValidator(
             description,
+            validatorAddress,
             commissionRates,
             minSelfDelegation,
-            validatorAddress,
-            pubkey,
-            value,
-            0 // minDelegation
+            0, // minDelegation
+            delegateAuthorization
         );
 
         console.log('Transaction envoyée, hash :', tx.hash);
@@ -240,43 +147,21 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
         const receipt = await tx.wait();
         console.log('Transaction confirmée dans le bloc :', receipt.blockNumber);
 
-        console.log("Validateur créé avec succès !");
-
-        // await new Promise((resolve) => setTimeout(resolve, 10000));
-
-        // const valueDelegate = ethers.parseUnits("10", 18);
-
-        // const delegateTx = await contract.delegate(
-        //     validatorAddress,
-        //     validatorAddress,
-        //     valueDelegate,
-        //     "ueth", {
-        //       gasPrice: 20000000000,
-        //       gasLimit: 500000
-        //     }
-        // );
-
-        // console.log('Transaction envoyée, hash :', delegateTx.hash);
-
-        // const delegateReceipt = await delegateTx.wait();
-        // console.log('Transaction confirmée dans le bloc :', delegateReceipt.blockNumber);
-
-        // console.log("Délégation réussie !");
-
+        console.log("Validateur modifié avec succès !");
         return true;
     } catch (e) {
         console.log('Erreur complète:', e);
         if (retry >= 0) {
-            console.log('createValidator failed.');
+            console.log('editValidator failed.');
             console.log(e);
             return false;
         }
-        console.log('createValidator failed retry...');
+        console.log('editValidator failed retry...');
         await new Promise((resolve) => setTimeout(resolve, 1000));
-        return createValidator(app, password, validatorData, retry + 1);
+        return editValidator(app, password, validatorData, retry + 1);
     }
 }
 
 module.exports = {
-    createValidator
+    editValidator
 }
