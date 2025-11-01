@@ -158,9 +158,9 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
         const description = {
             moniker: nodeMoniker,
             identity: "",
-            website: "https://mynode.example",
+            website: "https://mynode.example", // favicon will be taken from display of validator on every websites. (https://example.com/favicon.ico)
             securityContact: "mynode@example.com",
-            details: "This is my great node"
+            details: "This is my great node" 
         };
 
         const commissionRates = {
