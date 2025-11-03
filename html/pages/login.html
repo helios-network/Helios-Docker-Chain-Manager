@@ -168,24 +168,7 @@
                 button.disabled = true;
 
                 if (isWelcomeBack) {
-                    const testPassword = async (password) => {
-                        const response = await fetch('/auth-try', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    password: password
-                                })
-                            });
-                        const is = await response.text();
-
-                        if (is === 'true') {
-                            return true;
-                        }
-                        return false;
-                    }
-                    if (await testPassword(password)) {
+                    if (await apiTestPassword(password)) {
                         window.localStorage.setItem("access-code", password);
                         window.location.href = `/setup`;
                     } else {

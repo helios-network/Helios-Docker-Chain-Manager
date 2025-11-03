@@ -1,6 +1,46 @@
 // Lib Utils
 
 const rot13 = str => str.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 13)).join('');
+const unrot13 = str => str.split('').map(char => String.fromCharCode(char.charCodeAt(0) - 13)).join('');
+
+const encodePasswordPayload = password => {
+    if (password == null) {
+        return '';
+    }
+
+    try {
+        const encoder = new TextEncoder();
+        const bytes = encoder.encode(password);
+        let shifted = '';
+
+        for (let i = 0; i < bytes.length; i += 1) {
+            shifted += String.fromCharCode((bytes[i] + 13) & 0xff);
+        }
+
+        return `enc:${btoa(shifted)}`;
+    } catch (error) {
+        return password;
+    }
+};
+
+const decodePasswordPayload = payload => {
+    if (typeof payload !== 'string' || !payload.startsWith('enc:')) {
+        return '';
+    }
+
+    try {
+        const raw = atob((payload ?? '').slice(4));
+        const bytes = new Uint8Array(raw.length);
+
+        for (let i = 0; i < raw.length; i += 1) {
+            bytes[i] = (raw.charCodeAt(i) - 13 + 256) & 0xff;
+        }
+
+        return new TextDecoder().decode(bytes);
+    } catch (error) {
+        return '';
+    }
+};
 
 const compareIt = (a,b) => {
     let ap = a.trim().replace(/\&lt/gm, '<').replace(/\&gt/gm, '<').replace(/[^a-z0-9]/gi, '');

@@ -22,7 +22,7 @@ const apiTestPassword = async (password) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                password: password
+                password: encodePasswordPayload(password)
             })
         });
     const is = await response.text();
@@ -40,7 +40,7 @@ const apiSetPassword = async (password) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                password: password
+                password: encodePasswordPayload(password)
             })
         });
     const is = await response.text();

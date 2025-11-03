@@ -2,6 +2,33 @@ const path = require('path');
 const fs = require('fs');
 const moment = require('moment');
 
+const rot13 = str => str.split('').map(char => String.fromCharCode(char.charCodeAt(0) + 13)).join('');
+const unrot13 = str => str.split('').map(char => String.fromCharCode(char.charCodeAt(0) - 13)).join('');
+const decodePasswordPayload = (payload) => {
+    if (typeof payload !== 'string') {
+        return payload;
+    }
+
+    if (payload.startsWith('enc:')) {
+        const encoded = payload.slice(4);
+        try {
+            const shiftedBuffer = Buffer.from(encoded, 'base64');
+            for (let i = 0; i < shiftedBuffer.length; i += 1) {
+                shiftedBuffer[i] = (shiftedBuffer[i] - 13 + 256) & 0xff;
+            }
+            return shiftedBuffer.toString('utf8');
+        } catch (error) {
+            try {
+                const base64Decoded = Buffer.from(encoded, 'base64').toString('latin1');
+                return unrot13(base64Decoded);
+            } catch (legacyError) {
+            }
+        }
+    }
+
+    return payload;
+};
+
 module.exports = {
     asFile: (app, files) => {
         app.use(function (req, res, next) {
@@ -54,7 +81,8 @@ module.exports = {
                     && (app.lastAuthFailedTime === undefined || moment(app.lastAuthFailedTime).add(10, 'seconds').isBefore(moment())) // anti brut force
                     ) {
                     const pass = fs.readFileSync(path.join(homeDirectory, '.password')).toString();
-                    const equals = req.body['password'] === pass;
+                    const providedPassword = decodePasswordPayload(req.body['password']);
+                    const equals = providedPassword === pass;
 
                     if (!equals) {
                         app.lastAuthFailedTime = moment().valueOf();
@@ -68,13 +96,15 @@ module.exports = {
 
             if (req.path === '/auth-subscribe') {
                 const homeDirectory = await app.actions.getHomeDirectory.use();
+                const providedPassword = decodePasswordPayload(req.body['password']);
+
                 if (fs.existsSync(path.join(homeDirectory, '.password'))
-                    || req.body['password'] == undefined
-                    || req.body['password'] == '') {
+                    || providedPassword == undefined
+                    || providedPassword === '') {
                     res.send(false);
                     return ;
                 }
-                environement.password = req.body['password'];
+                environement.password = providedPassword;
                 fs.writeFileSync(path.join(homeDirectory, '.password'), environement.password);
                 res.send(true);
                 return ;
