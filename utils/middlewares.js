@@ -57,7 +57,7 @@ module.exports = {
                     const equals = req.body['password'] === pass;
 
                     if (!equals) {
-                        app.lastAuthFailedTime = moment(app.lastAuthFailedTime).toDate().getTime();
+                        app.lastAuthFailedTime = moment().valueOf();
                     }
                     res.send(equals);
                     return ;
