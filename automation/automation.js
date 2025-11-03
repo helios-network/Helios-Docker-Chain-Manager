@@ -59,6 +59,12 @@ const actionCreateValidator = async (app, environement, action) => {
         },
         minSelfDelegation: "1",
         value: "1",
+        description: {
+            identity: "",
+            website: "https://mynode.example",
+            securityContact: "mynode@example.com",
+            details: "This is my great node"
+        }
     });
 }
 

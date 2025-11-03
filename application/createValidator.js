@@ -178,7 +178,7 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
 
         const homeDirectory = await app.actions.getHomeDirectory.use();
         const keyStoreNode = fs.readFileSync(path.join(homeDirectory, 'keystore')).toString();
-        const nodeMoniker = fs.readFileSync(path.join(homeDirectory, 'moniker')).toString();
+        const nodeMoniker = fs.readFileSync(path.join(homeDirectory, 'moniker')).toString().trim();
 
         const privateKey = await keyStoreRecover(keyStoreNode, password);
         if (privateKey == undefined) {
@@ -192,12 +192,13 @@ const createValidator = async (app, password, validatorData, retry = 0) => {
             throw new Error(`Données invalides: ${JSON.stringify(validatorData)}`);
         }
 
+        const descriptionInput = validatorData.description || {};
         const description = {
-            moniker: nodeMoniker,
-            identity: "",
-            website: "https://mynode.example", // favicon will be taken from display of validator on every websites. (https://example.com/favicon.ico)
-            securityContact: "mynode@example.com",
-            details: "This is my great node" 
+            moniker: (descriptionInput.moniker || nodeMoniker || '').trim(),
+            identity: (descriptionInput.identity || '').trim(),
+            website: (descriptionInput.website || 'https://mynode.example').trim(), // favicon will be taken from display of validator on every websites. (https://example.com/favicon.ico)
+            securityContact: (descriptionInput.securityContact || 'mynode@example.com').trim(),
+            details: (descriptionInput.details || 'This is my great node').trim()
         };
 
         const commissionRates = {

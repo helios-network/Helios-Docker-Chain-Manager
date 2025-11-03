@@ -103,8 +103,72 @@
                 </section>
             </div>
         </div>
+        <!-- Keybase Help Modal -->
+        <div id="keybase-help-modal"
+             class="modal modal-wide"
+             style="display: none;"
+             role="dialog"
+             aria-modal="true"
+             aria-labelledby="keybase-help-title"
+             onclick="if (event.target === this) closeKeybaseHelp()">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="keybase-help-title">
+                        <span class="material-icons">verified_user</span>
+                        Verify Your Identity with Keybase
+                    </h3>
+                    <button class="modal-close"
+                            type="button"
+                            onclick="closeKeybaseHelp()"
+                            aria-label="Close Keybase help"
+                            title="Close Keybase help">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+                <div class="modal-body markdown-content">
+                    <div class="markdown-section">
+                        <p class="markdown-lead">
+                            <span class="emoji">🧩</span>
+                            <strong>Goal:</strong> prove your validator identity with Keybase quickly and cleanly.
+                        </p>
+                        <p>Keybase remains the most straightforward and Cosmos-friendly way to publish a public identity for your validator.</p>
+                    </div>
+
+                    <div class="markdown-section">
+                        <h4><span class="emoji">⚙️</span> Steps to follow</h4>
+                        <ol>
+                            <li>
+                                <strong>Create a Keybase account.</strong><br>
+                                Sign up from the website or install the CLI: <a href="https://keybase.io/" target="_blank" rel="noopener noreferrer">https://keybase.io/</a><br>
+                                On the CLI, log in with <code>keybase login</code>.
+                            </li>
+                            <li>
+                                <strong>Generate (or import) your PGP key.</strong><br>
+                                Keybase automatically creates a PGP key for your account. Import your own key if you want it to match your validator key.
+                            </li>
+                            <li>
+                                <strong>Prove that you control your domain.</strong><br>
+                                In "Prove your identities", choose "website".<br>
+                                Host the <code>.well-known/keybase.txt</code> file provided by Keybase (example: <a href="https://helioschainlabs.org/.well-known/keybase.txt" target="_blank" rel="noopener noreferrer">https://helioschainlabs.org/.well-known/keybase.txt</a>).<br>
+                                This file publicly confirms that the domain is under your control.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="markdown-section">
+                        <h4><span class="emoji">✅</span> Expected result</h4>
+                        <ul>
+                            <li>A verified profile available at <a href="https://keybase.io/yourhandle" target="_blank" rel="noopener noreferrer">https://keybase.io/yourhandle</a>.</li>
+                            <li>A public PGP key exportable via <code>keybase pgp export</code>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script>
             let password = window.localStorage.getItem("access-code");
+            let keybaseHelpPreviousOverflow = '';
 
             const showNotification = (type, title, message, duration = 5000) => {
                 const container = document.getElementById('notification-container');
@@ -155,6 +219,34 @@
                     }, 10);
                 }
             };
+
+            const openKeybaseHelp = () => {
+                const modal = document.getElementById('keybase-help-modal');
+                if (!modal) return;
+
+                modal.style.display = 'flex';
+                keybaseHelpPreviousOverflow = document.body.style.overflow;
+                document.body.style.overflow = 'hidden';
+            };
+
+            const closeKeybaseHelp = () => {
+                const modal = document.getElementById('keybase-help-modal');
+                if (!modal) return;
+
+                modal.style.display = 'none';
+                document.body.style.overflow = keybaseHelpPreviousOverflow || '';
+            };
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key !== 'Escape') {
+                    return;
+                }
+
+                const modal = document.getElementById('keybase-help-modal');
+                if (modal && modal.style.display !== 'none') {
+                    closeKeybaseHelp();
+                }
+            });
 
             const formatLargeNumber = (value) => {
                 if (!value || value === 'N/A') return 'N/A';
@@ -361,70 +453,143 @@
                         </div>
                         <div class="settings-body">
                             <form id="validator-form">
-                                <h3 style="margin-bottom: 1rem; color: var(--text-primary);">
-                                    <span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem;">percent</span>
-                                    Commission Rates
-                                </h3>
-                                
-                                <div class="settings-group">
-                                    <label for="commission-rate">Rate * (0-1)</label>
-                                    <input type="number" 
-                                           id="commission-rate" 
-                                           name="commission-rate"
-                                           class="form-input"
-                                           placeholder="Ex: 0.05 for 5%"
-                                           min="0"
-                                           max="1"
-                                           step="0.01"
-                                           required>
-                                    <p class="help-text">Initial commission rate (ex: 0.05 for 5%)</p>
-                                </div>
+                                <section>
+                                    <h3 style="margin-bottom: 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                        <span class="material-icons">percent</span>
+                                        Commission Rates
+                                    </h3>
+                                    <div class="form-grid">
+                                        <div class="form-group settings-group">
+                                            <label for="commission-rate">Rate * (0-1)</label>
+                                            <input type="number" 
+                                                   id="commission-rate" 
+                                                   name="commission-rate"
+                                                   class="form-input"
+                                                   placeholder="Ex: 0.05 for 5%"
+                                                   min="0"
+                                                   max="1"
+                                                   step="0.01"
+                                                   required>
+                                            <p class="help-text">Initial commission rate (ex: 0.05 for 5%)</p>
+                                        </div>
 
-                                <div class="settings-group">
-                                    <label for="commission-max-rate">Max Rate * (0-1)</label>
-                                    <input type="number" 
-                                           id="commission-max-rate" 
-                                           name="commission-max-rate"
-                                           class="form-input"
-                                           placeholder="Ex: 0.20 for 20%"
-                                           min="0"
-                                           max="1"
-                                           step="0.01"
-                                           required>
-                                    <p class="help-text">Maximum rate possible</p>
-                                </div>
+                                        <div class="form-group settings-group">
+                                            <label for="commission-max-rate">Max Rate * (0-1)</label>
+                                            <input type="number" 
+                                                   id="commission-max-rate" 
+                                                   name="commission-max-rate"
+                                                   class="form-input"
+                                                   placeholder="Ex: 0.20 for 20%"
+                                                   min="0"
+                                                   max="1"
+                                                   step="0.01"
+                                                   required>
+                                            <p class="help-text">Maximum rate possible</p>
+                                        </div>
 
-                                <div class="settings-group">
-                                    <label for="commission-max-change-rate">Max Change Rate * (0-1)</label>
-                                    <input type="number" 
-                                           id="commission-max-change-rate" 
-                                           name="commission-max-change-rate"
-                                           class="form-input"
-                                           placeholder="Ex: 0.01 for 1%"
-                                           min="0"
-                                           max="1"
-                                           step="0.01"
-                                           required>
-                                    <p class="help-text">Maximum change per update</p>
-                                </div>
+                                        <div class="form-group settings-group">
+                                            <label for="commission-max-change-rate">Max Change Rate * (0-1)</label>
+                                            <input type="number" 
+                                                   id="commission-max-change-rate" 
+                                                   name="commission-max-change-rate"
+                                                   class="form-input"
+                                                   placeholder="Ex: 0.01 for 1%"
+                                                   min="0"
+                                                   max="1"
+                                                   step="0.01"
+                                                   required>
+                                            <p class="help-text">Maximum change per update</p>
+                                        </div>
+                                    </div>
+                                </section>
 
-                                <h3 style="margin: 2rem 0 1rem; color: var(--text-primary);">
-                                    <span class="material-icons" style="vertical-align: middle; margin-right: 0.5rem;">settings</span>
-                                    Validator Settings
-                                </h3>
+                                <section>
+                                    <h3 style="margin: 1.5rem 0 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                        <span class="material-icons">badge</span>
+                                        Validator Profile
+                                    </h3>
+                                    <div class="form-grid">
+                                        <div class="form-group settings-group">
+                                            <label for="description-moniker">Moniker</label>
+                                            <input type="text"
+                                                   id="description-moniker"
+                                                   name="description-moniker"
+                                                   class="form-input"
+                                                   placeholder="Validator public name">
+                                            <p class="help-text">Defaults to your node moniker if left empty</p>
+                                        </div>
 
-                                <div class="settings-group">
-                                    <label for="min-self-delegation">Min Self Delegation * (1 = 1 share)</label>
-                                    <input type="number" 
-                                           id="min-self-delegation" 
-                                           name="min-self-delegation"
-                                           class="form-input"
-                                           placeholder="Minimum self delegation amount"
-                                           min="1"
-                                           step="1"
-                                           required>
-                                    <p class="help-text">Minimum self delegation amount</p>
-                                </div>
+                                        <div class="form-group settings-group">
+                                            <label for="description-website">Website</label>
+                                            <input type="url"
+                                                   id="description-website"
+                                                   name="description-website"
+                                                   class="form-input"
+                                                   placeholder="https://example.com">
+                                            <p class="help-text">Public website for your validator</p>
+                                        </div>
+
+                                        <div class="form-group settings-group" style="grid-column: 1 / -1;">
+                                            <label for="description-details">Details</label>
+                                            <textarea id="description-details"
+                                                      name="description-details"
+                                                      class="form-input"
+                                                      rows="3"
+                                                      placeholder="Brief description shown in explorers"></textarea>
+                                            <p class="help-text">Short description of your validator (optional)</p>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 style="margin: 1.5rem 0 1rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                        <span class="material-icons">verified_user</span>
+                                        Identity & Security
+                                    </h3>
+                                    <div class="form-grid">
+                                        <div class="form-group settings-group">
+                                            <div class="input-label-row">
+                                                <label for="description-identity">Identity</label>
+                                                <button type="button"
+                                                        class="icon-button"
+                                                        onclick="openKeybaseHelp()"
+                                                        aria-label="Open Keybase identity help"
+                                                        title="Open Keybase identity help">
+                                                    <span class="material-icons">help_outline</span>
+                                                </button>
+                                            </div>
+                                            <input type="text"
+                                                   id="description-identity"
+                                                   name="description-identity"
+                                                   class="form-input"
+                                                   placeholder="Keybase or other identity reference">
+                                            <p class="help-text">Optional identifier (e.g. Keybase verification hash). Use the help icon for setup guidance.</p>
+                                        </div>
+
+                                        <div class="form-group settings-group">
+                                            <label for="description-security-contact">Security Contact</label>
+                                            <input type="email"
+                                                   id="description-security-contact"
+                                                   name="description-security-contact"
+                                                   class="form-input"
+                                                   placeholder="security@example.com">
+                                            <p class="help-text">Email used for incident or security notifications</p>
+                                        </div>
+
+                                        <div class="form-group settings-group">
+                                            <label for="min-self-delegation">Min Self Delegation * (1 = 1 share)</label>
+                                            <input type="number" 
+                                                   id="min-self-delegation" 
+                                                   name="min-self-delegation"
+                                                   class="form-input"
+                                                   placeholder="Minimum self delegation amount"
+                                                   min="1"
+                                                   step="1"
+                                                   required>
+                                            <p class="help-text">Minimum self delegation amount</p>
+                                        </div>
+                                    </div>
+                                </section>
 
                                 <button type="submit" class="button primary">
                                     <span class="material-icons">check</span>
@@ -443,6 +608,14 @@
                     e.preventDefault();
                     
                     try {
+                        const description = {
+                            moniker: document.getElementById('description-moniker').value.trim(),
+                            identity: document.getElementById('description-identity').value.trim(),
+                            website: document.getElementById('description-website').value.trim(),
+                            securityContact: document.getElementById('description-security-contact').value.trim(),
+                            details: document.getElementById('description-details').value.trim()
+                        };
+
                         const formData = {
                             commission: {
                                 rate: document.getElementById('commission-rate').value,
@@ -450,7 +623,8 @@
                                 maxChangeRate: document.getElementById('commission-max-change-rate').value
                             },
                             minSelfDelegation: document.getElementById('min-self-delegation').value,
-                            value: "1"
+                            value: "1",
+                            description
                         };
 
                         // Validation des données
@@ -462,6 +636,7 @@
                             showNotification('error', 'Validation Error', 'Commission rate must be between 0 and 1');
                             return;
                         }
+
                         if (isNaN(maxRate) || maxRate < 0 || maxRate > 1) {
                             showNotification('error', 'Validation Error', 'Max commission rate must be between 0 and 1');
                             return;
@@ -472,6 +647,16 @@
                         }
                         if (rate > maxRate) {
                             showNotification('error', 'Validation Error', 'Commission rate cannot be greater than max rate');
+                            return;
+                        }
+
+                        if (description.website && !/^https:\/\//i.test(description.website)) {
+                            showNotification('error', 'Validation Error', 'Website must start with https://');
+                            return;
+                        }
+
+                        if (description.securityContact && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(description.securityContact)) {
+                            showNotification('error', 'Validation Error', 'Security contact must be a valid email address');
                             return;
                         }
 

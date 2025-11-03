@@ -8141,6 +8141,11 @@ body.sidebar-open .sidebar-mobile-toggle .material-icons {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
+.modal.modal-wide .modal-content {
+    max-width: 960px;
+    width: min(960px, 95vw);
+}
+
 .modal-header {
     display: flex;
     align-items: center;
@@ -8196,6 +8201,105 @@ body.sidebar-open .sidebar-mobile-toggle .material-icons {
 
 .modal-body {
     padding: 1.5rem;
+}
+
+.markdown-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+.markdown-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.markdown-content h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.markdown-content .emoji {
+    font-size: 1.1rem;
+}
+
+.markdown-lead {
+    margin: 0;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.markdown-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.markdown-content ol,
+.markdown-content ul {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.markdown-content li {
+    padding-left: 0.25rem;
+}
+
+.markdown-content a {
+    color: var(--accent-primary);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.markdown-content a:hover {
+    text-decoration: underline;
+}
+
+.markdown-content code {
+    font-family: "Fira Code", "Source Code Pro", monospace;
+    background: rgba(0, 45, 203, 0.08);
+    color: var(--accent-primary);
+    padding: 0.1rem 0.4rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.markdown-content .code-block {
+    background: rgba(0, 45, 203, 0.08);
+    border: 1px solid rgba(0, 45, 203, 0.15);
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 0;
+    overflow-x: auto;
+}
+
+.markdown-content pre {
+    margin: 0;
+    font-family: "Fira Code", "Source Code Pro", monospace;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.markdown-content pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: var(--text-primary);
 }
 
 .modal-footer {
@@ -10751,6 +10855,17 @@ button.btn {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+}
+
+.input-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.input-label-row label {
+    margin-bottom: 0;
 }
 
 .settings-group label {
