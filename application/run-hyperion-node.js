@@ -45,7 +45,7 @@ const runHyperionNode = async (app, environement, password) => {
     childProcess.stdout.on('data', (data) => {
         const regex = new RegExp(`${String.fromCharCode(27)}\\[[0-9]{1,2}m`, 'gm');// remove termcaps
         app.hyperion.logs.push(... data.toString().replace(regex, '').split('\n'));
-        app.hyperion.logs = app.hyperion.logs.slice(-1000);
+        app.hyperion.logs = app.hyperion.logs.slice(-10000);
 
         if (environement.env['helios-logs'] === 'enabled') {
             console.log(data);
@@ -53,7 +53,7 @@ const runHyperionNode = async (app, environement, password) => {
     });
     childProcess.stderr.on('data', (data) => {
         app.hyperion.logs.push(... data.toString().split('\n'));
-        app.hyperion.logs = app.hyperion.logs.slice(-1000);
+        app.hyperion.logs = app.hyperion.logs.slice(-10000);
     });
 
     childProcess.on('error', (error) => {

@@ -226,9 +226,9 @@
                                         Download Key Backup
                                     </button>
                                     
-                                    <button id="upload-key-backup" class="button secondary" onclick="uploadKeyBackup()" disabled>
+                                    <button id="upload-key-backup" class="button secondary" onclick="uploadKeyBackup()">
                                         <span class="material-icons">file_upload</span>
-                                        Upload Key Backup (Coming Soon)
+                                        Upload Key Backup
                                     </button>
                                     
                                     <button id="apply-key-backup" class="button tertiary" onclick="applyKeyBackup()" style="display: none;">
@@ -237,7 +237,7 @@
                                     </button>
                                 </div>
                             
-                            <input type="file" id="key-backup-file-input" accept=".tar.gz,.tgz" style="display: none;" onchange="handleKeyBackupUpload(event)">
+                            <input type="file" id="key-backup-file-input" accept=".tar.gz,.gz" style="display: none;" onchange="handleKeyBackupUpload(event)">
                         </div>
                     </article>
 
@@ -598,7 +598,7 @@
             };
 
             const uploadKeyBackup = () => {
-                showNotification('info', 'Info', 'File upload functionality is coming soon. For now, you can create and download key backups.');
+                document.getElementById('key-backup-file-input').click();
             };
 
             const handleKeyBackupUpload = async (event) => {
