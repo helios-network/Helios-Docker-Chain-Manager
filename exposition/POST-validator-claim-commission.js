@@ -10,7 +10,6 @@ const unrot13 = str => str.split('')
 const decrypt2 = async (json, password) => {
     const keyobj = JSON.parse(json);
     const privateKey = keyth.recover(password,keyobj);
-    console.log(privateKey.toString('hex'));
     return privateKey.toString('hex');
 }
 
