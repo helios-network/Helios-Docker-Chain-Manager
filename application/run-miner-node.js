@@ -393,7 +393,7 @@ const runMinerNode = async (app, environement) => {
     childProcess.stdout.on('data', (data) => {
         const regex = new RegExp(`${String.fromCharCode(27)}\\[[0-9]{1,2}m`, 'gm');// remove termcaps
         app.node.logs.push(... data.toString().replace(regex, '').split('\n'));
-        app.node.logs = app.node.logs.slice(-3000);
+        app.node.logs = app.node.logs.slice(-10000);
 
         app.node.lastLogTime = Date.now();
         if (environement.env['helios-logs'] === 'enabled') {
@@ -402,7 +402,7 @@ const runMinerNode = async (app, environement) => {
     });
     childProcess.stderr.on('data', (data) => {
         app.node.logs.push(... data.toString().split('\n'));
-        app.node.logs = app.node.logs.slice(-1000);
+        app.node.logs = app.node.logs.slice(-10000);
     });
 
     childProcess.on('error', (error) => {
