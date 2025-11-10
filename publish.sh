@@ -1,4 +1,4 @@
-version=v0.0.253
+version=v0.0.254
 docker tag docker-helios-nodemanager:$version heliosfoundation/docker-helios-nodemanager:$version
 docker push heliosfoundation/docker-helios-nodemanager:$version
 docker tag docker-helios-nodemanager:$version heliosfoundation/docker-helios-nodemanager:latest
