@@ -412,6 +412,12 @@ const runMinerNode = async (app, environement) => {
 
     childProcess.on('exit', async (code, signal) => {
         app.node.logs.push(`[EXIT] ${code}`);
+        if (code == 42000) { // upgrade signal we can restart immediately
+            app.node.logs.push(`[UPGRADE] Signal received, restarting immediately`);
+            app.node.start();
+            return;
+        }
+        
         if (!app.node.stopOrdonned) {
 
             if (app.node.startRetries == undefined || app.node.startRetries < 1000000) {
