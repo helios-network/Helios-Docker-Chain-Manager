@@ -19,11 +19,6 @@ const displaySideBar = () => {
                     name: 'Validator',
                     path: '/validator',
                     icon: '<i class="material-icons">how_to_reg</i>'
-                },
-                {
-                    name: 'EthStats',
-                    path: '/eth-stats',
-                    icon: '<i class="material-icons">analytics</i>'
                 }
             ]
         },
