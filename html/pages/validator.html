@@ -293,7 +293,7 @@
                     document.getElementById('validator-commission-info-container').style.display = 'none';
                     document.getElementById('validator-delegation-info-container').style.display = 'none';
                     document.getElementById('validator-assets-info-container').style.display = 'none';
-                    displayCreateValidator();
+                    await displayCreateValidator();
                 } else {
                     document.getElementById('validator-form-container').style.display = 'none';
                     document.getElementById('validator-info-container').style.display = '';
@@ -439,7 +439,8 @@
                 setTimeout(() => window.location.reload(), 2000);
             }
 
-            const displayCreateValidator = () => {
+            const displayCreateValidator = async () => {
+                const nodeMonikerPromise = apiGetNodeMoniker();
                 const formHtml = `
                     <article class="status-card">
                         <div class="card-header">
@@ -515,8 +516,9 @@
                                                    id="description-moniker"
                                                    name="description-moniker"
                                                    class="form-input"
-                                                   placeholder="Validator public name">
-                                            <p class="help-text">Defaults to your node moniker if left empty</p>
+                                                   placeholder="Detecting node moniker..."
+                                                   readonly>
+                                            <p class="help-text" id="description-moniker-help">Automatically detected from your node configuration</p>
                                         </div>
 
                                         <div class="form-group settings-group">
@@ -603,6 +605,38 @@
                 const container = document.getElementById('validator-form-container');
                 container.innerHTML = formHtml;
                 container.style.display = '';
+
+                const monikerInput = document.getElementById('description-moniker');
+                const monikerHelp = document.getElementById('description-moniker-help');
+
+                if (monikerInput) {
+                    monikerInput.setAttribute('readonly', 'readonly');
+                    monikerInput.placeholder = 'Detecting node moniker...';
+
+                    if (monikerHelp) {
+                        monikerHelp.textContent = 'Detecting node moniker from your local configuration...';
+                    }
+
+                    (async () => {
+                        const monikerResult = await nodeMonikerPromise;
+
+                        if (monikerResult?.moniker) {
+                            monikerInput.value = monikerResult.moniker.trim();
+                            monikerInput.placeholder = '';
+
+                            if (monikerHelp) {
+                                monikerHelp.textContent = 'Using the moniker from your node configuration';
+                            }
+                        } else {
+                            monikerInput.removeAttribute('readonly');
+                            monikerInput.placeholder = 'Enter validator public name';
+
+                            if (monikerHelp) {
+                                monikerHelp.textContent = 'Moniker not found automatically, please enter it manually';
+                            }
+                        }
+                    })();
+                }
 
                 document.getElementById('validator-form').addEventListener('submit', async (e) => {
                     e.preventDefault();

@@ -51,6 +51,32 @@ const apiSetPassword = async (password) => {
     return false;
 }
 
+const apiGetNodeMoniker = async () => {
+    try {
+        const response = await fetch('/node-moniker', {
+            method: 'GET',
+            headers: {
+                'Access-Code': password
+            }
+        });
+
+        if (!response.ok) {
+            return undefined;
+        }
+
+        const result = await response.json();
+
+        if (!result || result.success === false) {
+            return undefined;
+        }
+
+        return result;
+    } catch (error) {
+        console.error('Failed to fetch node moniker:', error);
+        return undefined;
+    }
+};
+
 const apiGetValidatorAndHisAssetsAndCommission = async () => {
     const response = await fetch('/call-rpc', {
             method: 'POST',
