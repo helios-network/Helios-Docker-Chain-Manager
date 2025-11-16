@@ -24,6 +24,7 @@ const initAppNodeFunctions = async (app, environement) => {
                 peers: await app.node.getPeers(),
                 persistentPeers: await app.node.getPersistentPeers(),
                 mode: await app.node.getMode(),
+                version: await app.node.getVersion(),
             }
 
             if (infos.node_info?.id == undefined) {
@@ -50,6 +51,7 @@ const initAppNodeFunctions = async (app, environement) => {
         return {
             "chain_id":"42000",
             "height": "0",
+            "version": "v0.0.0",
             "hash": "",
             "time": (new Date()).toISOString(),
             "proposer":"",
@@ -204,6 +206,20 @@ const initAppNodeFunctions = async (app, environement) => {
         } catch (e) {
             console.log(e);
             return undefined;
+        }
+    }
+
+    app.node.getVersion = async () => {
+        try {
+            const data = await execWrapper(`heliades version`);
+            if (data.trim().includes("Error")) {
+                return undefined;
+            }
+            const version = JSON.parse(data.trim()).version;
+            return version;
+        } catch (e) {
+            console.log(e);
+            return "v0.0.0";
         }
     }
 

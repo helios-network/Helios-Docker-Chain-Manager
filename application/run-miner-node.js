@@ -351,6 +351,8 @@ const runMinerNode = async (app, environement) => {
         console.log('Backup disabled: only available in very-light mode. Current mode:', settings.nodeMode);
     }
 
+    app.node.logs = []; // clear logs
+
     const childProcess = spawn
     (
         'heliades',
@@ -384,6 +386,8 @@ const runMinerNode = async (app, environement) => {
             ...pruningArgs,
 
             ...backupArgs,
+
+            `--upgrade-trust-hosts=${settings.upgradeTrustHosts ?? 'https://github.com/helios-network/helios-core/releases/download/'}`,
         ],
         { stdio: ['pipe', 'pipe', 'pipe', 'pipe', fs.openSync(path.join(homeDirectory, '.error-node.log'), 'w')]}
     );
@@ -412,9 +416,15 @@ const runMinerNode = async (app, environement) => {
 
     childProcess.on('exit', async (code, signal) => {
         app.node.logs.push(`[EXIT] ${code}`);
-        if (code == 42000) { // upgrade signal we can restart immediately
-            app.node.logs.push(`[UPGRADE] Signal received, restarting immediately`);
+        if (code == 120) { // upgrade signal we can restart immediately
+            app.node.logs.push(`[UPGRADE] Signal code 120 from the module upgrade received, restarting immediately`);
             app.node.start();
+            return;
+        }
+
+        if (code == 10) { // upgrade signal to stop the node
+            app.node.logs.push(`[UPGRADE] Signal code 10 from the module upgrade received, stopping the node`);
+            app.node.stop();
             return;
         }
         

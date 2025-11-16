@@ -46,6 +46,14 @@
                                     <span class="detail-value" id="node-height">---</span>
                                 </div>
                                 <div class="node-detail">
+                                    <span class="detail-label">Latest Block Version</span>
+                                    <span class="detail-value" id="node-block-version">---</span>
+                                </div>
+                                <div class="node-detail">
+                                    <span class="detail-label">Node Version</span>
+                                    <span class="detail-value" id="node-version">---</span>
+                                </div>
+                                <div class="node-detail">
                                     <span class="detail-label">Sync Status</span>
                                     <span class="detail-value status-pill" id="node-sync">---</span>
                                 </div>
@@ -845,6 +853,16 @@
                         const nodeHeight = document.getElementById('node-height');
                         if (nodeHeight) {
                             nodeHeight.textContent = jsonResult.node?.infos?.metadata?.height ?? 'N/A';
+                        }
+
+                        const nodeVersion = document.getElementById('node-version');
+                        if (nodeVersion) {
+                            nodeVersion.textContent = jsonResult.node?.infos?.version ?? 'N/A';
+                        }
+
+                        const nodeBlockVersion = document.getElementById('node-block-version');
+                        if (nodeBlockVersion) {
+                            nodeBlockVersion.textContent = jsonResult.node?.infos?.metadata?.version ?? 'N/A';
                         }
 
                         const nodeSync = document.getElementById('node-sync');
