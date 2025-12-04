@@ -93,10 +93,8 @@ const editValidator = async (app, password, validatorData, retry = 0) => {
         }
         const wallet = new ethers.Wallet(privateKey, provider);
 
-        console.log("Données reçues dans editValidator:", validatorData); // Debug log
-
         if (!validatorData) {
-            throw new Error(`Données invalides: ${JSON.stringify(validatorData)}`);
+            throw new Error(`Invalid data: ${JSON.stringify(validatorData)}`);
         }
 
         const descriptionInput = validatorData.description || {};
@@ -108,56 +106,116 @@ const editValidator = async (app, password, validatorData, retry = 0) => {
             details: (descriptionInput.details || 'This is my great node').trim()
         };
 
-        const commissionRates = {
-            rate: ethers.parseUnits(validatorData.commission.rate.toString(), 18),
-            maxRate: ethers.parseUnits(validatorData.commission.maxRate.toString(), 18),
-            maxChangeRate: ethers.parseUnits(validatorData.commission.maxChangeRate.toString(), 18)
-        };
+        const commissionRate = ethers.parseUnits(validatorData.commission.rate.toString(), 18);
 
-        const minSelfDelegation = validatorData.minSelfDelegation.toString(); // minimum share
+        const minSelfDelegation = BigInt(validatorData.minSelfDelegation.toString());
+        const minDelegation = BigInt(0);
 
         const validatorAddress = wallet.address;
 
-        const pubkeyJson = (await(execWrapper(`heliades tendermint show-validator`))).trim();
-        const pubkey = JSON.parse(pubkeyJson).key;
-        const value = ethers.parseUnits("1", 18); // by default 1 HLS
-        const delegateAuthorization = validatorData.delegateAuthorization || true;
-
-        console.log('Données formatées:', {
-          description,
-          validatorAddress,
-          commissionRates,
-          minSelfDelegation,
-          minDelegation: 0, // minDelegation
-          delegateAuthorization
-        });
+        const delegateAuthorization = validatorData.delegateAuthorization !== undefined ? validatorData.delegateAuthorization : true;
 
         const contract = new ethers.Contract('0x0000000000000000000000000000000000000800', editValidatorAbi, wallet);
         
-        const tx = await contract.editValidator(
-            description,
-            validatorAddress,
-            commissionRates,
-            minSelfDelegation,
-            0, // minDelegation
-            delegateAuthorization
-        );
+        let tx;
+        let revertReason = null;
+        
+        try {
+            tx = await contract.editValidator(
+                description,
+                validatorAddress,
+                commissionRate,
+                minSelfDelegation,
+                minDelegation,
+                delegateAuthorization
+            );
+        } catch (txError) {
+            if (txError.info?.error?.message) {
+                const errorMsg = txError.info.error.message;
+                if (errorMsg.includes('commission cannot be changed')) {
+                    revertReason = 'Commission rate cannot be changed more than once in 24 hours';
+                } else if (errorMsg.includes('desc =')) {
+                    revertReason = errorMsg.split('desc =')[1]?.trim() || errorMsg;
+                } else {
+                    revertReason = errorMsg;
+                }
+            }
+            
+            if (txError.code === 'CALL_EXCEPTION' || txError.code === 'BAD_DATA') {
+                try {
+                    tx = await contract.editValidator(
+                        description,
+                        validatorAddress,
+                        commissionRate,
+                        minSelfDelegation,
+                        minDelegation,
+                        delegateAuthorization,
+                        {
+                            gasPrice: 20000000000,
+                            gasLimit: 500000
+                        }
+                    );
+                } catch (txError2) {
+                    if (txError2.info?.error?.message) {
+                        const errorMsg = txError2.info.error.message;
+                        if (errorMsg.includes('commission cannot be changed')) {
+                            revertReason = 'Commission rate cannot be changed more than once in 24 hours';
+                        } else if (errorMsg.includes('desc =')) {
+                            revertReason = errorMsg.split('desc =')[1]?.trim() || errorMsg;
+                        } else {
+                            revertReason = errorMsg;
+                        }
+                    }
+                    
+                    throw txError2;
+                }
+            } else {
+                throw txError;
+            }
+        }
 
-        console.log('Transaction envoyée, hash :', tx.hash);
+        let receipt;
+        try {
+            receipt = await tx.wait();
+        } catch (waitError) {
+            if (waitError.receipt && waitError.receipt.status === 0) {
+                if (!revertReason) {
+                    if (waitError.info?.error?.message) {
+                        const errorMsg = waitError.info.error.message;
+                        if (errorMsg.includes('commission cannot be changed')) {
+                            revertReason = 'Commission rate cannot be changed more than once in 24 hours';
+                        } else if (errorMsg.includes('desc =')) {
+                            revertReason = errorMsg.split('desc =')[1]?.trim() || errorMsg;
+                        } else {
+                            revertReason = errorMsg;
+                        }
+                    } else {
+                        revertReason = 'Transaction reverted. The validator update may have failed due to contract restrictions (e.g., commission rate change limit).';
+                    }
+                }
+                
+                const error = new Error(revertReason);
+                error.revertReason = revertReason;
+                throw error;
+            }
+            throw waitError;
+        }
+        
+        if (receipt.status === 0) {
+            if (!revertReason) {
+                revertReason = 'Transaction reverted. The validator update may have failed due to contract restrictions.';
+            }
+            const error = new Error(revertReason);
+            error.revertReason = revertReason;
+            throw error;
+        }
 
-        const receipt = await tx.wait();
-        console.log('Transaction confirmée dans le bloc :', receipt.blockNumber);
-
-        console.log("Validateur modifié avec succès !");
         return true;
     } catch (e) {
-        console.log('Erreur complète:', e);
         if (retry >= 0) {
-            console.log('editValidator failed.');
-            console.log(e);
-            return false;
+            const errorMessage = e.revertReason || e.message || 'Failed to update validator';
+            return { error: errorMessage };
         }
-        console.log('editValidator failed retry...');
         await new Promise((resolve) => setTimeout(resolve, 1000));
         return editValidator(app, password, validatorData, retry + 1);
     }
